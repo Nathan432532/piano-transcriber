@@ -6,9 +6,11 @@ Piano Transcriber is een lokale webapp voor korte piano-audio: upload, validatie
 
 ## Huidige fase
 
-Fase 1 is handmatig goedgekeurd. Laatste checkpoint-commit:
+Fase 1 is handmatig goedgekeurd. Laatste Fase-1-checkpoint:
 
 `fa5bd3d4e6a6e88ee8510b2afb35f15162d2ff60`
+
+De read-only Fase-2-transcriptiespike is afgerond met Reviewer-verdict `PASS WITH NOTES`. Basic Pitch is de aanbevolen prototype-engine achter een asynchrone worker. Er is nog geen Fase-2-code geïmplementeerd.
 
 ## Fase 1 werkt aantoonbaar
 
@@ -35,6 +37,8 @@ Fase 1 is handmatig goedgekeurd. Laatste checkpoint-commit:
 - Alleen WAV-upload is aantoonbaar geaccepteerd in Fase 1; MP3 hoort bij Fase 2-onderzoek.
 - Confidence is nog geen modelscore.
 - `hand` blijft voorlopig `"unknown"`.
+- Het benchmarkplan en het generated-artifact/`.gitignore`-beleid zijn nog contract, geen uitgevoerde implementatie.
+- Licenties moeten bij implementatie opnieuw worden vastgelegd voor de exacte packageversies, modelartifacts en hashes.
 
 ## Uitgevoerde tests
 
@@ -48,8 +52,8 @@ Fase 1 is handmatig goedgekeurd. Laatste checkpoint-commit:
 
 ## Git status
 
-Voor deze sessieoverdracht gestart vanaf schone `master` op checkpoint `fa5bd3d`.
+De spike-remediation is document-only. Voor de start van Fase 2 moet de working tree schoon zijn en moeten de bijgewerkte projectstatus en het definitieve spikeverslag lokaal gecommit zijn.
 
 ## Eerstvolgende taak
 
-Remedieer de read-only Fase 2-spike: werk de vier resterende Reviewer-findings uit zonder direct implementatie, package-installatie of model-download.
+Start na het documentatiecheckpoint een nieuwe OpenClaw-sessie. Bepaal daarin één afgebakende eerste Fase-2-implementatietaak op basis van `docs/phase2-transcription-spike.md`. Installeer nog geen package en download geen model voordat de exacte versie, licentie, artifactbron en resource-aanpak voor die implementatiestap zijn bevestigd.
