@@ -1,0 +1,82 @@
+{
+  "version": "1.0",
+  "source": {
+    "kind": "synthetic",
+    "filename": "demo.wav",
+    "duration": 8.0
+  },
+  "notes": [
+    {
+      "pitch": 60,
+      "noteName": "C4",
+      "startTime": 0.25,
+      "endTime": 0.85,
+      "velocity": 82,
+      "confidence": 0.99,
+      "hand": "unknown"
+    },
+    {
+      "pitch": 64,
+      "noteName": "E4",
+      "startTime": 0.95,
+      "endTime": 1.55,
+      "velocity": 78,
+      "confidence": 0.98,
+      "hand": "unknown"
+    },
+    {
+      "pitch": 67,
+      "noteName": "G4",
+      "startTime": 1.65,
+      "endTime": 2.25,
+      "velocity": 84,
+      "confidence": 0.98,
+      "hand": "unknown"
+    },
+    {
+      "pitch": 72,
+      "noteName": "C5",
+      "startTime": 2.55,
+      "endTime": 3.25,
+      "velocity": 88,
+      "confidence": 0.97,
+      "hand": "unknown"
+    },
+    {
+      "pitch": 69,
+      "noteName": "A4",
+      "startTime": 3.55,
+      "endTime": 4.15,
+      "velocity": 75,
+      "confidence": 0.96,
+      "hand": "unknown"
+    },
+    {
+      "pitch": 65,
+      "noteName": "F4",
+      "startTime": 4.25,
+      "endTime": 4.95,
+      "velocity": 79,
+      "confidence": 0.96,
+      "hand": "unknown"
+    },
+    {
+      "pitch": 62,
+      "noteName": "D4",
+      "startTime": 5.2,
+      "endTime": 5.85,
+      "velocity": 77,
+      "confidence": 0.97,
+      "hand": "unknown"
+    },
+    {
+      "pitch": 60,
+      "noteName": "C4",
+      "startTime": 6.1,
+      "endTime": 7.25,
+      "velocity": 90,
+      "confidence": 0.99,
+      "hand": "unknown"
+    }
+  ]
+}

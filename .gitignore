@@ -1,0 +1,15 @@
+node_modules/
+dist/
+dist-tests/
+.vite/
+.venv/
+backend/.deps/
+__pycache__/
+.pytest_cache/
+*.pyc
+
+backend/data/uploads/
+backend/data/tmp/
+
+.env
+.env.local

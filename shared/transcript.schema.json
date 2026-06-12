@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/piano-transcriber/transcript.schema.json",
+  "title": "Piano Audio Transcriber Transcript",
+  "type": "object",
+  "required": ["version", "source", "notes"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "required": ["kind", "filename", "duration"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["synthetic", "uploaded"]
+        },
+        "filename": {
+          "type": "string",
+          "minLength": 1
+        },
+        "duration": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/note"
+      }
+    }
+  },
+  "$defs": {
+    "note": {
+      "type": "object",
+      "required": ["pitch", "noteName", "startTime", "endTime", "velocity", "confidence", "hand"],
+      "additionalProperties": false,
+      "properties": {
+        "pitch": {
+          "type": "integer",
+          "minimum": 21,
+          "maximum": 108
+        },
+        "noteName": {
+          "type": "string",
+          "pattern": "^[A-G](#|b)?-?[0-9]$"
+        },
+        "startTime": {
+          "type": "number",
+          "minimum": 0
+        },
+        "endTime": {
+          "type": "number",
+          "minimum": 0
+        },
+        "velocity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 127
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "hand": {
+          "type": "string",
+          "enum": ["unknown"]
+        }
+      }
+    }
+  }
+}
