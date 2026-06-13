@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
     "lint": "eslint .",
-    "test": "tsc -p tsconfig.test.json && node dist-tests/tests/keyboardGeometry.test.js"
+    "test": "tsc -p tsconfig.test.json && node dist-tests/tests/keyboardGeometry.test.js && node dist-tests/tests/transcriptionApi.test.js && node dist-tests/tests/transcriptionPoller.test.js"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

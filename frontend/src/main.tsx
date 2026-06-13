@@ -1,6 +1,17 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { getKeyboardGeometry, getKeyboardHeight, getPitchKeyRect, isWhiteKey } from './keyboardGeometry';
+import {
+  createTranscriptionApiClient,
+  createWithNetworkRetries,
+  isTerminalState,
+  makeIdempotencyKey,
+  TRANSCRIPTION_JOB_STORAGE_KEY,
+  TranscriptionApiError,
+  userMessageForErrorCode,
+  type TranscriptionJob,
+} from './transcriptionApi';
+import { TranscriptionPoller, type PollerStatus } from './transcriptionPoller';
 import './styles.css';
 
 type Hand = 'unknown';
@@ -40,6 +51,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
 const SPEEDS = [0.5, 0.75, 1] as const;
 const PITCH_MIN = 48;
 const PITCH_MAX = 84;
+const transcriptionApi = createTranscriptionApiClient(fetch, API_BASE);
 
 function apiUrl(path: string): string {
   if (path.startsWith('http')) {
@@ -54,6 +66,24 @@ function durationFromTranscript(transcript: Transcript | null): number {
   }
   const maxNote = transcript.notes.reduce((max, note) => Math.max(max, note.endTime), 0);
   return Math.max(transcript.source.duration, maxNote, 1);
+}
+
+function stateLabel(job: TranscriptionJob): string {
+  const labels: Record<TranscriptionJob['state'], string> = {
+    queued: 'Queued',
+    running: 'Running',
+    succeeded: 'Succeeded',
+    failed: 'Failed',
+    cancelled: 'Cancelled',
+  };
+  return labels[job.state];
+}
+
+function jobResultHasArtifacts(job: TranscriptionJob | null): boolean {
+  if (!job?.result) {
+    return false;
+  }
+  return Boolean(job.result.transcriptUrl || Object.keys(job.result.exports).length > 0);
 }
 
 function drawPianoRoll(
@@ -254,10 +284,56 @@ function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(1);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [job, setJob] = useState<TranscriptionJob | null>(null);
+  const [jobError, setJobError] = useState<string | null>(null);
+  const [pollerStatus, setPollerStatus] = useState<PollerStatus>({
+    isPolling: false,
+    networkIssue: false,
+    stillWorking: false,
+    nextDelayMs: null,
+    consecutiveUnchangedMs: 0,
+  });
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const frameRef = useRef<number | null>(null);
+  const pollerRef = useRef<TranscriptionPoller | null>(null);
+  const createAbortRef = useRef<AbortController | null>(null);
 
   const duration = useMemo(() => durationFromTranscript(transcript), [transcript]);
+
+  useEffect(() => {
+    pollerRef.current = new TranscriptionPoller({
+      fetchJob: (jobId, signal) => transcriptionApi.get(jobId, signal),
+      onUpdate: (nextJob) => {
+        setJob(nextJob);
+        setJobError(nextJob.error ? userMessageForErrorCode(nextJob.error.code) : null);
+        window.localStorage.setItem(TRANSCRIPTION_JOB_STORAGE_KEY, nextJob.jobId);
+      },
+      onTerminalError: (apiError) => {
+        setJobError(apiError.message);
+        setError(apiError.message);
+        setState('error');
+        window.localStorage.removeItem(TRANSCRIPTION_JOB_STORAGE_KEY);
+      },
+      onStatus: setPollerStatus,
+    });
+
+    const storedJobId = window.localStorage.getItem(TRANSCRIPTION_JOB_STORAGE_KEY);
+    if (storedJobId) {
+      pollerRef.current.start(storedJobId);
+    }
+
+    return () => {
+      pollerRef.current?.stop();
+      createAbortRef.current?.abort();
+    };
+  }, []);
+
+  const startPollingJob = (nextJob: TranscriptionJob) => {
+    setJob(nextJob);
+    setJobError(nextJob.error ? userMessageForErrorCode(nextJob.error.code) : null);
+    window.localStorage.setItem(TRANSCRIPTION_JOB_STORAGE_KEY, nextJob.jobId);
+    pollerRef.current?.start(nextJob.jobId, nextJob);
+  };
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -287,6 +363,10 @@ function App() {
   const loadDemo = async () => {
     setState('loading');
     setError(null);
+    setJob(null);
+    setJobError(null);
+    window.localStorage.removeItem(TRANSCRIPTION_JOB_STORAGE_KEY);
+    pollerRef.current?.stop();
     setIsPlaying(false);
     try {
       const response = await fetch(apiUrl('/api/transcripts/demo'));
@@ -311,7 +391,12 @@ function App() {
     }
     setState('loading');
     setError(null);
+    setJob(null);
+    setJobError(null);
     setIsPlaying(false);
+    pollerRef.current?.stop();
+    createAbortRef.current?.abort();
+    createAbortRef.current = new AbortController();
     try {
       const data = new FormData();
       data.append('file', file);
@@ -327,12 +412,36 @@ function App() {
       setTranscript(payload.transcript);
       setAudioUrl(apiUrl(payload.audioUrl));
       setCurrentTime(0);
+      const idempotencyKey = makeIdempotencyKey();
+      const createdJob = await createWithNetworkRetries(
+        (signal) => transcriptionApi.create(payload.uploadId, idempotencyKey, signal),
+        { signal: createAbortRef.current.signal },
+      );
+      startPollingJob(createdJob);
       setState('ready');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed');
       setState('error');
     } finally {
+      createAbortRef.current = null;
       event.target.value = '';
+    }
+  };
+
+  const cancelJob = async () => {
+    if (!job || isTerminalState(job.state)) {
+      return;
+    }
+    setJobError(null);
+    try {
+      const cancelled = await transcriptionApi.cancel(job.jobId);
+      startPollingJob(cancelled);
+    } catch (err) {
+      if (err instanceof TranscriptionApiError) {
+        setJobError(err.message);
+      } else {
+        setJobError('Could not cancel transcription right now.');
+      }
     }
   };
 
@@ -362,7 +471,7 @@ function App() {
       <section className="topbar">
         <div>
           <h1>Piano Audio Transcriber</h1>
-          <p>Upload a short WAV/MP3 and inspect synchronized placeholder note data.</p>
+          <p>Upload a short WAV/MP3 and watch the prototype transcription job status.</p>
         </div>
         <label className="upload-button">
           Upload audio
@@ -413,7 +522,44 @@ function App() {
         </div>
       </section>
 
-      {state === 'loading' && <section className="state-panel">Loading audio and transcript...</section>}
+      {job && (
+        <section className={`job-panel job-panel-${job.state}`} aria-live="polite">
+          <div className="job-panel-header">
+            <div>
+              <div className="job-kicker">Transcription job</div>
+              <strong>{stateLabel(job)}</strong>
+            </div>
+            <span className="job-id">Job {job.jobId}</span>
+          </div>
+          <div className="progress-track" aria-label={`Progress ${job.progress.percent}%`}>
+            <div className="progress-fill" style={{ width: `${job.progress.percent}%` }} />
+          </div>
+          <div className="job-details">
+            <span>{job.progress.percent}%</span>
+            <span>Phase: {job.progress.phase}</span>
+            <span>{job.progress.message}</span>
+          </div>
+          {pollerStatus.stillWorking && <p className="job-note">Still working...</p>}
+          {pollerStatus.networkIssue && (
+            <p className="job-note warning">
+              Network connection is unstable. Keeping the last known status visible and retrying.
+            </p>
+          )}
+          {jobError && <p className="job-note error-text">{jobError}</p>}
+          {job.state === 'succeeded' && !jobResultHasArtifacts(job) && (
+            <p className="job-note">
+              Prototype job completed. No real model transcript or export artifact was produced yet.
+            </p>
+          )}
+          {!isTerminalState(job.state) && (
+            <button type="button" onClick={cancelJob}>
+              Cancel transcription
+            </button>
+          )}
+        </section>
+      )}
+
+      {state === 'loading' && <section className="state-panel">Uploading audio and starting transcription job...</section>}
       {state === 'empty' && (
         <section className="state-panel state-panel-actions">
           <div>
@@ -442,7 +588,7 @@ function App() {
           <section className="meta-strip">
             <span>{transcript.source.filename}</span>
             <span>{transcript.notes.length} notes</span>
-            <span>{transcript.source.kind}</span>
+            <span>{transcript.source.kind === 'uploaded' ? 'demo visualization for uploaded audio' : 'synthetic demo'}</span>
           </section>
 
           <section className="visual-grid">

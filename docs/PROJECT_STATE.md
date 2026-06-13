@@ -14,6 +14,8 @@ De read-only Fase-2-transcriptiespike is afgerond met Reviewer-verdict `PASS WIT
 
 Eerste Fase-2-backendslice is lokaal geïmplementeerd: persistente async transcriptiejobs met pollingroutes, idempotent create-contract en een deterministische demo-runner zonder echte Basic Pitch-inference. De lokale single-process create-route gebruikt een per-key lock voor Idempotency-Key-hergebruik; multi-process/distributed locking is niet geclaimd.
 
+Eerste Fase-2-frontendslice is lokaal geïmplementeerd: upload start nu een async transcriptiejob via de bestaande routes, de UI pollt jobstatus met backoff/still-working gedrag, ondersteunt cancellation, herstelt een opgeslagen jobId na refresh en toont prototype-resultaten zonder downloadlinks wanneer echte artifacts ontbreken.
+
 ## Fase 1 werkt aantoonbaar
 
 - WAV-upload werkt.
@@ -35,6 +37,7 @@ Eerste Fase-2-backendslice is lokaal geïmplementeerd: persistente async transcr
 
 - Nog geen echte nootdetectie of model-inference; Fase-2 gebruikt voorlopig een deterministische demo-runner.
 - Nog geen transcript- of MIDI-exportartifactroutes; geslaagde demo-jobs publiceren daarom geen downloadlinks voor die artifacts.
+- De frontend gebruikt nog de bestaande synthetische demo-transcriptie voor visualisaties; een geslaagde demo-job is nog geen echte modeltranscriptie.
 - Nog geen automatische queue-timeout, worker heartbeat, stale-worker-detectie of watchdog-failing.
 - Bij idempotent hergebruik van een nog `queued` job kan de default auto-run nog een extra background runner schedulen. Die runner stopt doorgaans nadat een andere runner de state heeft gewijzigd, maar `queued -> running` is binnen deze prototypeslice nog niet volledig atomisch; dit moet in een latere worker/concurrency-slice worden aangescherpt.
 - Demo-transcript is statisch.
@@ -54,6 +57,10 @@ Eerste Fase-2-backendslice is lokaal geïmplementeerd: persistente async transcr
 - `npm run lint` -> passed.
 - `npm run typecheck` -> passed.
 - `npm run build` -> passed.
+- `npm run test` -> passed na de eerste Fase-2-frontendslice met tests voor create/cancel/errorcopy, polling, terminale states, retry/backoff en refresh-herstel.
+- `npm run lint` -> passed na de eerste Fase-2-frontendslice.
+- `npm run typecheck` -> passed na de eerste Fase-2-frontendslice.
+- `npm run build` -> passed na de eerste Fase-2-frontendslice.
 - Smokechecks: frontend 200, API health 200, demo-audio 200/705644 bytes, geldige WAV-upload 200 met duration 8.0 en 8 notes, ongeldige upload 400.
 - `git check-ignore` bevestigde dat uploads, dependencies en build-output genegeerd worden.
 

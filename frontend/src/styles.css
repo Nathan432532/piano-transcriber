@@ -82,6 +82,7 @@ p {
 .transport,
 .meta-strip,
 .state-panel,
+.job-panel,
 .visual-block {
   border: 1px solid #26303a;
   border-radius: 8px;
@@ -151,6 +152,93 @@ audio {
 
 .state-panel.error strong {
   color: #ffccd3;
+}
+
+.job-panel {
+  margin-top: 16px;
+  padding: 16px;
+}
+
+.job-panel-succeeded {
+  border-color: #287a5c;
+}
+
+.job-panel-failed {
+  border-color: #9f3a45;
+}
+
+.job-panel-cancelled {
+  border-color: #7a6472;
+}
+
+.job-panel-header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.job-kicker,
+.job-id,
+.job-details,
+.job-note {
+  color: #aeb8c2;
+}
+
+.job-kicker {
+  font-size: 0.78rem;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.job-panel strong {
+  color: #e8edf2;
+  font-size: 1.15rem;
+}
+
+.job-id {
+  font-size: 0.84rem;
+  max-width: 50%;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.progress-track {
+  background: #0b0d10;
+  border: 1px solid #26303a;
+  border-radius: 999px;
+  height: 12px;
+  margin-top: 14px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: #3ddc97;
+  height: 100%;
+  transition: width 180ms ease;
+}
+
+.job-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 10px;
+}
+
+.job-note {
+  margin-top: 10px;
+}
+
+.job-note.warning {
+  color: #ffd166;
+}
+
+.error-text {
+  color: #ffb3bd;
+}
+
+.job-panel button {
+  margin-top: 14px;
 }
 
 .meta-strip {
