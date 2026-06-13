@@ -55,12 +55,7 @@ class BasicPitchTranscriptionAdapter:
     def load(self, context: Any) -> None:
         from .transcription_jobs import TranscriptionAdapterLoadError
 
-        if self._model_path is None or not str(self._model_path).strip():
-            raise TranscriptionAdapterLoadError("Basic Pitch model path is not configured")
-
-        model_path = Path(str(self._model_path)).expanduser()
-        if not model_path.exists() or not model_path.is_file():
-            raise TranscriptionAdapterLoadError("Basic Pitch model file is not available")
+        model_path = resolve_basic_pitch_model_path(self._model_path)
 
         try:
             self._binding.load_model(model_path)
@@ -104,6 +99,23 @@ def extract_note_events(output: Any) -> Any:
         return output[2]
 
     raise_invalid_output("Basic Pitch output shape is not supported")
+
+
+def resolve_basic_pitch_model_path(configured_model_path: str | Path | None) -> Path:
+    from .transcription_jobs import TranscriptionAdapterLoadError
+
+    if configured_model_path is not None and str(configured_model_path).strip():
+        model_path = Path(str(configured_model_path)).expanduser()
+    else:
+        try:
+            basic_pitch = importlib.import_module("basic_pitch")
+            model_path = Path(getattr(basic_pitch, "ICASSP_2022_MODEL_PATH")).expanduser()
+        except Exception as exc:
+            raise TranscriptionAdapterLoadError("Basic Pitch package default model could not be resolved") from exc
+
+    if not model_path.exists() or not model_path.is_file():
+        raise TranscriptionAdapterLoadError("Basic Pitch model file is not available")
+    return model_path
 
 
 def extract_duration_seconds(output: Any) -> Any:

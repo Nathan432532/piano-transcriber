@@ -17,6 +17,7 @@ from app.main import app
 from app.transcription_jobs import (
     DemoTranscriptionAdapter,
     TranscriptionAdapterContext,
+    TranscriptionAdapterLoadError,
     cancel_transcription_job,
     create_transcription_adapter,
     load_job,
@@ -110,11 +111,28 @@ def install_fake_basic_pitch_module(monkeypatch: pytest.MonkeyPatch, inference: 
     monkeypatch.setitem(sys.modules, "basic_pitch.inference", inference)
 
 
+def install_fake_basic_pitch_default_model(monkeypatch: pytest.MonkeyPatch, model_path: Path) -> None:
+    package = ModuleType("basic_pitch")
+    package.__path__ = []
+    package.ICASSP_2022_MODEL_PATH = model_path
+    monkeypatch.setitem(sys.modules, "basic_pitch", package)
+
+
 def test_basic_pitch_adapter_module_does_not_import_basic_pitch_package() -> None:
     sys.modules.pop("basic_pitch", None)
     sys.modules.pop("basic_pitch.inference", None)
 
     importlib.import_module("app.basic_pitch_adapter")
+
+    assert "basic_pitch" not in sys.modules
+    assert "basic_pitch.inference" not in sys.modules
+
+
+def test_basic_pitch_adapter_init_does_not_import_basic_pitch_package() -> None:
+    sys.modules.pop("basic_pitch", None)
+    sys.modules.pop("basic_pitch.inference", None)
+
+    BasicPitchTranscriptionAdapter()
 
     assert "basic_pitch" not in sys.modules
     assert "basic_pitch.inference" not in sys.modules
@@ -142,8 +160,8 @@ def test_unknown_runner_mode_fails_job_without_demo_fallback(tmp_path: Path, mon
     assert load_job(created["jobId"])["result"] is None
 
 
-@pytest.mark.parametrize("configured_path", [None, "", "   ", "/missing/basic-pitch-model.pb"])
-def test_basic_pitch_missing_model_path_or_file_maps_to_model_load_failed(
+@pytest.mark.parametrize("configured_path", ["/missing/basic-pitch-model.pb"])
+def test_basic_pitch_missing_explicit_model_file_maps_to_model_load_failed(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     configured_path: str | None,
@@ -159,6 +177,71 @@ def test_basic_pitch_missing_model_path_or_file_maps_to_model_load_failed(
     assert result["error"]["code"] == "MODEL_LOAD_FAILED"
     assert result["error"]["details"] == {"engine": "basic-pitch"}
     assert "missing" not in str(result["error"])
+
+
+@pytest.mark.parametrize("configured_path", [None, "", "   "])
+def test_basic_pitch_missing_package_default_maps_to_model_load_failed(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    configured_path: str | None,
+) -> None:
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key=f"missing-package-default-{configured_path!r}")
+    monkeypatch.setattr(config, "TRANSCRIPTION_RUNNER_MODE", "basic-pitch")
+    monkeypatch.setattr(config, "BASIC_PITCH_MODEL_PATH", configured_path)
+
+    original_import_module = importlib.import_module
+
+    def fake_import_module(name: str, package: str | None = None):
+        if name == "basic_pitch":
+            raise ImportError("no basic pitch")
+        return original_import_module(name, package)
+
+    monkeypatch.setattr(importlib, "import_module", fake_import_module)
+
+    result = run_transcription_job(created["jobId"])
+
+    assert result["state"] == "failed"
+    assert result["error"]["code"] == "MODEL_LOAD_FAILED"
+    assert result["error"]["details"] == {"engine": "basic-pitch"}
+
+
+def test_basic_pitch_explicit_model_path_has_precedence_over_package_default(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    explicit_model = model_file(tmp_path)
+    default_model = tmp_path / "package_default_model.pb"
+    default_model.write_bytes(b"default")
+    install_fake_basic_pitch_default_model(monkeypatch, default_model)
+    binding = FakeBinding()
+
+    BasicPitchTranscriptionAdapter(explicit_model, binding=binding).load(None)
+
+    assert binding.loaded_path == explicit_model
+
+
+def test_basic_pitch_uses_package_default_model_without_override(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    default_model = model_file(tmp_path)
+    install_fake_basic_pitch_default_model(monkeypatch, default_model)
+    binding = FakeBinding()
+
+    BasicPitchTranscriptionAdapter(binding=binding).load(None)
+
+    assert binding.loaded_path == default_model
+
+
+def test_basic_pitch_missing_package_model_raises_controlled_load_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    install_fake_basic_pitch_default_model(monkeypatch, tmp_path / "missing-default-model.pb")
+
+    with pytest.raises(TranscriptionAdapterLoadError, match="model file is not available"):
+        BasicPitchTranscriptionAdapter(binding=FakeBinding()).load(None)
 
 
 def test_basic_pitch_package_import_error_maps_to_model_load_failed(
