@@ -2,12 +2,25 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, UploadFile
+from typing import Any
+
+from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
+from pydantic import BaseModel, Field
 
 from . import config
 from .audio_validation import ALLOWED_EXTENSIONS, ensure_child_path, store_validated_audio
+from .transcription_jobs import (
+    TranscriptionApiError,
+    cancel_transcription_job,
+    create_transcription_job,
+    creation_response,
+    ensure_job_dirs,
+    load_job,
+    public_job,
+    run_demo_transcription_job,
+)
 from .transcript import DEMO_TRANSCRIPT
 
 
@@ -17,15 +30,27 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
     allow_credentials=False,
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["*"],
 )
+
+
+class TranscriptionCreateRequest(BaseModel):
+    uploadId: str
+    engine: str = "basic-pitch"
+    options: dict[str, Any] = Field(default_factory=dict)
+
+
+@app.exception_handler(TranscriptionApiError)
+def transcription_api_error_handler(_: object, exc: TranscriptionApiError) -> JSONResponse:
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.to_detail()})
 
 
 @app.on_event("startup")
 def ensure_data_dirs() -> None:
     config.UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     config.SAMPLE_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_job_dirs()
 
 
 @app.get("/api/health")
@@ -84,3 +109,25 @@ def uploaded_audio(upload_id: str) -> FileResponse:
     path = matches[0]
     media_type = "audio/mpeg" if path.suffix == ".mp3" else "audio/wav"
     return FileResponse(path, media_type=media_type, filename=path.name)
+
+
+@app.post("/api/transcriptions")
+def create_transcription(
+    payload: TranscriptionCreateRequest,
+    background_tasks: BackgroundTasks,
+    idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
+) -> JSONResponse:
+    job = create_transcription_job(payload.model_dump(), idempotency_key)
+    if config.TRANSCRIPTION_AUTO_RUN and job["state"] == "queued":
+        background_tasks.add_task(run_demo_transcription_job, job["jobId"])
+    return JSONResponse(status_code=202, content=creation_response(job))
+
+
+@app.get("/api/transcriptions/{job_id}")
+def get_transcription(job_id: str) -> dict[str, Any]:
+    return public_job(load_job(job_id))
+
+
+@app.delete("/api/transcriptions/{job_id}")
+def delete_transcription(job_id: str) -> dict[str, Any]:
+    return public_job(cancel_transcription_job(job_id))

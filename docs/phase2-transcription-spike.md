@@ -86,7 +86,7 @@ Niet toegestaan:
 - `failed`: laatste bekende percent, niet verplicht `100`
 - `cancelled`: laatste bekende percent, niet verplicht `100`
 
-Als een engine geen fijne voortgang kan rapporteren, gebruikt de worker fase-gebaseerde voortgang binnen deze banden. Tijdens `inferencing` mag percent alleen stijgen op basis van bekende chunks of elapsed-time-estimate; de UI mag dit niet presenteren als exacte modelprogress. `updatedAt` wordt bij elke worker heartbeat vernieuwd. Een `running` job waarvan `updatedAt` ouder is dan `workerHeartbeatTimeoutSeconds` geldt voor de API als `unknown/stale` en de frontend toont dit als herstelbare serververtraging totdat backend de job terminaal markeert.
+Als een engine geen fijne voortgang kan rapporteren, gebruikt de worker fase-gebaseerde voortgang binnen deze banden. Tijdens `inferencing` mag percent alleen stijgen op basis van bekende chunks of elapsed-time-estimate; de UI mag dit niet presenteren als exacte modelprogress. `updatedAt` wordt bij elke demo-runner progress-update vernieuwd. Heartbeat-, stale-worker-, queue-timeout- en watchdog-enforcement zijn nog niet actief in deze backendslice en vormen een volgende backendtaak.
 
 ### Polling/SSE-keuze
 
@@ -178,10 +178,8 @@ Succeeded response:
   },
   "error": null,
   "result": {
-    "transcriptUrl": "/api/transcriptions/7fa8c4a5-6c5d-4c0e-88fc-fd5b0610bb3d/result",
-    "exports": {
-      "midi": "/api/transcriptions/7fa8c4a5-6c5d-4c0e-88fc-fd5b0610bb3d/exports/midi"
-    },
+    "transcriptUrl": null,
+    "exports": {},
     "noteCount": 148,
     "durationSeconds": 31.2
   }
@@ -220,12 +218,14 @@ Cancellation:
 
 ### Timeouts, retries en idempotency
 
-Backend defaults:
+Geplande backend defaults voor een latere worker/watchdog-slice:
 
 - `queueTimeoutSeconds`: 300; expired queued jobs become `failed` with `QUEUE_TIMEOUT`.
 - `workerHeartbeatTimeoutSeconds`: 30; stale running jobs are exposed as recoverable warning and are failed by backend watchdog after 120 seconds stale with `WORKER_LOST`.
 - `jobTimeoutSeconds`: 180 for Fase 2 prototype; timeout becomes `failed` with `TRANSCRIPTION_TIMEOUT`.
 - `jobTtlDays`: 7 for jobs/results unless benchmark artifacts expliciet anders zeggen.
+
+Huidige implementatiestatus: `QUEUE_TIMEOUT`, `TRANSCRIPTION_TIMEOUT` en `WORKER_LOST` staan in het foutcodecontract, maar automatische queue-timeout, worker heartbeat, stale-worker-detectie en watchdog-failing zijn nog niet geïmplementeerd. De huidige demo-runner faalt jobs alleen via expliciete validatie-/runnerfouten of cancellation.
 
 Idempotency:
 
@@ -361,7 +361,7 @@ Alle runtime-data onder `backend/data/` is standaard lokaal en gitignored, behal
 | `backend/data/ground_truth/` | MIDI-fixtures, manifests, rendermetadata en eventueel kleine gerenderde WAVs. | Persistent reproduceerbare benchmarkbasis. | `fixtures/**/*.mid` en `fixtures/**/*.json` mogen in Git als licentievrij en klein; gerenderde WAVs/cache standaard gitignored tenzij expliciet klein en licentievrij. | Geen automatische cleanup voor Git-fixtures; gegenereerde render/cachebestanden kunnen worden herbouwd en mogen na 30 dagen weg. |
 | `backend/data/model-cache/` | Download/cache van package- of frameworkmodellen, checkpoints en converted weights. | Afgeleid lokaal cachemateriaal. | Volledig gitignored. | Mag automatisch worden opgeschoond bij diskdruk; behoud alleen actieve modelversie, of LRU met max size. |
 
-Later benodigde `.gitignore`-regels, nu niet toepassen:
+De eerste Fase-2-backendslice past de relevante runtime-`.gitignore`-regels toe:
 
 ```gitignore
 /backend/data/models/**

@@ -10,7 +10,9 @@ Fase 1 is handmatig goedgekeurd. Laatste Fase-1-checkpoint:
 
 `fa5bd3d4e6a6e88ee8510b2afb35f15162d2ff60`
 
-De read-only Fase-2-transcriptiespike is afgerond met Reviewer-verdict `PASS WITH NOTES`. Basic Pitch is de aanbevolen prototype-engine achter een asynchrone worker. Er is nog geen Fase-2-code geïmplementeerd.
+De read-only Fase-2-transcriptiespike is afgerond met Reviewer-verdict `PASS WITH NOTES`. Basic Pitch is de aanbevolen prototype-engine achter een asynchrone worker.
+
+Eerste Fase-2-backendslice is lokaal geïmplementeerd: persistente async transcriptiejobs met pollingroutes, idempotent create-contract en een deterministische demo-runner zonder echte Basic Pitch-inference. De lokale single-process create-route gebruikt een per-key lock voor Idempotency-Key-hergebruik; multi-process/distributed locking is niet geclaimd.
 
 ## Fase 1 werkt aantoonbaar
 
@@ -31,18 +33,23 @@ De read-only Fase-2-transcriptiespike is afgerond met Reviewer-verdict `PASS WIT
 
 ## Resterende beperkingen
 
-- Nog geen echte nootdetectie of model-inference.
+- Nog geen echte nootdetectie of model-inference; Fase-2 gebruikt voorlopig een deterministische demo-runner.
+- Nog geen transcript- of MIDI-exportartifactroutes; geslaagde demo-jobs publiceren daarom geen downloadlinks voor die artifacts.
+- Nog geen automatische queue-timeout, worker heartbeat, stale-worker-detectie of watchdog-failing.
+- Bij idempotent hergebruik van een nog `queued` job kan de default auto-run nog een extra background runner schedulen. Die runner stopt doorgaans nadat een andere runner de state heeft gewijzigd, maar `queued -> running` is binnen deze prototypeslice nog niet volledig atomisch; dit moet in een latere worker/concurrency-slice worden aangescherpt.
 - Demo-transcript is statisch.
 - Geen browser-e2e of canvas-pixeltest bewezen.
 - Alleen WAV-upload is aantoonbaar geaccepteerd in Fase 1; MP3 hoort bij Fase 2-onderzoek.
 - Confidence is nog geen modelscore.
 - `hand` blijft voorlopig `"unknown"`.
-- Het benchmarkplan en het generated-artifact/`.gitignore`-beleid zijn nog contract, geen uitgevoerde implementatie.
+- Het benchmarkplan is nog contract, geen uitgevoerde implementatie.
 - Licenties moeten bij implementatie opnieuw worden vastgelegd voor de exacte packageversies, modelartifacts en hashes.
 
 ## Uitgevoerde tests
 
 - `PYTHONPATH=backend:backend/.deps python3 -m pytest backend/tests` -> 7 passed, 2 bestaande FastAPI deprecation warnings.
+- `PYTHONPATH=backend:backend/.deps python3 -m pytest backend/tests` -> 16 passed, 2 bestaande FastAPI deprecation warnings na de eerste Fase-2-backendslice.
+- `PYTHONPATH=backend:backend/.deps python3 -m pytest backend/tests` -> 18 passed, 2 bestaande FastAPI deprecation warnings na Fase-2-remediation van links/idempotency.
 - `npm run test` -> passed.
 - `npm run lint` -> passed.
 - `npm run typecheck` -> passed.
@@ -52,7 +59,7 @@ De read-only Fase-2-transcriptiespike is afgerond met Reviewer-verdict `PASS WIT
 
 ## Git status
 
-De spike-remediation is document-only. Voor de start van Fase 2 moet de working tree schoon zijn en moeten de bijgewerkte projectstatus en het definitieve spikeverslag lokaal gecommit zijn.
+De eerste Fase-2-backendslice is lokaal geïmplementeerd en gereviewd met `PASS WITH NOTES`, maar nog niet lokaal gecommit. Voor vervolgwerk moet de huidige working tree eerst bewust worden afgerond of gecommit.
 
 ## Eerstvolgende taak
 

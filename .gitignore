@@ -10,6 +10,21 @@ __pycache__/
 
 backend/data/uploads/
 backend/data/tmp/
+/backend/data/models/**
+/backend/data/transcriptions/**
+/backend/data/jobs/**
+/backend/data/exports/**
+/backend/data/benchmarks/runs/**
+/backend/data/benchmarks/tmp/**
+/backend/data/model-cache/**
+/backend/data/ground_truth/**/*.wav
+/backend/data/ground_truth/**/*.flac
+/backend/data/ground_truth/**/*.mp3
+/backend/data/ground_truth/rendered/**
+!/backend/data/ground_truth/
+!/backend/data/ground_truth/fixtures/
+!/backend/data/ground_truth/fixtures/**/*.mid
+!/backend/data/ground_truth/fixtures/**/*.json
 
 .env
 .env.local
