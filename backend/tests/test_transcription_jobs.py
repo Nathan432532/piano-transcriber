@@ -106,6 +106,34 @@ def test_create_endpoint_schedules_default_demo_runner(tmp_path: Path, monkeypat
     assert response.json()["state"] == "succeeded"
 
 
+def test_idempotent_reuse_of_queued_job_does_not_schedule_second_runner(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from app import main as main_module
+
+    monkeypatch.setattr(config, "TRANSCRIPTION_AUTO_RUN", True)
+    upload_id = create_upload(tmp_path)
+    calls: list[str] = []
+
+    def fake_runner(job_id: str) -> dict:
+        calls.append(job_id)
+        return load_job(job_id)
+
+    monkeypatch.setattr(main_module, "run_demo_transcription_job", fake_runner)
+    headers = {"Idempotency-Key": "queued-reuse-key"}
+    body = {"uploadId": upload_id, "engine": "basic-pitch", "options": {"minPitch": 21}}
+
+    first = client.post("/api/transcriptions", headers=headers, json=body)
+    second = client.post("/api/transcriptions", headers=headers, json=body)
+
+    assert first.status_code == 202
+    assert second.status_code == 202
+    assert second.json() == first.json()
+    assert calls == [first.json()["jobId"]]
+    assert load_job(first.json()["jobId"])["state"] == "queued"
+
+
 def test_idempotency_key_reuses_same_body_and_rejects_different_body(tmp_path: Path) -> None:
     upload_id = create_upload(tmp_path)
     body = {"uploadId": upload_id, "engine": "basic-pitch", "options": {"minPitch": 21}}
@@ -153,6 +181,62 @@ def test_concurrent_idempotent_creates_return_one_job(tmp_path: Path, monkeypatc
     job_ids = {payload["jobId"] for _, payload in responses}
     assert len(job_ids) == 1
     assert len(list((config.JOB_DIR / "records").glob("*.json"))) == 1
+
+
+def test_concurrent_runners_for_same_job_only_start_once(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from app import transcription_jobs
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="runner-race-key")
+    progress_updates: list[str] = []
+    original_update = transcription_jobs.update_running_progress
+
+    def slow_update(job_id: str, phase: str, percent: int, message: str) -> dict:
+        progress_updates.append(phase)
+        time.sleep(0.01)
+        return original_update(job_id, phase, percent, message)
+
+    monkeypatch.setattr(transcription_jobs, "update_running_progress", slow_update)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(lambda _: run_demo_transcription_job(created["jobId"]), range(2)))
+
+    assert len([job for job in results if job["state"] == "succeeded"]) == 1
+    assert len(progress_updates) == 5
+    assert load_job(created["jobId"])["state"] == "succeeded"
+
+
+def test_runner_stops_safely_for_non_queued_jobs(tmp_path: Path) -> None:
+    upload_id = create_upload(tmp_path)
+
+    cancelled = create_job(upload_id, key="runner-cancelled-key")
+    transition_job(
+        cancelled["jobId"],
+        "cancelled",
+        progress=make_progress("cancelled", 0, "Transcription cancelled"),
+        error=make_error("CANCELLED"),
+    )
+
+    failed = create_job(upload_id, key="runner-failed-key")
+    transition_job(
+        failed["jobId"],
+        "failed",
+        progress=make_progress("failed", 0, "Transcription failed"),
+        error=make_error("UNKNOWN_ERROR"),
+    )
+
+    succeeded = create_job(upload_id, key="runner-succeeded-key")
+    transition_job(succeeded["jobId"], "running", progress=make_progress("validating", 5, "Validating upload"))
+    transition_job(
+        succeeded["jobId"],
+        "succeeded",
+        progress=make_progress("complete", 100, "Transcription ready"),
+        result={"noteCount": 0},
+    )
+
+    assert run_demo_transcription_job(cancelled["jobId"])["state"] == "cancelled"
+    assert run_demo_transcription_job(failed["jobId"])["state"] == "failed"
+    assert run_demo_transcription_job(succeeded["jobId"])["state"] == "succeeded"
 
 
 def test_idempotency_recovers_missing_or_incomplete_record(tmp_path: Path) -> None:

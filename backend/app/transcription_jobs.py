@@ -50,7 +50,9 @@ ERROR_CONTRACT: dict[str, tuple[int | None, bool, str]] = {
 }
 
 _idempotency_locks_guard = threading.Lock()
-_idempotency_locks: dict[str, threading.Lock] = {}
+_idempotency_locks: dict[str, threading.RLock] = {}
+_job_locks_guard = threading.Lock()
+_job_locks: dict[str, threading.RLock] = {}
 
 
 class TranscriptionApiError(Exception):
@@ -132,13 +134,31 @@ def read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text())
 
 
-def lock_for_idempotency_key(idempotency_key: str) -> threading.Lock:
+def lock_for_idempotency_key(idempotency_key: str) -> threading.RLock:
     with _idempotency_locks_guard:
         lock = _idempotency_locks.get(idempotency_key)
         if lock is None:
-            lock = threading.Lock()
+            lock = threading.RLock()
             _idempotency_locks[idempotency_key] = lock
         return lock
+
+
+def lock_for_job_id(job_id: str) -> threading.RLock:
+    safe_job_id = validate_job_id(job_id)
+    with _job_locks_guard:
+        lock = _job_locks.get(safe_job_id)
+        if lock is None:
+            lock = threading.RLock()
+            _job_locks[safe_job_id] = lock
+        return lock
+
+
+def mutation_lock_for_job(job_id: str) -> threading.RLock:
+    job = load_job(job_id)
+    idempotency_key = job.get("idempotencyKey")
+    if isinstance(idempotency_key, str) and idempotency_key:
+        return lock_for_idempotency_key(idempotency_key)
+    return lock_for_job_id(job["jobId"])
 
 
 def make_error(code: str, details: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -298,14 +318,18 @@ def create_transcription_job(body: dict[str, Any], idempotency_key: str | None) 
         if record is not None:
             if record["requestHash"] != body_hash:
                 raise TranscriptionApiError("IDEMPOTENCY_CONFLICT")
-            return load_job(record["jobId"])
+            job = load_job(record["jobId"])
+            job["_created"] = False
+            return job
 
         existing_job = find_fresh_job_for_idempotency_key(normalized_idempotency_key)
         if existing_job is not None:
             if existing_job["requestHash"] != body_hash:
                 raise TranscriptionApiError("IDEMPOTENCY_CONFLICT")
             write_idempotency_record(idem_path, normalized_idempotency_key, existing_job)
-            return deepcopy(existing_job)
+            existing_job = deepcopy(existing_job)
+            existing_job["_created"] = False
+            return existing_job
 
         timestamp = now_utc()
         job_id = str(uuid.uuid4())
@@ -329,10 +353,12 @@ def create_transcription_job(body: dict[str, Any], idempotency_key: str | None) 
         }
         save_job(job)
         write_idempotency_record(idem_path, normalized_idempotency_key, job)
-        return deepcopy(job)
+        created_job = deepcopy(job)
+        created_job["_created"] = True
+        return created_job
 
 
-def transition_job(
+def _transition_job_unlocked(
     job_id: str,
     new_state: str,
     *,
@@ -367,13 +393,42 @@ def transition_job(
     return save_job(job)
 
 
+def transition_job(
+    job_id: str,
+    new_state: str,
+    *,
+    progress: dict[str, Any] | None = None,
+    error: dict[str, Any] | None = None,
+    result: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    with mutation_lock_for_job(job_id):
+        return _transition_job_unlocked(job_id, new_state, progress=progress, error=error, result=result)
+
+
+def claim_transcription_job(job_id: str) -> dict[str, Any]:
+    with mutation_lock_for_job(job_id):
+        job = load_job(job_id)
+        if job["state"] != "queued":
+            job = deepcopy(job)
+            job["_claimed"] = False
+            return job
+        claimed = _transition_job_unlocked(
+            job_id,
+            "running",
+            progress=make_progress("validating", 5, "Validating upload"),
+        )
+        claimed["_claimed"] = True
+        return claimed
+
+
 def update_running_progress(job_id: str, phase: str, percent: int, message: str) -> dict[str, Any]:
-    job = load_job(job_id)
-    if job["state"] != "running":
-        return job
-    current_percent = int(job["progress"]["percent"])
-    job["progress"] = make_progress(phase, max(current_percent, percent), message)
-    return save_job(job)
+    with mutation_lock_for_job(job_id):
+        job = load_job(job_id)
+        if job["state"] != "running":
+            return job
+        current_percent = int(job["progress"]["percent"])
+        job["progress"] = make_progress(phase, max(current_percent, percent), message)
+        return save_job(job)
 
 
 def fail_transcription_job(
@@ -383,39 +438,41 @@ def fail_transcription_job(
     percent: int | None = None,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    job = load_job(job_id)
-    if job["state"] == "queued":
-        transition_job(job_id, "running", progress=make_progress("validating", 1, "Validating upload"))
+    with mutation_lock_for_job(job_id):
         job = load_job(job_id)
-    if job["state"] != "running":
-        raise InvalidStateTransition(f"Transition {job['state']} -> failed is not allowed")
+        if job["state"] == "queued":
+            _transition_job_unlocked(job_id, "running", progress=make_progress("validating", 1, "Validating upload"))
+            job = load_job(job_id)
+        if job["state"] != "running":
+            raise InvalidStateTransition(f"Transition {job['state']} -> failed is not allowed")
 
-    return transition_job(
-        job_id,
-        "failed",
-        progress=make_progress(
+        return _transition_job_unlocked(
+            job_id,
             "failed",
-            int(percent if percent is not None else job["progress"]["percent"]),
-            "Transcription failed",
-        ),
-        error=make_error(code, details),
-    )
+            progress=make_progress(
+                "failed",
+                int(percent if percent is not None else job["progress"]["percent"]),
+                "Transcription failed",
+            ),
+            error=make_error(code, details),
+        )
 
 
 def cancel_transcription_job(job_id: str) -> dict[str, Any]:
-    job = load_job(job_id)
-    if job["state"] in TERMINAL_STATES:
-        raise TranscriptionApiError("JOB_TERMINAL", details={"job": public_job(job)})
+    with mutation_lock_for_job(job_id):
+        job = load_job(job_id)
+        if job["state"] in TERMINAL_STATES:
+            raise TranscriptionApiError("JOB_TERMINAL", details={"job": public_job(job)})
 
-    timestamp = now_utc()
-    job["cancelRequestedAt"] = format_timestamp(timestamp)
-    save_job(job)
-    return transition_job(
-        job_id,
-        "cancelled",
-        progress=make_progress("cancelled", int(job["progress"]["percent"]), "Transcription cancelled", timestamp),
-        error=make_error("CANCELLED"),
-    )
+        timestamp = now_utc()
+        job["cancelRequestedAt"] = format_timestamp(timestamp)
+        save_job(job)
+        return _transition_job_unlocked(
+            job_id,
+            "cancelled",
+            progress=make_progress("cancelled", int(job["progress"]["percent"]), "Transcription cancelled", timestamp),
+            error=make_error("CANCELLED"),
+        )
 
 
 def build_demo_result(job: dict[str, Any], upload_path: Path) -> dict[str, Any]:
@@ -429,8 +486,8 @@ def build_demo_result(job: dict[str, Any], upload_path: Path) -> dict[str, Any]:
 
 
 def run_demo_transcription_job(job_id: str) -> dict[str, Any]:
-    job = load_job(job_id)
-    if job["state"] != "queued":
+    job = claim_transcription_job(job_id)
+    if not job.get("_claimed"):
         return job
 
     try:
@@ -438,7 +495,6 @@ def run_demo_transcription_job(job_id: str) -> dict[str, Any]:
         if upload_path is None:
             return fail_transcription_job(job_id, "MODEL_INFERENCE_FAILED", details={"uploadId": job["uploadId"]})
 
-        transition_job(job_id, "running", progress=make_progress("validating", 5, "Validating upload"))
         for phase, percent, message in (
             ("preprocessing", 15, "Preparing audio"),
             ("loading_model", 25, "Starting deterministic demo engine"),

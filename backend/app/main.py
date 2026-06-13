@@ -118,7 +118,7 @@ def create_transcription(
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> JSONResponse:
     job = create_transcription_job(payload.model_dump(), idempotency_key)
-    if config.TRANSCRIPTION_AUTO_RUN and job["state"] == "queued":
+    if config.TRANSCRIPTION_AUTO_RUN and job.get("_created") and job["state"] == "queued":
         background_tasks.add_task(run_demo_transcription_job, job["jobId"])
     return JSONResponse(status_code=202, content=creation_response(job))
 
