@@ -66,7 +66,12 @@ Eerste Fase-2-frontendslice is lokaal geïmplementeerd: upload start nu een asyn
 
 ## Git status
 
-De eerste Fase-2-backendslice is lokaal geïmplementeerd en gereviewd met `PASS WITH NOTES`, maar nog niet lokaal gecommit. Voor vervolgwerk moet de huidige working tree eerst bewust worden afgerond of gecommit.
+Relevante lokale checkpoints:
+
+- `b01110f` — async transcription job UI integration.
+- `ec81dca` — harden transcription job concurrency.
+
+De eerder bekende backend-concurrencybeperking rond idempotent hergebruik en dubbele background runners is opgelost in het lokale single-process prototype. Voor vervolgwerk blijven de multi-process/distributed worker-garanties expliciet buiten claim.
 
 ## Eerstvolgende taak
 
