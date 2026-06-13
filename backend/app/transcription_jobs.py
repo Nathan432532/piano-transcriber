@@ -123,6 +123,17 @@ class DemoTranscriptionAdapter:
         return build_demo_result(context.job, context.upload_path)
 
 
+def create_transcription_adapter() -> TranscriptionAdapter:
+    mode = config.TRANSCRIPTION_RUNNER_MODE
+    if mode == "demo":
+        return DemoTranscriptionAdapter()
+    if mode == "basic-pitch":
+        from .basic_pitch_adapter import BasicPitchTranscriptionAdapter
+
+        return BasicPitchTranscriptionAdapter(config.BASIC_PITCH_MODEL_PATH)
+    raise TranscriptionAdapterLoadError("Unknown transcription runner mode")
+
+
 def now_utc() -> datetime:
     return datetime.now(timezone.utc).replace(microsecond=0)
 
@@ -579,7 +590,6 @@ def run_transcription_job(job_id: str, adapter: TranscriptionAdapter | None = No
     if not job.get("_claimed"):
         return job
 
-    adapter = adapter or DemoTranscriptionAdapter()
     try:
         upload_path = find_upload_path(job["uploadId"])
         if upload_path is None:
@@ -597,7 +607,12 @@ def run_transcription_job(job_id: str, adapter: TranscriptionAdapter | None = No
             return cancelled
 
         try:
-            update_running_progress(job_id, "loading_model", 25, "Starting deterministic demo engine")
+            adapter = adapter or create_transcription_adapter()
+        except TranscriptionAdapterLoadError:
+            return fail_transcription_job(job_id, "MODEL_LOAD_FAILED", percent=25, details={"engine": job["engine"]})
+
+        try:
+            update_running_progress(job_id, "loading_model", 25, "Starting transcription engine")
             adapter.load(context)
         except TranscriptionAdapterLoadError:
             return fail_transcription_job(job_id, "MODEL_LOAD_FAILED", percent=25, details={"engine": job["engine"]})
@@ -626,6 +641,10 @@ def run_transcription_job(job_id: str, adapter: TranscriptionAdapter | None = No
             result = validate_adapter_result(result)
         except TranscriptionAdapterInferenceError:
             return fail_transcription_job(job_id, "MODEL_INFERENCE_FAILED", details={"engine": job["engine"]})
+
+        cancelled = cancel_if_requested(job_id)
+        if cancelled is not None:
+            return cancelled
 
         return transition_job(
             job_id,

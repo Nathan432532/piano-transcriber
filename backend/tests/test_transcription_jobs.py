@@ -39,6 +39,8 @@ def isolated_runtime_dirs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> No
     monkeypatch.setattr(config, "UPLOAD_DIR", tmp_path / "uploads")
     monkeypatch.setattr(config, "JOB_DIR", tmp_path / "jobs")
     monkeypatch.setattr(config, "TRANSCRIPTION_AUTO_RUN", False)
+    monkeypatch.setattr(config, "TRANSCRIPTION_RUNNER_MODE", "demo")
+    monkeypatch.setattr(config, "BASIC_PITCH_MODEL_PATH", None)
 
 
 def make_wav(path: Path, seconds: float = 0.25, rate: int = 8000) -> None:
@@ -332,7 +334,7 @@ def test_idempotent_reuse_of_queued_job_does_not_schedule_second_runner(
         calls.append(job_id)
         return load_job(job_id)
 
-    monkeypatch.setattr(main_module, "run_demo_transcription_job", fake_runner)
+    monkeypatch.setattr(main_module, "run_transcription_job", fake_runner)
     headers = {"Idempotency-Key": "queued-reuse-key"}
     body = {"uploadId": upload_id, "engine": "basic-pitch", "options": {"minPitch": 21}}
 

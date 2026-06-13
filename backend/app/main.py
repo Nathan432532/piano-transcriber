@@ -19,7 +19,7 @@ from .transcription_jobs import (
     ensure_job_dirs,
     load_job,
     public_job,
-    run_demo_transcription_job,
+    run_transcription_job,
 )
 from .transcript import DEMO_TRANSCRIPT
 
@@ -119,7 +119,7 @@ def create_transcription(
 ) -> JSONResponse:
     job = create_transcription_job(payload.model_dump(), idempotency_key)
     if config.TRANSCRIPTION_AUTO_RUN and job.get("_created") and job["state"] == "queued":
-        background_tasks.add_task(run_demo_transcription_job, job["jobId"])
+        background_tasks.add_task(run_transcription_job, job["jobId"])
     return JSONResponse(status_code=202, content=creation_response(job))
 
 
