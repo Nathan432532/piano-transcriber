@@ -12,7 +12,7 @@ Fase 1 is handmatig goedgekeurd. Laatste Fase-1-checkpoint:
 
 De read-only Fase-2-transcriptiespike is afgerond met Reviewer-verdict `PASS WITH NOTES`. Basic Pitch is de aanbevolen prototype-engine achter een asynchrone worker.
 
-Eerste Fase-2-backendslice is lokaal geïmplementeerd: persistente async transcriptiejobs met pollingroutes, idempotent create-contract en een deterministische demo-runner zonder echte Basic Pitch-inference. De lokale single-process create-route gebruikt een per-key lock voor Idempotency-Key-hergebruik; multi-process/distributed locking is niet geclaimd.
+Eerste Fase-2-backendslice is lokaal geïmplementeerd: persistente async transcriptiejobs met pollingroutes, idempotent create-contract en een deterministische demo-runner zonder echte Basic Pitch-inference. De lokale single-process create-route gebruikt een per-key lock voor Idempotency-Key-hergebruik; `queued -> running` wordt binnen het lokale single-process prototype atomisch geclaimd. Idempotent hergebruik van een bestaande job schedult geen extra background runner. Multi-process/distributed locking of distributed worker-garanties worden niet geclaimd.
 
 Eerste Fase-2-frontendslice is lokaal geïmplementeerd: upload start nu een async transcriptiejob via de bestaande routes, de UI pollt jobstatus met backoff/still-working gedrag, ondersteunt cancellation, herstelt een opgeslagen jobId na refresh en toont prototype-resultaten zonder downloadlinks wanneer echte artifacts ontbreken.
 
@@ -39,7 +39,6 @@ Eerste Fase-2-frontendslice is lokaal geïmplementeerd: upload start nu een asyn
 - Nog geen transcript- of MIDI-exportartifactroutes; geslaagde demo-jobs publiceren daarom geen downloadlinks voor die artifacts.
 - De frontend gebruikt nog de bestaande synthetische demo-transcriptie voor visualisaties; een geslaagde demo-job is nog geen echte modeltranscriptie.
 - Nog geen automatische queue-timeout, worker heartbeat, stale-worker-detectie of watchdog-failing.
-- Bij idempotent hergebruik van een nog `queued` job kan de default auto-run nog een extra background runner schedulen. Die runner stopt doorgaans nadat een andere runner de state heeft gewijzigd, maar `queued -> running` is binnen deze prototypeslice nog niet volledig atomisch; dit moet in een latere worker/concurrency-slice worden aangescherpt.
 - Demo-transcript is statisch.
 - Geen browser-e2e of canvas-pixeltest bewezen.
 - Alleen WAV-upload is aantoonbaar geaccepteerd in Fase 1; MP3 hoort bij Fase 2-onderzoek.
@@ -53,6 +52,7 @@ Eerste Fase-2-frontendslice is lokaal geïmplementeerd: upload start nu een asyn
 - `PYTHONPATH=backend:backend/.deps python3 -m pytest backend/tests` -> 7 passed, 2 bestaande FastAPI deprecation warnings.
 - `PYTHONPATH=backend:backend/.deps python3 -m pytest backend/tests` -> 16 passed, 2 bestaande FastAPI deprecation warnings na de eerste Fase-2-backendslice.
 - `PYTHONPATH=backend:backend/.deps python3 -m pytest backend/tests` -> 18 passed, 2 bestaande FastAPI deprecation warnings na Fase-2-remediation van links/idempotency.
+- `PYTHONPATH=backend:backend/.deps python3 -m pytest backend/tests` -> 21 passed, 2 bestaande FastAPI deprecation warnings na het hardenen van transcriptiejob-concurrency.
 - `npm run test` -> passed.
 - `npm run lint` -> passed.
 - `npm run typecheck` -> passed.
