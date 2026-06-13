@@ -113,9 +113,17 @@ def resolve_basic_pitch_model_path(configured_model_path: str | Path | None) -> 
         except Exception as exc:
             raise TranscriptionAdapterLoadError("Basic Pitch package default model could not be resolved") from exc
 
-    if not model_path.exists() or not model_path.is_file():
+    if not is_basic_pitch_model_path_available(model_path):
         raise TranscriptionAdapterLoadError("Basic Pitch model file is not available")
     return model_path
+
+
+def is_basic_pitch_model_path_available(model_path: Path) -> bool:
+    return model_path.is_file() or (
+        model_path.is_dir()
+        and (model_path / "saved_model.pb").is_file()
+        and (model_path / "variables").is_dir()
+    )
 
 
 def extract_duration_seconds(output: Any) -> Any:

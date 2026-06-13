@@ -103,6 +103,14 @@ def model_file(tmp_path: Path) -> Path:
     return path
 
 
+def saved_model_dir(tmp_path: Path, name: str = "saved_model") -> Path:
+    path = tmp_path / name
+    path.mkdir()
+    (path / "saved_model.pb").write_bytes(b"placeholder")
+    (path / "variables").mkdir()
+    return path
+
+
 def install_fake_basic_pitch_module(monkeypatch: pytest.MonkeyPatch, inference: ModuleType) -> None:
     package = ModuleType("basic_pitch")
     package.__path__ = []
@@ -225,13 +233,52 @@ def test_basic_pitch_uses_package_default_model_without_override(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    default_model = model_file(tmp_path)
+    default_model = saved_model_dir(tmp_path)
     install_fake_basic_pitch_default_model(monkeypatch, default_model)
     binding = FakeBinding()
 
     BasicPitchTranscriptionAdapter(binding=binding).load(None)
 
     assert binding.loaded_path == default_model
+
+
+def test_basic_pitch_accepts_explicit_saved_model_directory(tmp_path: Path) -> None:
+    model_path = saved_model_dir(tmp_path)
+    binding = FakeBinding()
+
+    BasicPitchTranscriptionAdapter(model_path, binding=binding).load(None)
+
+    assert binding.loaded_path == model_path
+
+
+def test_basic_pitch_accepts_existing_model_file(tmp_path: Path) -> None:
+    model_path = model_file(tmp_path)
+    binding = FakeBinding()
+
+    BasicPitchTranscriptionAdapter(model_path, binding=binding).load(None)
+
+    assert binding.loaded_path == model_path
+
+
+@pytest.mark.parametrize("missing_child", ["saved_model.pb", "variables"])
+def test_basic_pitch_rejects_incomplete_model_directory(tmp_path: Path, missing_child: str) -> None:
+    model_path = saved_model_dir(tmp_path)
+    child_path = model_path / missing_child
+    if child_path.is_dir():
+        child_path.rmdir()
+    else:
+        child_path.unlink()
+
+    with pytest.raises(TranscriptionAdapterLoadError, match="model file is not available"):
+        BasicPitchTranscriptionAdapter(model_path, binding=FakeBinding()).load(None)
+
+
+def test_basic_pitch_rejects_empty_model_directory(tmp_path: Path) -> None:
+    model_path = tmp_path / "empty_model"
+    model_path.mkdir()
+
+    with pytest.raises(TranscriptionAdapterLoadError, match="model file is not available"):
+        BasicPitchTranscriptionAdapter(model_path, binding=FakeBinding()).load(None)
 
 
 def test_basic_pitch_missing_package_model_raises_controlled_load_error(
