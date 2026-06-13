@@ -5,9 +5,10 @@ import json
 import threading
 import uuid
 from copy import deepcopy
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 from . import config
 from .audio_validation import ALLOWED_EXTENSIONS, audio_duration_seconds, ensure_child_path
@@ -78,6 +79,47 @@ class TranscriptionApiError(Exception):
 
 class InvalidStateTransition(ValueError):
     pass
+
+
+class TranscriptionAdapterLoadError(Exception):
+    pass
+
+
+class TranscriptionAdapterInferenceError(Exception):
+    pass
+
+
+@dataclass(frozen=True)
+class TranscriptionAdapterContext:
+    job: dict[str, Any]
+    upload_path: Path
+
+
+class ProgressReporter(Protocol):
+    def __call__(self, phase: str, percent: int, message: str) -> dict[str, Any]:
+        ...
+
+
+class TranscriptionAdapter(Protocol):
+    def load(self, context: TranscriptionAdapterContext) -> None:
+        ...
+
+    def transcribe(self, context: TranscriptionAdapterContext, report_progress: ProgressReporter) -> dict[str, Any]:
+        ...
+
+
+class DemoTranscriptionAdapter:
+    def load(self, context: TranscriptionAdapterContext) -> None:
+        pass
+
+    def transcribe(self, context: TranscriptionAdapterContext, report_progress: ProgressReporter) -> dict[str, Any]:
+        for phase, percent, message in (
+            ("inferencing", 85, "Detecting notes"),
+            ("postprocessing", 95, "Normalizing note events"),
+            ("saving", 99, "Saving transcript metadata"),
+        ):
+            report_progress(phase, percent, message)
+        return build_demo_result(context.job, context.upload_path)
 
 
 def now_utc() -> datetime:
@@ -485,42 +527,82 @@ def build_demo_result(job: dict[str, Any], upload_path: Path) -> dict[str, Any]:
     }
 
 
-def run_demo_transcription_job(job_id: str) -> dict[str, Any]:
+def cancel_if_requested(job_id: str) -> dict[str, Any] | None:
+    current = load_job(job_id)
+    if current["state"] == "cancelled":
+        return current
+    if current["state"] in TERMINAL_STATES:
+        return current
+    if current.get("cancelRequestedAt"):
+        return cancel_transcription_job(job_id)
+    return None
+
+
+def run_transcription_job(job_id: str, adapter: TranscriptionAdapter | None = None) -> dict[str, Any]:
     job = claim_transcription_job(job_id)
     if not job.get("_claimed"):
         return job
 
+    adapter = adapter or DemoTranscriptionAdapter()
     try:
         upload_path = find_upload_path(job["uploadId"])
         if upload_path is None:
             return fail_transcription_job(job_id, "MODEL_INFERENCE_FAILED", details={"uploadId": job["uploadId"]})
 
-        for phase, percent, message in (
-            ("preprocessing", 15, "Preparing audio"),
-            ("loading_model", 25, "Starting deterministic demo engine"),
-            ("inferencing", 85, "Detecting notes"),
-            ("postprocessing", 95, "Normalizing note events"),
-            ("saving", 99, "Saving transcript metadata"),
-        ):
-            current = load_job(job_id)
-            if current.get("cancelRequestedAt"):
-                return cancel_transcription_job(job_id)
-            update_running_progress(job_id, phase, percent, message)
+        cancelled = cancel_if_requested(job_id)
+        if cancelled is not None:
+            return cancelled
 
-        current = load_job(job_id)
-        if current.get("cancelRequestedAt"):
-            return cancel_transcription_job(job_id)
+        update_running_progress(job_id, "preprocessing", 15, "Preparing audio")
+        context = TranscriptionAdapterContext(job=load_job(job_id), upload_path=upload_path)
+
+        cancelled = cancel_if_requested(job_id)
+        if cancelled is not None:
+            return cancelled
+
+        try:
+            update_running_progress(job_id, "loading_model", 25, "Starting deterministic demo engine")
+            adapter.load(context)
+        except TranscriptionAdapterLoadError:
+            return fail_transcription_job(job_id, "MODEL_LOAD_FAILED", percent=25, details={"engine": job["engine"]})
+
+        cancelled = cancel_if_requested(job_id)
+        if cancelled is not None:
+            return cancelled
+
+        try:
+            # Blocking inference cannot be interrupted here; cancellation is honored at runner checkpoints.
+            result = adapter.transcribe(
+                context,
+                lambda phase, percent, message: update_running_progress(job_id, phase, percent, message),
+            )
+        except TranscriptionAdapterInferenceError:
+            cancelled = cancel_if_requested(job_id)
+            if cancelled is not None:
+                return cancelled
+            return fail_transcription_job(job_id, "MODEL_INFERENCE_FAILED", details={"engine": job["engine"]})
+
+        cancelled = cancel_if_requested(job_id)
+        if cancelled is not None:
+            return cancelled
 
         return transition_job(
             job_id,
             "succeeded",
             progress=make_progress("complete", 100, "Transcription ready"),
-            result=build_demo_result(current, upload_path),
+            result=result,
         )
     except InvalidStateTransition:
         raise
     except Exception:
+        cancelled = cancel_if_requested(job_id)
+        if cancelled is not None:
+            return cancelled
         return fail_transcription_job(job_id, "UNKNOWN_ERROR")
+
+
+def run_demo_transcription_job(job_id: str) -> dict[str, Any]:
+    return run_transcription_job(job_id, DemoTranscriptionAdapter())
 
 
 def public_job(job: dict[str, Any]) -> dict[str, Any]:

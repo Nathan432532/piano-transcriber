@@ -14,13 +14,18 @@ from app import config
 from app.main import app
 from app.transcription_jobs import (
     ALLOWED_TRANSITIONS,
+    TranscriptionAdapterContext,
+    TranscriptionAdapterInferenceError,
+    TranscriptionAdapterLoadError,
     InvalidStateTransition,
+    cancel_transcription_job,
     fail_transcription_job,
     idempotency_path,
     load_job,
     make_error,
     make_progress,
     run_demo_transcription_job,
+    run_transcription_job,
     save_job,
     transition_job,
 )
@@ -92,6 +97,146 @@ def test_create_and_run_deterministic_transcription_job(tmp_path: Path) -> None:
     assert payload["result"]["exports"] == {}
     assert payload["result"]["noteCount"] == 8
     assert payload["result"]["durationSeconds"] == 0.25
+
+
+def test_demo_adapter_preserves_existing_happy_path_result(tmp_path: Path) -> None:
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="demo-adapter-key")
+
+    result = run_transcription_job(created["jobId"])
+    response = client.get(f"/api/transcriptions/{created['jobId']}")
+
+    assert result["state"] == "succeeded"
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["state"] == "succeeded"
+    assert payload["result"] == {
+        "transcriptUrl": None,
+        "exports": {},
+        "noteCount": 8,
+        "durationSeconds": 0.25,
+    }
+
+
+def test_injected_adapter_can_publish_success_result(tmp_path: Path) -> None:
+    class FakeAdapter:
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            assert context.upload_path.exists()
+            assert context.job["uploadId"] == upload_id
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
+            report_progress("inferencing", 80, "Fake inference")
+            return {"transcriptUrl": None, "exports": {}, "noteCount": 1, "durationSeconds": 0.123}
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="fake-success-key")
+
+    run_transcription_job(created["jobId"], FakeAdapter())
+
+    job = load_job(created["jobId"])
+    assert job["state"] == "succeeded"
+    assert job["progress"]["phase"] == "complete"
+    assert job["result"] == {"transcriptUrl": None, "exports": {}, "noteCount": 1, "durationSeconds": 0.123}
+
+
+def test_adapter_load_error_maps_to_model_load_failed(tmp_path: Path) -> None:
+    class LoadFailingAdapter:
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            raise TranscriptionAdapterLoadError("load failed")
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
+            raise AssertionError("transcribe should not run")
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="load-failure-key")
+
+    result = run_transcription_job(created["jobId"], LoadFailingAdapter())
+
+    assert result["state"] == "failed"
+    assert result["error"]["code"] == "MODEL_LOAD_FAILED"
+    assert result["progress"]["phase"] == "failed"
+    assert result["progress"]["percent"] == 25
+
+
+def test_adapter_inference_error_maps_to_model_inference_failed(tmp_path: Path) -> None:
+    class InferenceFailingAdapter:
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            return None
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
+            report_progress("inferencing", 55, "Fake inference")
+            raise TranscriptionAdapterInferenceError("inference failed")
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="inference-failure-key")
+
+    result = run_transcription_job(created["jobId"], InferenceFailingAdapter())
+
+    assert result["state"] == "failed"
+    assert result["error"]["code"] == "MODEL_INFERENCE_FAILED"
+    assert result["progress"]["phase"] == "failed"
+    assert result["progress"]["percent"] == 55
+
+
+def test_unexpected_adapter_error_maps_to_unknown_error(tmp_path: Path) -> None:
+    class UnexpectedFailingAdapter:
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            return None
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
+            raise RuntimeError("unexpected failure")
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="unknown-failure-key")
+
+    result = run_transcription_job(created["jobId"], UnexpectedFailingAdapter())
+
+    assert result["state"] == "failed"
+    assert result["error"]["code"] == "UNKNOWN_ERROR"
+
+
+def test_cancellation_before_adapter_call_prevents_execution_and_publication(tmp_path: Path) -> None:
+    class RecordingAdapter:
+        calls = 0
+
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            self.calls += 1
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
+            self.calls += 1
+            return {"transcriptUrl": None, "exports": {}, "noteCount": 99, "durationSeconds": 1.0}
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="cancel-before-key")
+    adapter = RecordingAdapter()
+
+    cancel_transcription_job(created["jobId"])
+    result = run_transcription_job(created["jobId"], adapter)
+
+    assert result["state"] == "cancelled"
+    assert adapter.calls == 0
+    assert load_job(created["jobId"])["result"] is None
+
+
+def test_cancellation_after_adapter_execution_prevents_succeeded_publication(tmp_path: Path) -> None:
+    class CancellingAdapter:
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            return None
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
+            report_progress("inferencing", 85, "Fake inference")
+            cancel_transcription_job(context.job["jobId"])
+            return {"transcriptUrl": None, "exports": {}, "noteCount": 99, "durationSeconds": 1.0}
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="cancel-after-key")
+
+    result = run_transcription_job(created["jobId"], CancellingAdapter())
+
+    assert result["state"] == "cancelled"
+    job = load_job(created["jobId"])
+    assert job["state"] == "cancelled"
+    assert job["result"] is None
 
 
 def test_create_endpoint_schedules_default_demo_runner(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -203,6 +348,29 @@ def test_concurrent_runners_for_same_job_only_start_once(tmp_path: Path, monkeyp
 
     assert len([job for job in results if job["state"] == "succeeded"]) == 1
     assert len(progress_updates) == 5
+    assert load_job(created["jobId"])["state"] == "succeeded"
+
+
+def test_concurrent_adapter_runners_for_same_job_only_execute_once(tmp_path: Path) -> None:
+    class SlowAdapter:
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            return None
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
+            calls.append(context.job["jobId"])
+            time.sleep(0.02)
+            report_progress("inferencing", 75, "Fake inference")
+            return {"transcriptUrl": None, "exports": {}, "noteCount": 2, "durationSeconds": 0.25}
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="adapter-runner-race-key")
+    calls: list[str] = []
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(lambda _: run_transcription_job(created["jobId"], SlowAdapter()), range(2)))
+
+    assert calls == [created["jobId"]]
+    assert len([job for job in results if job["state"] == "succeeded"]) == 1
     assert load_job(created["jobId"])["state"] == "succeeded"
 
 
