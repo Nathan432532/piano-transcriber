@@ -126,7 +126,13 @@ def test_injected_adapter_can_publish_success_result(tmp_path: Path) -> None:
 
         def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
             report_progress("inferencing", 80, "Fake inference")
-            return {"transcriptUrl": None, "exports": {}, "noteCount": 1, "durationSeconds": 0.123}
+            return {
+                "transcriptUrl": None,
+                "exports": {},
+                "noteCount": 1,
+                "durationSeconds": 0.123,
+                "ignoredFutureField": "not public",
+            }
 
     upload_id = create_upload(tmp_path)
     created = create_job(upload_id, key="fake-success-key")
@@ -137,6 +143,45 @@ def test_injected_adapter_can_publish_success_result(tmp_path: Path) -> None:
     assert job["state"] == "succeeded"
     assert job["progress"]["phase"] == "complete"
     assert job["result"] == {"transcriptUrl": None, "exports": {}, "noteCount": 1, "durationSeconds": 0.123}
+
+
+@pytest.mark.parametrize(
+    ("adapter_result", "key"),
+    [
+        (None, "invalid-none"),
+        (["not", "a", "dict"], "invalid-list"),
+        ({}, "invalid-empty"),
+        ({"transcriptUrl": None, "exports": {}, "noteCount": 1}, "invalid-missing-duration"),
+        ({"transcriptUrl": 123, "exports": {}, "noteCount": 1, "durationSeconds": 0.25}, "invalid-url-type"),
+        ({"transcriptUrl": None, "exports": [], "noteCount": 1, "durationSeconds": 0.25}, "invalid-exports-type"),
+        ({"transcriptUrl": None, "exports": {}, "noteCount": "1", "durationSeconds": 0.25}, "invalid-count-type"),
+        ({"transcriptUrl": None, "exports": {}, "noteCount": -1, "durationSeconds": 0.25}, "invalid-negative-count"),
+        ({"transcriptUrl": None, "exports": {}, "noteCount": 1, "durationSeconds": "0.25"}, "invalid-duration-type"),
+        ({"transcriptUrl": None, "exports": {}, "noteCount": 1, "durationSeconds": -0.25}, "invalid-negative-duration"),
+        ({"transcriptUrl": None, "exports": {}, "noteCount": 1, "durationSeconds": math.nan}, "invalid-nan-duration"),
+        ({"transcriptUrl": None, "exports": {}, "noteCount": 1, "durationSeconds": math.inf}, "invalid-inf-duration"),
+    ],
+)
+def test_invalid_adapter_result_fails_without_publishing_result(tmp_path: Path, adapter_result, key: str) -> None:
+    class InvalidResultAdapter:
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            return None
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress):
+            report_progress("inferencing", 80, "Fake inference")
+            return adapter_result
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key=key)
+
+    result = run_transcription_job(created["jobId"], InvalidResultAdapter())
+    job = load_job(created["jobId"])
+
+    assert result["state"] == "failed"
+    assert result["error"]["code"] == "MODEL_INFERENCE_FAILED"
+    assert job["state"] == "failed"
+    assert job["error"]["code"] == "MODEL_INFERENCE_FAILED"
+    assert job["result"] is None
 
 
 def test_adapter_load_error_maps_to_model_load_failed(tmp_path: Path) -> None:
@@ -236,6 +281,28 @@ def test_cancellation_after_adapter_execution_prevents_succeeded_publication(tmp
     assert result["state"] == "cancelled"
     job = load_job(created["jobId"])
     assert job["state"] == "cancelled"
+    assert job["result"] is None
+
+
+def test_invalid_adapter_result_after_cancellation_publishes_no_succeeded_result(tmp_path: Path) -> None:
+    class CancellingInvalidAdapter:
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            return None
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
+            report_progress("inferencing", 85, "Fake inference")
+            cancel_transcription_job(context.job["jobId"])
+            return {}
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="cancel-invalid-after-key")
+
+    result = run_transcription_job(created["jobId"], CancellingInvalidAdapter())
+    job = load_job(created["jobId"])
+
+    assert result["state"] == "cancelled"
+    assert job["state"] == "cancelled"
+    assert job["error"]["code"] == "CANCELLED"
     assert job["result"] is None
 
 

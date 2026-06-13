@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import threading
 import uuid
 from copy import deepcopy
@@ -527,6 +528,41 @@ def build_demo_result(job: dict[str, Any], upload_path: Path) -> dict[str, Any]:
     }
 
 
+def validate_adapter_result(result: Any) -> dict[str, Any]:
+    if not isinstance(result, dict):
+        raise TranscriptionAdapterInferenceError("adapter result must be an object")
+
+    required_fields = {"transcriptUrl", "exports", "noteCount", "durationSeconds"}
+    if not required_fields <= set(result):
+        raise TranscriptionAdapterInferenceError("adapter result is missing required fields")
+
+    transcript_url = result["transcriptUrl"]
+    exports = result["exports"]
+    note_count = result["noteCount"]
+    duration_seconds = result["durationSeconds"]
+
+    if transcript_url is not None and not isinstance(transcript_url, str):
+        raise TranscriptionAdapterInferenceError("adapter transcriptUrl must be null or a string")
+    if not isinstance(exports, dict):
+        raise TranscriptionAdapterInferenceError("adapter exports must be an object")
+    if isinstance(note_count, bool) or not isinstance(note_count, int) or note_count < 0:
+        raise TranscriptionAdapterInferenceError("adapter noteCount must be a non-negative integer")
+    if (
+        isinstance(duration_seconds, bool)
+        or not isinstance(duration_seconds, (int, float))
+        or not math.isfinite(duration_seconds)
+        or duration_seconds < 0
+    ):
+        raise TranscriptionAdapterInferenceError("adapter durationSeconds must be a finite non-negative number")
+
+    return {
+        "transcriptUrl": transcript_url,
+        "exports": exports,
+        "noteCount": note_count,
+        "durationSeconds": duration_seconds,
+    }
+
+
 def cancel_if_requested(job_id: str) -> dict[str, Any] | None:
     current = load_job(job_id)
     if current["state"] == "cancelled":
@@ -585,6 +621,11 @@ def run_transcription_job(job_id: str, adapter: TranscriptionAdapter | None = No
         cancelled = cancel_if_requested(job_id)
         if cancelled is not None:
             return cancelled
+
+        try:
+            result = validate_adapter_result(result)
+        except TranscriptionAdapterInferenceError:
+            return fail_transcription_job(job_id, "MODEL_INFERENCE_FAILED", details={"engine": job["engine"]})
 
         return transition_job(
             job_id,
