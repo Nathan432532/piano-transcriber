@@ -103,8 +103,6 @@ class TranscriptionAdapterContext:
 class CorrectedArtifactTransaction:
     transcript_path: Path
     midi_path: Path
-    transcript_temp_path: Path
-    midi_temp_path: Path
 
 
 class ProgressReporter(Protocol):
@@ -670,76 +668,45 @@ def write_transcription_artifacts(job_id: str, transcript: dict[str, Any]) -> No
     atomic_write_bytes(midi_path, build_midi_file(transcript["notes"]))
 
 
-def prepare_corrected_transcription_artifacts(job_id: str, transcript: dict[str, Any]) -> CorrectedArtifactTransaction:
+def corrected_artifact_names(revision: int) -> tuple[str, str]:
+    return f"corrected-r{revision}.json", f"corrected-r{revision}.mid"
+
+
+def prepare_corrected_transcription_artifacts(
+    job_id: str, revision: int, transcript: dict[str, Any]
+) -> CorrectedArtifactTransaction:
     artifact_dir = job_artifacts_dir(job_id)
-    transcript_path = ensure_child_path(artifact_dir, artifact_dir / "corrected-transcript.json")
-    midi_path = ensure_child_path(artifact_dir, artifact_dir / "corrected-transcription.mid")
-    artifact_dir.mkdir(parents=True, exist_ok=True)
-    transcript_temp_path = ensure_child_path(artifact_dir, artifact_dir / f"corrected-transcript.{uuid.uuid4().hex}.tmp")
-    midi_temp_path = ensure_child_path(artifact_dir, artifact_dir / f"corrected-transcription.{uuid.uuid4().hex}.tmp")
+    transcript_name, midi_name = corrected_artifact_names(revision)
+    transcript_path = ensure_child_path(artifact_dir, artifact_dir / transcript_name)
+    midi_path = ensure_child_path(artifact_dir, artifact_dir / midi_name)
     try:
-        transcript_temp_path.write_text(json.dumps(transcript, indent=2, sort_keys=True) + "\n")
-        midi_temp_path.write_bytes(build_midi_file(transcript["notes"]))
-        return CorrectedArtifactTransaction(
-            transcript_path=transcript_path,
-            midi_path=midi_path,
-            transcript_temp_path=transcript_temp_path,
-            midi_temp_path=midi_temp_path,
-        )
+        atomic_write_json(transcript_path, transcript)
+        atomic_write_bytes(midi_path, build_midi_file(transcript["notes"]))
+        if read_json(transcript_path) != transcript:
+            raise OSError("corrected transcript artifact verification failed")
+        if not midi_path.read_bytes().startswith(b"MThd"):
+            raise OSError("corrected midi artifact verification failed")
+        return CorrectedArtifactTransaction(transcript_path=transcript_path, midi_path=midi_path)
     except Exception:
-        transcript_temp_path.unlink(missing_ok=True)
-        midi_temp_path.unlink(missing_ok=True)
+        transcript_path.unlink(missing_ok=True)
+        midi_path.unlink(missing_ok=True)
         raise
 
 
 def cleanup_corrected_transcription_artifacts(transaction: CorrectedArtifactTransaction) -> None:
-    transaction.transcript_temp_path.unlink(missing_ok=True)
-    transaction.midi_temp_path.unlink(missing_ok=True)
-
-
-def commit_corrected_transcription_artifacts(transaction: CorrectedArtifactTransaction) -> None:
-    replacements = (
-        (transaction.transcript_temp_path, transaction.transcript_path),
-        (transaction.midi_temp_path, transaction.midi_path),
-    )
-    backups: list[tuple[Path, Path]] = []
-    missing_targets: list[Path] = []
-
-    try:
-        for _, target_path in replacements:
-            backup_path = target_path.with_name(f"{target_path.name}.{uuid.uuid4().hex}.bak")
-            if target_path.exists():
-                target_path.replace(backup_path)
-                backups.append((target_path, backup_path))
-            else:
-                missing_targets.append(target_path)
-
-        for temp_path, target_path in replacements:
-            temp_path.replace(target_path)
-    except Exception:
-        for _, target_path in replacements:
-            target_path.unlink(missing_ok=True)
-        for target_path, backup_path in backups:
-            if backup_path.exists():
-                backup_path.replace(target_path)
-        for target_path in missing_targets:
-            target_path.unlink(missing_ok=True)
-        raise
-    finally:
-        for temp_path, _ in replacements:
-            temp_path.unlink(missing_ok=True)
-        for _, backup_path in backups:
-            backup_path.unlink(missing_ok=True)
+    transaction.transcript_path.unlink(missing_ok=True)
+    transaction.midi_path.unlink(missing_ok=True)
 
 
 def get_transcription_artifact_path(job_id: str, artifact_name: str) -> Path:
-    artifact_filenames = {
-        "transcript.json",
-        "transcription.mid",
-        "corrected-transcript.json",
-        "corrected-transcription.mid",
-    }
-    if artifact_name not in artifact_filenames:
+    if (
+        artifact_name not in {"transcript.json", "transcription.mid"}
+        and not (
+            artifact_name.startswith("corrected-r")
+            and (artifact_name.endswith(".json") or artifact_name.endswith(".mid"))
+            and artifact_name.removeprefix("corrected-r").split(".", 1)[0].isdigit()
+        )
+    ):
         raise TranscriptionApiError("JOB_NOT_FOUND")
     job = load_job(job_id)
     result = job.get("result") if job.get("state") == "succeeded" else None
@@ -758,9 +725,7 @@ def get_transcription_artifact_path(job_id: str, artifact_name: str) -> Path:
         raise TranscriptionApiError("JOB_NOT_FOUND")
     correction = result.get("correction") if isinstance(result.get("correction"), dict) else {}
     correction_exports = correction.get("exports") if isinstance(correction.get("exports"), dict) else {}
-    if artifact_name == "corrected-transcript.json" and correction_exports.get("transcript") != expected_url:
-        raise TranscriptionApiError("JOB_NOT_FOUND")
-    if artifact_name == "corrected-transcription.mid" and correction_exports.get("midi") != expected_url:
+    if artifact_name.startswith("corrected-r") and expected_url not in set(correction_exports.values()):
         raise TranscriptionApiError("JOB_NOT_FOUND")
     return path
 
@@ -855,7 +820,6 @@ def save_transcription_corrections(job_id: str, body: dict[str, Any]) -> dict[st
 
     with mutation_lock_for_job(job_id):
         job = load_job(job_id)
-        previous_job = deepcopy(job)
         if job["state"] != "succeeded":
             raise TranscriptionApiError("JOB_NOT_SUCCEEDED", details={"state": job["state"]})
         result = job.get("result")
@@ -885,24 +849,20 @@ def save_transcription_corrections(job_id: str, body: dict[str, Any]) -> dict[st
             },
             "notes": notes,
         }
-        artifact_transaction = prepare_corrected_transcription_artifacts(job["jobId"], transcript)
+        artifact_transaction = prepare_corrected_transcription_artifacts(job["jobId"], next_revision, transcript)
+        transcript_name, midi_name = corrected_artifact_names(next_revision)
 
         next_result = deepcopy(result)
         next_result["correction"] = {
             "revision": next_revision,
             "exports": {
-                "transcript": artifact_download_url(job["jobId"], "corrected-transcript.json"),
-                "midi": artifact_download_url(job["jobId"], "corrected-transcription.mid"),
+                "transcript": artifact_download_url(job["jobId"], transcript_name),
+                "midi": artifact_download_url(job["jobId"], midi_name),
             },
         }
         job["result"] = next_result
         try:
             save_job(job)
-            try:
-                commit_corrected_transcription_artifacts(artifact_transaction)
-            except Exception:
-                save_job(previous_job)
-                raise
         except Exception:
             cleanup_corrected_transcription_artifacts(artifact_transaction)
             raise

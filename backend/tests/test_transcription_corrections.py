@@ -136,6 +136,15 @@ def error_code(response) -> str:
     return response.json()["detail"]["code"]
 
 
+def artifact_path_from_url(url: str) -> Path:
+    return job_artifacts_dir(url.split("/")[3]) / url.rsplit("/", 1)[1]
+
+
+def correction_artifact_paths(job_id: str, revision: int) -> tuple[Path, Path]:
+    artifact_dir = job_artifacts_dir(job_id)
+    return artifact_dir / f"corrected-r{revision}.json", artifact_dir / f"corrected-r{revision}.mid"
+
+
 def test_successful_correction_writes_corrected_artifacts_and_preserves_originals(tmp_path: Path) -> None:
     job = create_succeeded_job_with_artifacts(tmp_path)
     artifact_dir = job_artifacts_dir(job["jobId"])
@@ -149,14 +158,15 @@ def test_successful_correction_writes_corrected_artifacts_and_preserves_original
     assert payload == {
         "revision": 1,
         "exports": {
-            "transcript": f"/api/transcriptions/{job['jobId']}/artifacts/corrected-transcript.json",
-            "midi": f"/api/transcriptions/{job['jobId']}/artifacts/corrected-transcription.mid",
+            "transcript": f"/api/transcriptions/{job['jobId']}/artifacts/corrected-r1.json",
+            "midi": f"/api/transcriptions/{job['jobId']}/artifacts/corrected-r1.mid",
         },
     }
-    corrected_json = json.loads((artifact_dir / "corrected-transcript.json").read_text())
+    corrected_json_path, corrected_midi_path = correction_artifact_paths(job["jobId"], 1)
+    corrected_json = json.loads(corrected_json_path.read_text())
     assert corrected_json["notes"][0]["pitch"] == 60
     assert corrected_json["notes"][0]["noteName"] == "C4"
-    assert (artifact_dir / "corrected-transcription.mid").read_bytes().startswith(b"MThd")
+    assert corrected_midi_path.read_bytes().startswith(b"MThd")
     assert (artifact_dir / "transcript.json").read_bytes() == original_transcript
     assert (artifact_dir / "transcription.mid").read_bytes() == original_midi
 
@@ -166,23 +176,33 @@ def test_successful_correction_writes_corrected_artifacts_and_preserves_original
     assert persisted["result"]["exports"]["midi"] == f"/api/transcriptions/{job['jobId']}/artifacts/transcription.mid"
 
 
-def test_second_valid_correction_replaces_only_corrected_artifacts_and_increments_revision(tmp_path: Path) -> None:
+def test_two_successive_corrections_use_distinct_immutable_artifact_names(tmp_path: Path) -> None:
     job = create_succeeded_job_with_artifacts(tmp_path)
     artifact_dir = job_artifacts_dir(job["jobId"])
     original_transcript = (artifact_dir / "transcript.json").read_bytes()
     original_midi = (artifact_dir / "transcription.mid").read_bytes()
 
     first = put_correction(job["jobId"])
-    first_json = (artifact_dir / "corrected-transcript.json").read_bytes()
     second = put_correction(job["jobId"], base_revision=1, notes=[valid_note(pitch=64, noteName="E4")])
 
     assert first.status_code == 200
     assert second.status_code == 200
+    first_payload = first.json()
+    second_payload = second.json()
     assert second.json()["revision"] == 2
     assert (artifact_dir / "transcript.json").read_bytes() == original_transcript
     assert (artifact_dir / "transcription.mid").read_bytes() == original_midi
-    assert (artifact_dir / "corrected-transcript.json").read_bytes() != first_json
-    assert json.loads((artifact_dir / "corrected-transcript.json").read_text())["notes"][0]["noteName"] == "E4"
+    assert first_payload["exports"]["transcript"].endswith("/corrected-r1.json")
+    assert first_payload["exports"]["midi"].endswith("/corrected-r1.mid")
+    assert second_payload["exports"]["transcript"].endswith("/corrected-r2.json")
+    assert second_payload["exports"]["midi"].endswith("/corrected-r2.mid")
+    assert first_payload["exports"] != second_payload["exports"]
+    first_json_path, first_midi_path = correction_artifact_paths(job["jobId"], 1)
+    second_json_path, second_midi_path = correction_artifact_paths(job["jobId"], 2)
+    assert json.loads(first_json_path.read_text())["notes"][0]["noteName"] == "C4"
+    assert json.loads(second_json_path.read_text())["notes"][0]["noteName"] == "E4"
+    assert first_midi_path.exists()
+    assert second_midi_path.exists()
     assert load_job(job["jobId"])["result"]["correction"]["revision"] == 2
 
 
@@ -260,9 +280,9 @@ def test_unknown_job_returns_404() -> None:
 def test_corrected_artifact_downloads_are_safe_and_link_gated(tmp_path: Path) -> None:
     job = create_succeeded_job_with_artifacts(tmp_path)
     artifact_dir = job_artifacts_dir(job["jobId"])
-    (artifact_dir / "corrected-transcript.json").write_text("{}\n")
+    (artifact_dir / "corrected-r1.json").write_text("{}\n")
 
-    unlinked = client.get(f"/api/transcriptions/{job['jobId']}/artifacts/corrected-transcript.json")
+    unlinked = client.get(f"/api/transcriptions/{job['jobId']}/artifacts/corrected-r1.json")
     traversal = client.get(f"/api/transcriptions/{job['jobId']}/artifacts/../records/{job['jobId']}.json")
 
     assert unlinked.status_code == 404
@@ -275,20 +295,59 @@ def test_corrected_artifact_downloads_are_safe_and_link_gated(tmp_path: Path) ->
     assert linked.json()["notes"][0]["pitch"] == 60
 
 
-def test_write_failure_preserves_previous_revision_and_artifacts(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_during_artifact_writes_previous_revision_remains_visible(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     job = create_succeeded_job_with_artifacts(tmp_path)
-    artifact_dir = job_artifacts_dir(job["jobId"])
     first = put_correction(job["jobId"])
     assert first.status_code == 200
-    previous_json = (artifact_dir / "corrected-transcript.json").read_bytes()
-    previous_midi = (artifact_dir / "corrected-transcription.mid").read_bytes()
+    previous_correction = deepcopy(load_job(job["jobId"])["result"]["correction"])
 
     from app import transcription_jobs
 
-    def failing_build_midi_file(notes: list[dict[str, Any]]) -> bytes:
-        raise OSError("disk full")
+    original_atomic_write_json = transcription_jobs.atomic_write_json
 
-    monkeypatch.setattr(transcription_jobs, "build_midi_file", failing_build_midi_file)
+    def observing_atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
+        if not path.name.startswith("corrected-r"):
+            original_atomic_write_json(path, payload)
+            return
+        persisted = load_job(job["jobId"])
+        assert persisted["result"]["correction"] == previous_correction
+        original_atomic_write_json(path, payload)
+        persisted_after_write = load_job(job["jobId"])
+        assert persisted_after_write["result"]["correction"] == previous_correction
+
+    monkeypatch.setattr(transcription_jobs, "atomic_write_json", observing_atomic_write_json)
+
+    response = put_correction(job["jobId"], base_revision=1, notes=[valid_note(pitch=64, noteName="E4")])
+
+    assert response.status_code == 200
+    assert load_job(job["jobId"])["result"]["correction"]["revision"] == 2
+
+
+def test_first_artifact_write_failure_preserves_previous_revision_and_artifacts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    job = create_succeeded_job_with_artifacts(tmp_path)
+    first = put_correction(job["jobId"])
+    assert first.status_code == 200
+    previous_job = load_job(job["jobId"])
+    previous_correction = deepcopy(previous_job["result"]["correction"])
+    previous_json_path = artifact_path_from_url(previous_correction["exports"]["transcript"])
+    previous_midi_path = artifact_path_from_url(previous_correction["exports"]["midi"])
+    previous_json = previous_json_path.read_bytes()
+    previous_midi = previous_midi_path.read_bytes()
+
+    from app import transcription_jobs
+
+    original_atomic_write_json = transcription_jobs.atomic_write_json
+
+    def failing_atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
+        if path.name == "corrected-r2.json":
+            raise OSError("disk full")
+        original_atomic_write_json(path, payload)
+
+    monkeypatch.setattr(transcription_jobs, "atomic_write_json", failing_atomic_write_json)
 
     response = non_raising_client.put(
         f"/api/transcriptions/{job['jobId']}/corrections",
@@ -296,20 +355,63 @@ def test_write_failure_preserves_previous_revision_and_artifacts(tmp_path: Path,
     )
 
     assert response.status_code == 500
-    assert load_job(job["jobId"])["result"]["correction"]["revision"] == 1
-    assert (artifact_dir / "corrected-transcript.json").read_bytes() == previous_json
-    assert (artifact_dir / "corrected-transcription.mid").read_bytes() == previous_midi
+    persisted = load_job(job["jobId"])
+    assert persisted["result"]["correction"] == previous_correction
+    assert persisted["result"]["correction"]["revision"] == 1
+    assert previous_json_path.read_bytes() == previous_json
+    assert previous_midi_path.read_bytes() == previous_midi
+    assert not correction_artifact_paths(job["jobId"], 2)[0].exists()
+    assert not correction_artifact_paths(job["jobId"], 2)[1].exists()
 
 
-def test_save_failure_after_prepare_preserves_previous_correction(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_second_artifact_write_failure_preserves_previous_revision_and_artifacts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     job = create_succeeded_job_with_artifacts(tmp_path)
-    artifact_dir = job_artifacts_dir(job["jobId"])
     first = put_correction(job["jobId"])
     assert first.status_code == 200
     previous_job = load_job(job["jobId"])
     previous_correction = deepcopy(previous_job["result"]["correction"])
-    previous_json = (artifact_dir / "corrected-transcript.json").read_bytes()
-    previous_midi = (artifact_dir / "corrected-transcription.mid").read_bytes()
+    previous_json_path = artifact_path_from_url(previous_correction["exports"]["transcript"])
+    previous_midi_path = artifact_path_from_url(previous_correction["exports"]["midi"])
+    previous_json = previous_json_path.read_bytes()
+    previous_midi = previous_midi_path.read_bytes()
+
+    from app import transcription_jobs
+
+    original_atomic_write_bytes = transcription_jobs.atomic_write_bytes
+
+    def failing_atomic_write_bytes(path: Path, payload: bytes) -> None:
+        if path.name == "corrected-r2.mid":
+            raise OSError("disk full")
+        original_atomic_write_bytes(path, payload)
+
+    monkeypatch.setattr(transcription_jobs, "atomic_write_bytes", failing_atomic_write_bytes)
+
+    response = non_raising_client.put(
+        f"/api/transcriptions/{job['jobId']}/corrections",
+        json={"baseRevision": 1, "notes": [valid_note(pitch=64, noteName="E4")]},
+    )
+
+    assert response.status_code == 500
+    persisted = load_job(job["jobId"])
+    assert persisted["result"]["correction"] == previous_correction
+    assert persisted["result"]["correction"]["revision"] == 1
+    assert previous_json_path.read_bytes() == previous_json
+    assert previous_midi_path.read_bytes() == previous_midi
+    assert not correction_artifact_paths(job["jobId"], 2)[0].exists()
+    assert not correction_artifact_paths(job["jobId"], 2)[1].exists()
+
+
+def test_save_failure_after_new_artifacts_preserves_previous_visible_metadata(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    job = create_succeeded_job_with_artifacts(tmp_path)
+    first = put_correction(job["jobId"])
+    assert first.status_code == 200
+    previous_correction = deepcopy(load_job(job["jobId"])["result"]["correction"])
+    previous_json_path = artifact_path_from_url(previous_correction["exports"]["transcript"])
+    previous_midi_path = artifact_path_from_url(previous_correction["exports"]["midi"])
 
     from app import transcription_jobs
 
@@ -331,42 +433,42 @@ def test_save_failure_after_prepare_preserves_previous_correction(tmp_path: Path
     assert response.status_code == 500
     persisted = load_job(job["jobId"])
     assert persisted["result"]["correction"] == previous_correction
-    assert persisted["result"]["correction"]["revision"] == 1
-    assert (artifact_dir / "corrected-transcript.json").read_bytes() == previous_json
-    assert (artifact_dir / "corrected-transcription.mid").read_bytes() == previous_midi
-    assert not list(artifact_dir.glob("corrected-*.tmp"))
-    assert not list(artifact_dir.glob("corrected-*.bak"))
+    assert previous_json_path.exists()
+    assert previous_midi_path.exists()
+    assert not correction_artifact_paths(job["jobId"], 2)[0].exists()
+    assert not correction_artifact_paths(job["jobId"], 2)[1].exists()
 
 
-def test_save_failure_after_prepare_leaves_no_first_corrected_artifacts(
+def test_readers_never_see_next_revision_with_previous_revision_artifacts(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     job = create_succeeded_job_with_artifacts(tmp_path)
-    artifact_dir = job_artifacts_dir(job["jobId"])
-    previous_job = load_job(job["jobId"])
+    first = put_correction(job["jobId"])
+    assert first.status_code == 200
 
     from app import transcription_jobs
 
     original_save_job = transcription_jobs.save_job
 
-    def failing_save_job(next_job: dict[str, Any]) -> dict[str, Any]:
-        correction = ((next_job.get("result") or {}).get("correction") or {})
-        if correction.get("revision") == 1:
-            raise OSError("job store unavailable")
+    def observing_save_job(next_job: dict[str, Any]) -> dict[str, Any]:
+        next_correction = ((next_job.get("result") or {}).get("correction") or {})
+        if next_correction.get("revision") == 2:
+            assert next_correction["exports"]["transcript"].endswith("/corrected-r2.json")
+            assert next_correction["exports"]["midi"].endswith("/corrected-r2.mid")
+            assert correction_artifact_paths(job["jobId"], 2)[0].exists()
+            assert correction_artifact_paths(job["jobId"], 2)[1].exists()
+            visible = load_job(job["jobId"])["result"]["correction"]
+            assert visible["revision"] == 1
+            assert visible["exports"]["transcript"].endswith("/corrected-r1.json")
+            assert visible["exports"]["midi"].endswith("/corrected-r1.mid")
         return original_save_job(next_job)
 
-    monkeypatch.setattr(transcription_jobs, "save_job", failing_save_job)
+    monkeypatch.setattr(transcription_jobs, "save_job", observing_save_job)
 
-    response = non_raising_client.put(
-        f"/api/transcriptions/{job['jobId']}/corrections",
-        json={"baseRevision": 0, "notes": [valid_note(pitch=64, noteName="E4")]},
-    )
+    response = put_correction(job["jobId"], base_revision=1, notes=[valid_note(pitch=64, noteName="E4")])
 
-    assert response.status_code == 500
-    persisted = load_job(job["jobId"])
-    assert persisted["result"] == previous_job["result"]
-    assert "correction" not in persisted["result"]
-    assert not (artifact_dir / "corrected-transcript.json").exists()
-    assert not (artifact_dir / "corrected-transcription.mid").exists()
-    assert not list(artifact_dir.glob("corrected-*.tmp"))
-    assert not list(artifact_dir.glob("corrected-*.bak"))
+    assert response.status_code == 200
+    persisted = load_job(job["jobId"])["result"]["correction"]
+    assert persisted["revision"] == 2
+    assert persisted["exports"]["transcript"].endswith("/corrected-r2.json")
+    assert persisted["exports"]["midi"].endswith("/corrected-r2.mid")
