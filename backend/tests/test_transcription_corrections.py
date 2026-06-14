@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import math
 import wave
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
@@ -298,3 +299,74 @@ def test_write_failure_preserves_previous_revision_and_artifacts(tmp_path: Path,
     assert load_job(job["jobId"])["result"]["correction"]["revision"] == 1
     assert (artifact_dir / "corrected-transcript.json").read_bytes() == previous_json
     assert (artifact_dir / "corrected-transcription.mid").read_bytes() == previous_midi
+
+
+def test_save_failure_after_prepare_preserves_previous_correction(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    job = create_succeeded_job_with_artifacts(tmp_path)
+    artifact_dir = job_artifacts_dir(job["jobId"])
+    first = put_correction(job["jobId"])
+    assert first.status_code == 200
+    previous_job = load_job(job["jobId"])
+    previous_correction = deepcopy(previous_job["result"]["correction"])
+    previous_json = (artifact_dir / "corrected-transcript.json").read_bytes()
+    previous_midi = (artifact_dir / "corrected-transcription.mid").read_bytes()
+
+    from app import transcription_jobs
+
+    original_save_job = transcription_jobs.save_job
+
+    def failing_save_job(next_job: dict[str, Any]) -> dict[str, Any]:
+        correction = ((next_job.get("result") or {}).get("correction") or {})
+        if correction.get("revision") == 2:
+            raise OSError("job store unavailable")
+        return original_save_job(next_job)
+
+    monkeypatch.setattr(transcription_jobs, "save_job", failing_save_job)
+
+    response = non_raising_client.put(
+        f"/api/transcriptions/{job['jobId']}/corrections",
+        json={"baseRevision": 1, "notes": [valid_note(pitch=64, noteName="E4")]},
+    )
+
+    assert response.status_code == 500
+    persisted = load_job(job["jobId"])
+    assert persisted["result"]["correction"] == previous_correction
+    assert persisted["result"]["correction"]["revision"] == 1
+    assert (artifact_dir / "corrected-transcript.json").read_bytes() == previous_json
+    assert (artifact_dir / "corrected-transcription.mid").read_bytes() == previous_midi
+    assert not list(artifact_dir.glob("corrected-*.tmp"))
+    assert not list(artifact_dir.glob("corrected-*.bak"))
+
+
+def test_save_failure_after_prepare_leaves_no_first_corrected_artifacts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    job = create_succeeded_job_with_artifacts(tmp_path)
+    artifact_dir = job_artifacts_dir(job["jobId"])
+    previous_job = load_job(job["jobId"])
+
+    from app import transcription_jobs
+
+    original_save_job = transcription_jobs.save_job
+
+    def failing_save_job(next_job: dict[str, Any]) -> dict[str, Any]:
+        correction = ((next_job.get("result") or {}).get("correction") or {})
+        if correction.get("revision") == 1:
+            raise OSError("job store unavailable")
+        return original_save_job(next_job)
+
+    monkeypatch.setattr(transcription_jobs, "save_job", failing_save_job)
+
+    response = non_raising_client.put(
+        f"/api/transcriptions/{job['jobId']}/corrections",
+        json={"baseRevision": 0, "notes": [valid_note(pitch=64, noteName="E4")]},
+    )
+
+    assert response.status_code == 500
+    persisted = load_job(job["jobId"])
+    assert persisted["result"] == previous_job["result"]
+    assert "correction" not in persisted["result"]
+    assert not (artifact_dir / "corrected-transcript.json").exists()
+    assert not (artifact_dir / "corrected-transcription.mid").exists()
+    assert not list(artifact_dir.glob("corrected-*.tmp"))
+    assert not list(artifact_dir.glob("corrected-*.bak"))
