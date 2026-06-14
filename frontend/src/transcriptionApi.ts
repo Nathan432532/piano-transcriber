@@ -21,6 +21,7 @@ export type TranscriptionErrorCode =
   | 'UPLOAD_NOT_FOUND'
   | 'UNSUPPORTED_ENGINE'
   | 'INVALID_OPTIONS'
+  | 'INVALID_CORRECTION'
   | 'QUEUE_TIMEOUT'
   | 'TRANSCRIPTION_TIMEOUT'
   | 'MODEL_LOAD_FAILED'
@@ -48,8 +49,8 @@ export type TranscriptionResult = {
   durationSeconds?: number;
   correction?: {
     revision: number;
-    artifactUrls: {
-      json: string;
+    exports: {
+      transcript: string;
       midi: string;
     };
   };
@@ -71,23 +72,21 @@ export type TranscriptionJob = {
 };
 
 export type CorrectionRequest = {
+  baseRevision: number;
   notes: Array<{
     pitch: number;
-    onset: number;
-    offset: number;
+    startTime: number;
+    endTime: number;
+    velocity: number;
     confidence?: number;
+    hand?: "unknown";
   }>;
-  metadata?: {
-    noteCount: number;
-    durationSeconds: number;
-  };
 };
 
 export type CorrectionResponse = {
-  jobId: string;
   revision: number;
-  artifactUrls: {
-    json: string;
+  exports: {
+    transcript: string;
     midi: string;
   };
 };
@@ -133,6 +132,7 @@ const ERROR_MESSAGES: Record<TranscriptionErrorCode, string> = {
   UPLOAD_NOT_FOUND: 'The uploaded audio could not be found. Upload it again.',
   UNSUPPORTED_ENGINE: 'This transcription engine is not available.',
   INVALID_OPTIONS: 'Some transcription settings are invalid.',
+  INVALID_CORRECTION: 'The correction data is invalid.',
   QUEUE_TIMEOUT: 'The job waited too long. Try again.',
   TRANSCRIPTION_TIMEOUT: 'Transcription took too long for this prototype. Try a shorter audio file.',
   MODEL_LOAD_FAILED: 'The transcription engine could not be started.',
@@ -161,7 +161,7 @@ const KNOWN_ERROR_CODES = new Set(Object.keys(ERROR_MESSAGES));
 const STATUS_CODE_TO_ERROR_CODE: Record<number, TranscriptionErrorCode> = {
   404: 'JOB_NOT_FOUND',
   409: 'JOB_NOT_SUCCEEDED',
-  422: 'INVALID_OPTIONS',
+  422: 'INVALID_CORRECTION',
 };
 
 export function isTerminalState(state: TranscriptionState): boolean {
@@ -194,20 +194,20 @@ export function transcriptionArtifactLinks(result: TranscriptionResult | null | 
 
   // Add corrected artifact links if present
   if (result.correction) {
-    const { revision, artifactUrls } = result.correction;
-    if (artifactUrls?.json) {
+    const { revision, exports } = result.correction;
+    if (exports?.transcript) {
       links.push({
         key: 'corrected-json',
         label: `Corrected JSON (r${revision})`,
-        href: artifactUrls.json,
+        href: exports.transcript,
         revision,
       });
     }
-    if (artifactUrls?.midi) {
+    if (exports?.midi) {
       links.push({
         key: 'corrected-midi',
         label: `Corrected MIDI (r${revision})`,
-        href: artifactUrls.midi,
+        href: exports.midi,
         revision,
       });
     }
@@ -261,7 +261,7 @@ export function createTranscriptionApiClient(fetchImpl: FetchLike, apiBase: stri
       });
     },
     putCorrection(jobId: string, body: CorrectionRequest, signal?: AbortSignal): Promise<CorrectionResponse> {
-      return requestJson<CorrectionResponse>(`/api/transcriptions/${jobId}/correction`, {
+      return requestJson<CorrectionResponse>(`/api/transcriptions/${jobId}/corrections`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

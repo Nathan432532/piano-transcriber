@@ -104,8 +104,8 @@ await test('artifact link visibility only includes present JSON and MIDI downloa
       exports: { midi: '/api/transcriptions/job-1/artifacts/transcription.mid' },
       correction: {
         revision: 1,
-        artifactUrls: {
-          json: '/api/transcriptions/job-1/artifacts/corrected-r1.json',
+        exports: {
+          transcript: '/api/transcriptions/job-1/artifacts/corrected-r1.json',
           midi: '/api/transcriptions/job-1/artifacts/corrected-r1.mid',
         },
       },
@@ -123,13 +123,12 @@ await test('putCorrection sends a PUT request with the correct payload and heade
   const calls: Array<{ input: RequestInfo | URL; init?: RequestInit }> = [];
   const fetchImpl = async (input: RequestInfo | URL, init?: RequestInit) => {
     calls.push({ input, init });
-    if (String(input).endsWith('/api/transcriptions/job-1/correction') && init?.method === 'PUT') {
+    if (String(input).endsWith('/api/transcriptions/job-1/corrections') && init?.method === 'PUT') {
       return jsonResponse(
         {
-          jobId: 'job-1',
           revision: 1,
-          artifactUrls: {
-            json: '/api/transcriptions/job-1/artifacts/corrected-r1.json',
+          exports: {
+            transcript: '/api/transcriptions/job-1/artifacts/corrected-r1.json',
             midi: '/api/transcriptions/job-1/artifacts/corrected-r1.mid',
           },
         },
@@ -141,16 +140,16 @@ await test('putCorrection sends a PUT request with the correct payload and heade
   const client = createTranscriptionApiClient(fetchImpl, 'http://api.test');
 
   const correctionRequest: CorrectionRequest = {
+    baseRevision: 0,
     notes: [
-      { pitch: 60, onset: 0.5, offset: 1.0, confidence: 0.9 },
+      { pitch: 60, startTime: 0.5, endTime: 1.0, velocity: 64, confidence: 0.9, hand: "unknown" },
     ],
-    metadata: { noteCount: 1, durationSeconds: 2.0 },
   };
 
   const response = await client.putCorrection('job-1', correctionRequest);
 
   assertEqual(response.revision, 1);
-  assertEqual(calls[0].input, 'http://api.test/api/transcriptions/job-1/correction');
+  assertEqual(calls[0].input, 'http://api.test/api/transcriptions/job-1/corrections');
   assertEqual(calls[0].init?.method, 'PUT');
   assertEqual((calls[0].init?.headers as Record<string, string>)['Content-Type'], 'application/json');
   assertDeepEqual(JSON.parse(String(calls[0].init?.body)), correctionRequest);
@@ -158,7 +157,7 @@ await test('putCorrection sends a PUT request with the correct payload and heade
 
 await test('putCorrection throws TranscriptionApiError for 404 (JOB_NOT_FOUND)', async () => {
   const fetchImpl = async (input: RequestInfo | URL, init?: RequestInit) => {
-    if (String(input).endsWith('/api/transcriptions/job-1/correction') && init?.method === 'PUT') {
+    if (String(input).endsWith('/api/transcriptions/job-1/corrections') && init?.method === 'PUT') {
       return jsonResponse(
         { detail: { code: 'JOB_NOT_FOUND', message: 'test error', retryable: false } },
         404,
@@ -168,7 +167,7 @@ await test('putCorrection throws TranscriptionApiError for 404 (JOB_NOT_FOUND)',
   };
   const client = createTranscriptionApiClient(fetchImpl, 'http://api.test');
 
-  const correctionRequest: CorrectionRequest = { notes: [] };
+  const correctionRequest: CorrectionRequest = { baseRevision: 0, notes: [] };
 
   await assertRejects(async () => client.putCorrection('job-1', correctionRequest), (error) => {
     assertOk(error instanceof TranscriptionApiError, 'expected TranscriptionApiError');
@@ -177,11 +176,11 @@ await test('putCorrection throws TranscriptionApiError for 404 (JOB_NOT_FOUND)',
   });
 });
 
-await test('putCorrection throws TranscriptionApiError for 422 (INVALID_OPTIONS)', async () => {
+await test('putCorrection throws TranscriptionApiError for 422 (INVALID_CORRECTION)', async () => {
   const fetchImpl = async (input: RequestInfo | URL, init?: RequestInit) => {
-    if (String(input).endsWith('/api/transcriptions/job-1/correction') && init?.method === 'PUT') {
+    if (String(input).endsWith('/api/transcriptions/job-1/corrections') && init?.method === 'PUT') {
       return jsonResponse(
-        { detail: { code: 'INVALID_OPTIONS', message: 'test error', retryable: false } },
+        { detail: { code: 'INVALID_CORRECTION', message: 'test error', retryable: false } },
         422,
       );
     }
@@ -189,18 +188,18 @@ await test('putCorrection throws TranscriptionApiError for 422 (INVALID_OPTIONS)
   };
   const client = createTranscriptionApiClient(fetchImpl, 'http://api.test');
 
-  const correctionRequest: CorrectionRequest = { notes: [] };
+  const correctionRequest: CorrectionRequest = { baseRevision: 0, notes: [] };
 
   await assertRejects(async () => client.putCorrection('job-1', correctionRequest), (error) => {
     assertOk(error instanceof TranscriptionApiError, 'expected TranscriptionApiError');
     const apiError = error as TranscriptionApiError;
-    assertEqual(apiError.code, 'INVALID_OPTIONS');
+    assertEqual(apiError.code, 'INVALID_CORRECTION');
   });
 });
 
 await test('putCorrection throws TranscriptionApiError for 409 (JOB_NOT_SUCCEEDED)', async () => {
   const fetchImpl = async (input: RequestInfo | URL, init?: RequestInit) => {
-    if (String(input).endsWith('/api/transcriptions/job-1/correction') && init?.method === 'PUT') {
+    if (String(input).endsWith('/api/transcriptions/job-1/corrections') && init?.method === 'PUT') {
       return jsonResponse(
         { detail: { code: 'JOB_NOT_SUCCEEDED', message: 'test error', retryable: false } },
         409,
@@ -210,7 +209,7 @@ await test('putCorrection throws TranscriptionApiError for 409 (JOB_NOT_SUCCEEDE
   };
   const client = createTranscriptionApiClient(fetchImpl, 'http://api.test');
 
-  const correctionRequest: CorrectionRequest = { notes: [] };
+  const correctionRequest: CorrectionRequest = { baseRevision: 0, notes: [] };
 
   await assertRejects(async () => client.putCorrection('job-1', correctionRequest), (error) => {
     assertOk(error instanceof TranscriptionApiError, 'expected TranscriptionApiError');

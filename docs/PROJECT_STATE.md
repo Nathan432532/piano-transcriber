@@ -118,12 +118,15 @@ Actieve live configuratie:
 - **Artifacts:** Immutable `corrected-r<N>.json`/`corrected-r<N>.mid` worden atomisch gepubliceerd.
 
 ### Frontendimplementatie
-- **API-client:** `putCorrection(jobId: string, body: CorrectionRequest): Promise<CorrectionResponse>` toegevoegd.
+- **API-client:** `putCorrection(jobId: string, body: CorrectionRequest): Promise<CorrectionResponse>` toegevoegd, nu met:
+  - Route: `PUT /api/transcriptions/{jobId}/corrections` (meervoud).
+  - Request: `baseRevision` + `notes` met `startTime`, `endTime`, `velocity` (verplicht), `confidence`, `hand` (optioneel).
+  - Response: `revision` + `exports.transcript`/`exports.midi`.
 - **Artifactlinks:** `transcriptionArtifactLinks` uitgebreid met ondersteuning voor `corrected-r<N>.json`/`corrected-r<N>.mid` wanneer `result.correction` aanwezig is.
-- **Types:** `CorrectionRequest`, `CorrectionResponse`, `CorrectionArtifactLink` toegevoegd.
+- **Types:** `CorrectionRequest`, `CorrectionResponse`, `CorrectionArtifactLink` gecorrigeerd naar het definitieve contract.
 - **Tests:**
   - Succesvolle correctie (200, valide response).
-  - Alle vier backendfoutcodes (404, 409, 422, 409 voor JOB_NOT_SUCCEEDED).
+  - Alle vier backendfoutcodes (404, 409, 422 `INVALID_CORRECTION`, 409 voor JOB_NOT_SUCCEEDED).
   - URL, PUT-methode, `Content-Type: application/json`.
   - Artifactlinks alleen wanneer `correction` aanwezig is.
 
@@ -139,7 +142,7 @@ Actieve live configuratie:
 - **Geen bewerkbare noteneditor:** Bevestigd (alleen backend API en artifactstorage).
 - **Corrected-transcript-reload:** Vereist na `PUT /corrections` (nieuwe `revision` in jobmetadata).
 - **Voorkeursbron:** Laad altijd de hoogste `revision` uit `job.result.correction`.
-- **Commit 1:** **VOLTOOID** — Frontend-API-uitbreiding en tests zijn geïmplementeerd en gevalideerd.
+- **Commit 1:** **VOLTOOID** — Frontend-API-uitbreiding en tests zijn gecorrigeerd naar het definitieve backendcontract, gevalideerd met `npm test` en `npm run build`.
 - **Volgende stap:** Geen; alle taken zijn voltooid volgens het contract.
 - **Notitie:** Tijdens deze ronde zijn **geen** backendwijzigingen uitgevoerd; alleen frontend-API-uitbreiding en tests.
 
