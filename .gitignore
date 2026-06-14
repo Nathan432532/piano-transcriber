@@ -28,3 +28,5 @@ backend/data/tmp/
 
 .env
 .env.local
+
+backend/.deps.rollback-*/
