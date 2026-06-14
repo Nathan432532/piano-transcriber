@@ -100,6 +100,8 @@ Each note uses the internal format:
 
 ## Next Steps
 
+The current MVP phase validates real piano transcription with Basic Pitch.
+
 - Replace fixed note generation with a real transcription pipeline.
 - Add full 88-key range controls and zooming.
 - Add richer transcript validation at the API boundary.
