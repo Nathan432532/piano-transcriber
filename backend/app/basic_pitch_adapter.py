@@ -81,6 +81,15 @@ class BasicPitchTranscriptionAdapter:
             raise TranscriptionAdapterInferenceError("Basic Pitch inference failed") from exc
 
         return {
+            "_transcript": {
+                "version": "1.0",
+                "source": {
+                    "kind": "uploaded",
+                    "filename": context.upload_path.name,
+                    "duration": duration,
+                },
+                "notes": notes,
+            },
             "transcriptUrl": None,
             "exports": {},
             "noteCount": len(notes),

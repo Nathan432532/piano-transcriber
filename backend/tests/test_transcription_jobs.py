@@ -21,6 +21,7 @@ from app.transcription_jobs import (
     cancel_transcription_job,
     fail_transcription_job,
     idempotency_path,
+    job_artifacts_dir,
     load_job,
     make_error,
     make_progress,
@@ -145,6 +146,120 @@ def test_injected_adapter_can_publish_success_result(tmp_path: Path) -> None:
     assert job["state"] == "succeeded"
     assert job["progress"]["phase"] == "complete"
     assert job["result"] == {"transcriptUrl": None, "exports": {}, "noteCount": 1, "durationSeconds": 0.123}
+
+
+def test_successful_adapter_result_writes_transcript_and_midi_artifacts(tmp_path: Path) -> None:
+    class ArtifactAdapter:
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            return None
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
+            return {
+                "_transcript": {
+                    "version": "1.0",
+                    "source": {
+                        "kind": "uploaded",
+                        "filename": context.upload_path.name,
+                        "duration": 0.5,
+                    },
+                    "notes": [
+                        {
+                            "pitch": 60,
+                            "noteName": "C4",
+                            "startTime": 0.0,
+                            "endTime": 0.25,
+                            "velocity": 80,
+                            "confidence": 0.9,
+                            "hand": "unknown",
+                        }
+                    ],
+                },
+                "transcriptUrl": "/untrusted/client/path.json",
+                "exports": {"midi": "/untrusted/client/path.mid"},
+                "noteCount": 1,
+                "durationSeconds": 0.5,
+            }
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="artifact-success-key")
+
+    result = run_transcription_job(created["jobId"], ArtifactAdapter())
+
+    artifact_dir = job_artifacts_dir(created["jobId"])
+    transcript_path = artifact_dir / "transcript.json"
+    midi_path = artifact_dir / "transcription.mid"
+    assert result["state"] == "succeeded"
+    assert result["result"] == {
+        "transcriptUrl": f"/api/transcriptions/{created['jobId']}/artifacts/transcript.json",
+        "exports": {"midi": f"/api/transcriptions/{created['jobId']}/artifacts/transcription.mid"},
+        "noteCount": 1,
+        "durationSeconds": 0.5,
+    }
+    assert json.loads(transcript_path.read_text())["notes"][0]["pitch"] == 60
+    assert midi_path.read_bytes().startswith(b"MThd")
+    assert b"MTrk" in midi_path.read_bytes()
+
+
+def test_downloads_transcript_and_valid_midi_artifacts(tmp_path: Path) -> None:
+    class ArtifactAdapter:
+        def load(self, context: TranscriptionAdapterContext) -> None:
+            return None
+
+        def transcribe(self, context: TranscriptionAdapterContext, report_progress) -> dict:
+            return {
+                "_transcript": {
+                    "version": "1.0",
+                    "source": {"kind": "uploaded", "filename": "valid.wav", "duration": 1.0},
+                    "notes": [
+                        {
+                            "pitch": 64,
+                            "noteName": "E4",
+                            "startTime": 0.1,
+                            "endTime": 0.6,
+                            "velocity": 100,
+                            "confidence": 0.8,
+                            "hand": "unknown",
+                        }
+                    ],
+                },
+                "transcriptUrl": None,
+                "exports": {},
+                "noteCount": 1,
+                "durationSeconds": 1.0,
+            }
+
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="artifact-download-key")
+    result = run_transcription_job(created["jobId"], ArtifactAdapter())
+
+    transcript_response = client.get(result["result"]["transcriptUrl"])
+    midi_response = client.get(result["result"]["exports"]["midi"])
+
+    assert transcript_response.status_code == 200
+    assert transcript_response.headers["content-type"].startswith("application/json")
+    assert transcript_response.json()["source"]["filename"] == "valid.wav"
+    assert midi_response.status_code == 200
+    assert midi_response.headers["content-type"].startswith("audio/midi")
+    midi = midi_response.content
+    assert midi[:4] == b"MThd"
+    assert int.from_bytes(midi[4:8], "big") == 6
+    assert int.from_bytes(midi[8:10], "big") == 0
+    assert int.from_bytes(midi[10:12], "big") == 1
+    assert int.from_bytes(midi[12:14], "big") == 480
+    assert midi[14:18] == b"MTrk"
+    assert midi.endswith(b"\xff\x2f\x00")
+
+
+def test_missing_or_traversal_artifact_download_returns_404(tmp_path: Path) -> None:
+    upload_id = create_upload(tmp_path)
+    created = create_job(upload_id, key="missing-artifact-key")
+    run_demo_transcription_job(created["jobId"])
+
+    missing = client.get(f"/api/transcriptions/{created['jobId']}/artifacts/transcription.mid")
+    traversal = client.get(f"/api/transcriptions/{created['jobId']}/artifacts/../records/{created['jobId']}.json")
+
+    assert missing.status_code == 404
+    assert traversal.status_code == 404
 
 
 @pytest.mark.parametrize(

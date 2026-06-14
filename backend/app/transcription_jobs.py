@@ -149,6 +149,7 @@ def parse_timestamp(value: str) -> datetime:
 def ensure_job_dirs() -> None:
     records_dir().mkdir(parents=True, exist_ok=True)
     idempotency_dir().mkdir(parents=True, exist_ok=True)
+    artifacts_dir().mkdir(parents=True, exist_ok=True)
 
 
 def records_dir() -> Path:
@@ -157,6 +158,15 @@ def records_dir() -> Path:
 
 def idempotency_dir() -> Path:
     return ensure_child_path(config.JOB_DIR, config.JOB_DIR / "idempotency")
+
+
+def artifacts_dir() -> Path:
+    return ensure_child_path(config.JOB_DIR, config.JOB_DIR / "artifacts")
+
+
+def job_artifacts_dir(job_id: str) -> Path:
+    safe_job_id = validate_job_id(job_id)
+    return ensure_child_path(artifacts_dir(), artifacts_dir() / safe_job_id)
 
 
 def job_path(job_id: str) -> Path:
@@ -181,6 +191,13 @@ def atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temp_path = path.with_suffix(f".{uuid.uuid4().hex}.tmp")
     temp_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    temp_path.replace(path)
+
+
+def atomic_write_bytes(path: Path, payload: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = path.with_suffix(f".{uuid.uuid4().hex}.tmp")
+    temp_path.write_bytes(payload)
     temp_path.replace(path)
 
 
@@ -539,7 +556,43 @@ def build_demo_result(job: dict[str, Any], upload_path: Path) -> dict[str, Any]:
     }
 
 
-def validate_adapter_result(result: Any) -> dict[str, Any]:
+def artifact_download_url(job_id: str, artifact_name: str) -> str:
+    return f"/api/transcriptions/{validate_job_id(job_id)}/artifacts/{artifact_name}"
+
+
+def validate_transcript_payload(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise TranscriptionAdapterInferenceError("adapter transcript must be an object")
+
+    source = value.get("source")
+    notes = value.get("notes")
+    if not isinstance(value.get("version"), str):
+        raise TranscriptionAdapterInferenceError("adapter transcript version must be a string")
+    if not isinstance(source, dict):
+        raise TranscriptionAdapterInferenceError("adapter transcript source must be an object")
+    if not isinstance(notes, list):
+        raise TranscriptionAdapterInferenceError("adapter transcript notes must be a list")
+    if source.get("kind") not in {"synthetic", "uploaded"}:
+        raise TranscriptionAdapterInferenceError("adapter transcript source kind is invalid")
+    if not isinstance(source.get("filename"), str):
+        raise TranscriptionAdapterInferenceError("adapter transcript filename must be a string")
+    if (
+        isinstance(source.get("duration"), bool)
+        or not isinstance(source.get("duration"), (int, float))
+        or not math.isfinite(source["duration"])
+        or source["duration"] < 0
+    ):
+        raise TranscriptionAdapterInferenceError("adapter transcript duration must be a finite non-negative number")
+
+    for note in notes:
+        if not isinstance(note, dict):
+            raise TranscriptionAdapterInferenceError("adapter transcript notes must be objects")
+        normalize_midi_note(note)
+
+    return value
+
+
+def validate_adapter_result(result: Any, job_id: str | None = None) -> dict[str, Any]:
     if not isinstance(result, dict):
         raise TranscriptionAdapterInferenceError("adapter result must be an object")
 
@@ -548,13 +601,12 @@ def validate_adapter_result(result: Any) -> dict[str, Any]:
         raise TranscriptionAdapterInferenceError("adapter result is missing required fields")
 
     transcript_url = result["transcriptUrl"]
-    exports = result["exports"]
     note_count = result["noteCount"]
     duration_seconds = result["durationSeconds"]
 
     if transcript_url is not None and not isinstance(transcript_url, str):
         raise TranscriptionAdapterInferenceError("adapter transcriptUrl must be null or a string")
-    if not isinstance(exports, dict):
+    if not isinstance(result["exports"], dict):
         raise TranscriptionAdapterInferenceError("adapter exports must be an object")
     if isinstance(note_count, bool) or not isinstance(note_count, int) or note_count < 0:
         raise TranscriptionAdapterInferenceError("adapter noteCount must be a non-negative integer")
@@ -566,12 +618,142 @@ def validate_adapter_result(result: Any) -> dict[str, Any]:
     ):
         raise TranscriptionAdapterInferenceError("adapter durationSeconds must be a finite non-negative number")
 
-    return {
-        "transcriptUrl": transcript_url,
-        "exports": exports,
+    public_result = {
+        "transcriptUrl": None,
+        "exports": {},
         "noteCount": note_count,
         "durationSeconds": duration_seconds,
     }
+    transcript = result.get("_transcript")
+    if transcript is not None:
+        if job_id is None:
+            raise TranscriptionAdapterInferenceError("adapter transcript requires a job id")
+        write_transcription_artifacts(job_id, validate_transcript_payload(transcript))
+        public_result = public_result_with_existing_artifacts(job_id, public_result)
+    return public_result
+
+
+def public_result_with_existing_artifacts(job_id: str, result: dict[str, Any]) -> dict[str, Any]:
+    artifact_dir = job_artifacts_dir(job_id)
+    transcript_path = ensure_child_path(artifact_dir, artifact_dir / "transcript.json")
+    midi_path = ensure_child_path(artifact_dir, artifact_dir / "transcription.mid")
+    next_result = deepcopy(result)
+    exports = dict(next_result.get("exports") or {})
+    if transcript_path.exists():
+        next_result["transcriptUrl"] = artifact_download_url(job_id, "transcript.json")
+    else:
+        next_result["transcriptUrl"] = None
+    if midi_path.exists():
+        exports["midi"] = artifact_download_url(job_id, "transcription.mid")
+    else:
+        exports.pop("midi", None)
+    next_result["exports"] = exports
+    return next_result
+
+
+def write_transcription_artifacts(job_id: str, transcript: dict[str, Any]) -> None:
+    artifact_dir = job_artifacts_dir(job_id)
+    transcript_path = ensure_child_path(artifact_dir, artifact_dir / "transcript.json")
+    midi_path = ensure_child_path(artifact_dir, artifact_dir / "transcription.mid")
+    atomic_write_json(transcript_path, transcript)
+    atomic_write_bytes(midi_path, build_midi_file(transcript["notes"]))
+
+
+def get_transcription_artifact_path(job_id: str, artifact_name: str) -> Path:
+    artifact_filenames = {"transcript.json", "transcription.mid"}
+    if artifact_name not in artifact_filenames:
+        raise TranscriptionApiError("JOB_NOT_FOUND")
+    job = load_job(job_id)
+    result = job.get("result") if job.get("state") == "succeeded" else None
+    if not isinstance(result, dict):
+        raise TranscriptionApiError("JOB_NOT_FOUND")
+
+    artifact_dir = job_artifacts_dir(job_id)
+    path = ensure_child_path(artifact_dir, artifact_dir / artifact_name)
+    if not path.exists():
+        raise TranscriptionApiError("JOB_NOT_FOUND")
+
+    expected_url = artifact_download_url(job_id, artifact_name)
+    if artifact_name == "transcript.json" and result.get("transcriptUrl") != expected_url:
+        raise TranscriptionApiError("JOB_NOT_FOUND")
+    if artifact_name == "transcription.mid" and (result.get("exports") or {}).get("midi") != expected_url:
+        raise TranscriptionApiError("JOB_NOT_FOUND")
+    return path
+
+
+def normalize_midi_note(note: dict[str, Any]) -> dict[str, int]:
+    pitch = note.get("pitch")
+    start = note.get("startTime")
+    end = note.get("endTime")
+    velocity = note.get("velocity", 64)
+    if isinstance(pitch, bool) or not isinstance(pitch, int) or not 0 <= pitch <= 127:
+        raise TranscriptionAdapterInferenceError("adapter transcript note pitch is invalid")
+    if isinstance(velocity, bool) or not isinstance(velocity, int) or not 0 <= velocity <= 127:
+        raise TranscriptionAdapterInferenceError("adapter transcript note velocity is invalid")
+    if (
+        isinstance(start, bool)
+        or isinstance(end, bool)
+        or not isinstance(start, (int, float))
+        or not isinstance(end, (int, float))
+        or not math.isfinite(start)
+        or not math.isfinite(end)
+        or start < 0
+        or end <= start
+    ):
+        raise TranscriptionAdapterInferenceError("adapter transcript note times are invalid")
+    return {
+        "pitch": pitch,
+        "startTick": seconds_to_midi_ticks(float(start)),
+        "endTick": seconds_to_midi_ticks(float(end)),
+        "velocity": velocity,
+    }
+
+
+def seconds_to_midi_ticks(seconds: float) -> int:
+    ticks_per_second = 480
+    return max(0, int(round(seconds * ticks_per_second)))
+
+
+def encode_variable_length_quantity(value: int) -> bytes:
+    if value < 0:
+        raise ValueError("MIDI delta time cannot be negative")
+    buffer = value & 0x7F
+    value >>= 7
+    while value:
+        buffer <<= 8
+        buffer |= (value & 0x7F) | 0x80
+        value >>= 7
+
+    output = bytearray()
+    while True:
+        output.append(buffer & 0xFF)
+        if buffer & 0x80:
+            buffer >>= 8
+        else:
+            break
+    return bytes(output)
+
+
+def build_midi_file(notes: list[dict[str, Any]]) -> bytes:
+    events: list[tuple[int, int, bytes]] = []
+    for note in notes:
+        midi_note = normalize_midi_note(note)
+        pitch = midi_note["pitch"]
+        velocity = midi_note["velocity"]
+        events.append((midi_note["startTick"], 0, bytes((0x90, pitch, velocity))))
+        events.append((midi_note["endTick"], 1, bytes((0x80, pitch, 0))))
+
+    track = bytearray()
+    track.extend(b"\x00\xff\x51\x03\x07\xa1\x20")
+    previous_tick = 0
+    for tick, _order, event in sorted(events, key=lambda item: (item[0], item[1])):
+        track.extend(encode_variable_length_quantity(tick - previous_tick))
+        track.extend(event)
+        previous_tick = tick
+    track.extend(b"\x00\xff\x2f\x00")
+
+    header = b"MThd" + (6).to_bytes(4, "big") + (0).to_bytes(2, "big") + (1).to_bytes(2, "big") + (480).to_bytes(2, "big")
+    return header + b"MTrk" + len(track).to_bytes(4, "big") + bytes(track)
 
 
 def cancel_if_requested(job_id: str) -> dict[str, Any] | None:
@@ -638,7 +820,7 @@ def run_transcription_job(job_id: str, adapter: TranscriptionAdapter | None = No
             return cancelled
 
         try:
-            result = validate_adapter_result(result)
+            result = validate_adapter_result(result, job_id)
         except TranscriptionAdapterInferenceError:
             return fail_transcription_job(job_id, "MODEL_INFERENCE_FAILED", details={"engine": job["engine"]})
 

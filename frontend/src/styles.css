@@ -31,8 +31,15 @@ button,
   padding: 0.6rem 0.8rem;
 }
 
+button,
+.upload-button,
+.artifact-links a {
+  min-height: 40px;
+}
+
 button:hover,
-.upload-button:hover {
+.upload-button:hover,
+.artifact-links a:hover {
   background: #202832;
 }
 
@@ -239,6 +246,23 @@ audio {
 
 .job-panel button {
   margin-top: 14px;
+}
+
+.artifact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.artifact-links a {
+  align-items: center;
+  border: 1px solid #37414a;
+  border-radius: 6px;
+  color: #e8edf2;
+  display: inline-flex;
+  padding: 0.55rem 0.8rem;
+  text-decoration: none;
 }
 
 .meta-strip {

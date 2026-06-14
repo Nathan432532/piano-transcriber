@@ -1,6 +1,7 @@
 import {
   createTranscriptionApiClient,
   createWithNetworkRetries,
+  transcriptionArtifactLinks,
   TranscriptionApiError,
   userMessageForErrorCode,
   type TranscriptionJob,
@@ -77,6 +78,24 @@ await test('error code copy follows the transcription contract', async () => {
   assertEqual(userMessageForErrorCode('MODEL_LOAD_FAILED'), 'The transcription engine could not be started.');
   assertEqual(userMessageForErrorCode('JOB_EXPIRED'), 'This transcription job has expired. Upload the audio again.');
   assertEqual(userMessageForErrorCode('UNKNOWN_CODE'), 'Something went wrong during transcription.');
+});
+
+await test('artifact link visibility only includes present JSON and MIDI downloads', async () => {
+  assertDeepEqual(transcriptionArtifactLinks(null), []);
+  assertDeepEqual(
+    transcriptionArtifactLinks({
+      transcriptUrl: '/api/transcriptions/job-1/artifacts/transcript.json',
+      exports: {},
+    }),
+    [{ key: 'json', label: 'Transcript JSON', href: '/api/transcriptions/job-1/artifacts/transcript.json' }],
+  );
+  assertDeepEqual(
+    transcriptionArtifactLinks({
+      transcriptUrl: null,
+      exports: { midi: '/api/transcriptions/job-1/artifacts/transcription.mid', ignored: '/other' },
+    }),
+    [{ key: 'midi', label: 'MIDI', href: '/api/transcriptions/job-1/artifacts/transcription.mid' }],
+  );
 });
 
 function makeJob(jobId: string, state: TranscriptionJob['state'], percent: number): TranscriptionJob {

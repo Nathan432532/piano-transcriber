@@ -7,6 +7,7 @@ import {
   isTerminalState,
   makeIdempotencyKey,
   TRANSCRIPTION_JOB_STORAGE_KEY,
+  transcriptionArtifactLinks,
   TranscriptionApiError,
   userMessageForErrorCode,
   type TranscriptionJob,
@@ -83,7 +84,7 @@ function jobResultHasArtifacts(job: TranscriptionJob | null): boolean {
   if (!job?.result) {
     return false;
   }
-  return Boolean(job.result.transcriptUrl || Object.keys(job.result.exports).length > 0);
+  return transcriptionArtifactLinks(job.result).length > 0;
 }
 
 function drawPianoRoll(
@@ -550,6 +551,15 @@ function App() {
             <p className="job-note">
               Prototype job completed. No real model transcript or export artifact was produced yet.
             </p>
+          )}
+          {job.state === 'succeeded' && transcriptionArtifactLinks(job.result).length > 0 && (
+            <div className="artifact-links" aria-label="Download transcription artifacts">
+              {transcriptionArtifactLinks(job.result).map((link) => (
+                <a key={link.key} href={apiUrl(link.href)} download>
+                  {link.label}
+                </a>
+              ))}
+            </div>
           )}
           {!isTerminalState(job.state) && (
             <button type="button" onClick={cancelJob}>

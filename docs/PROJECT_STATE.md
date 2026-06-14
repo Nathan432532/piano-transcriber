@@ -16,6 +16,7 @@ Belangrijke checkpoints:
 * `b01110f` — async transcription job UI integration
 * `ec81dca` — transcription job concurrency hardening
 * `fe45026` — Basic Pitch runtime dependency
+* `1476c4f` — persistent transcript JSON and MIDI artifacts
 
 Controleer het actuele `HEAD` alleen wanneer dit voor de taak nodig is.
 
@@ -28,6 +29,7 @@ Controleer het actuele `HEAD` alleen wanneer dit voor de taak nodig is.
 * Frontendpolling met backoff, foutafhandeling, cancellation en herstel na refresh.
 * Demo-runner en `BasicPitchTranscriptionAdapter`.
 * `basic-pitch==0.4.0`, TensorFlow 2.15 en het package-eigen SavedModel zijn aanwezig.
+* Geslaagde transcriptiejobs publiceren persistente transcript JSON- en MIDI-artifacts via veilige downloadroutes.
 * Adapter- en backendtests waren groen bij de laatste relevante checkpoints.
 * OpenClaw hostcontrol ondersteunt inspect, exec, logs, update, restart en rollback.
 
@@ -52,6 +54,13 @@ De dependencycontext vereist nog steeds dat `backend/.deps` via `site.addsitedir
 
 Echte Basic Pitch-inferentie is live geactiveerd en gevalideerd in de bestaande Piano Transcriber-container.
 
+Persistent artifact export is lokaal geïmplementeerd en gereviewd:
+
+* geslaagde jobs schrijven `transcript.json` en `transcription.mid`;
+* `result.exports` bevat alleen servergegenereerde links voor bestaande artifacts;
+* downloadroutes beperken bestandsnamen, blokkeren path traversal en geven `404` bij ontbrekende artifacts;
+* frontend toont JSON- en MIDI-links alleen wanneer aanwezig.
+
 Actieve live configuratie:
 
 * `SETUPTOOLS_USE_DISTUTILS=local`
@@ -62,7 +71,7 @@ Actieve live configuratie:
 
 ## Eerstvolgende taak
 
-Kies de volgende Fase-2-slice na live Basic Pitch-validatie. Logische kandidaten staan onder open vervolgwerk.
+Voer een live smoke uit voor artifactdownloads tegen de bestaande container wanneer een service-update/deployment expliciet is toegestaan. Zonder deployment is de feature lokaal getest maar nog niet live actief.
 
 ## Belangrijke beperkingen
 
@@ -83,7 +92,6 @@ Kies de volgende Fase-2-slice na live Basic Pitch-validatie. Logische kandidaten
 
 Na bewezen live Basic Pitch-inferentie:
 
-* transcript- en MIDI-exportartifacts;
 * benchmark uitvoeren met MIDI-ground-truth;
 * exacte licenties en hashes van package, model en weights vastleggen;
 * queue-timeout, heartbeat en stale-worker-detectie;

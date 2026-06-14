@@ -17,6 +17,7 @@ from .transcription_jobs import (
     create_transcription_job,
     creation_response,
     ensure_job_dirs,
+    get_transcription_artifact_path,
     load_job,
     public_job,
     run_transcription_job,
@@ -126,6 +127,13 @@ def create_transcription(
 @app.get("/api/transcriptions/{job_id}")
 def get_transcription(job_id: str) -> dict[str, Any]:
     return public_job(load_job(job_id))
+
+
+@app.get("/api/transcriptions/{job_id}/artifacts/{artifact_name:path}")
+def download_transcription_artifact(job_id: str, artifact_name: str) -> FileResponse:
+    path = get_transcription_artifact_path(job_id, artifact_name)
+    media_type = "application/json" if path.suffix == ".json" else "audio/midi"
+    return FileResponse(path, media_type=media_type, filename=path.name)
 
 
 @app.delete("/api/transcriptions/{job_id}")

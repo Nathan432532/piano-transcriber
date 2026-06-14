@@ -62,6 +62,12 @@ export type TranscriptionJob = {
   links?: { self?: string };
 };
 
+export type TranscriptionArtifactLink = {
+  key: 'json' | 'midi';
+  label: string;
+  href: string;
+};
+
 export type TranscriptionApiDetail = {
   detail?: Partial<TranscriptionErrorPayload> | string;
 };
@@ -127,6 +133,21 @@ export function userMessageForErrorCode(code: string | null | undefined): string
 
 export function retryableForErrorCode(code: string | null | undefined): boolean {
   return Boolean(code && RETRYABLE_CODES.has(code as TranscriptionErrorCode));
+}
+
+export function transcriptionArtifactLinks(result: TranscriptionResult | null | undefined): TranscriptionArtifactLink[] {
+  if (!result) {
+    return [];
+  }
+
+  const links: TranscriptionArtifactLink[] = [];
+  if (result.transcriptUrl) {
+    links.push({ key: 'json', label: 'Transcript JSON', href: result.transcriptUrl });
+  }
+  if (result.exports.midi) {
+    links.push({ key: 'midi', label: 'MIDI', href: result.exports.midi });
+  }
+  return links;
 }
 
 export function makeIdempotencyKey(): string {

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+import json
 import math
 import sys
 from types import ModuleType
@@ -20,6 +21,7 @@ from app.transcription_jobs import (
     TranscriptionAdapterLoadError,
     cancel_transcription_job,
     create_transcription_adapter,
+    job_artifacts_dir,
     load_job,
     run_transcription_job,
     update_running_progress,
@@ -427,12 +429,20 @@ def test_basic_pitch_success_returns_public_result_only_and_uses_binding_duratio
 
     assert result["state"] == "succeeded"
     assert result["result"] == {
-        "transcriptUrl": None,
-        "exports": {},
+        "transcriptUrl": f"/api/transcriptions/{created['jobId']}/artifacts/transcript.json",
+        "exports": {"midi": f"/api/transcriptions/{created['jobId']}/artifacts/transcription.mid"},
         "noteCount": 2,
         "durationSeconds": 3.5,
     }
     assert "notes" not in result["result"]
+    artifact_dir = job_artifacts_dir(created["jobId"])
+    transcript = json.loads((artifact_dir / "transcript.json").read_text())
+    midi = (artifact_dir / "transcription.mid").read_bytes()
+    assert transcript["source"]["kind"] == "uploaded"
+    assert transcript["source"]["duration"] == 3.5
+    assert [note["pitch"] for note in transcript["notes"]] == [60, 64]
+    assert midi.startswith(b"MThd")
+    assert b"MTrk" in midi
 
 
 def test_basic_pitch_uses_audio_duration_when_binding_duration_is_absent(tmp_path: Path) -> None:
@@ -591,8 +601,8 @@ def test_cancellation_before_succeeded_publication_wins(
     created = create_job(upload_id, key="cancel-before-success-key")
     original_validate = transcription_jobs.validate_adapter_result
 
-    def cancelling_validate(result: Any) -> dict[str, Any]:
-        validated = original_validate(result)
+    def cancelling_validate(result: Any, job_id: str | None = None) -> dict[str, Any]:
+        validated = original_validate(result, job_id)
         cancel_transcription_job(created["jobId"])
         return validated
 
