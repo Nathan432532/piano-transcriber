@@ -43,6 +43,9 @@ ERROR_CONTRACT: dict[str, tuple[int | None, bool, str]] = {
     "JOB_NOT_FOUND": (404, False, "This transcription job no longer exists."),
     "JOB_EXPIRED": (410, False, "This transcription job has expired. Upload the audio again."),
     "JOB_TERMINAL": (409, False, "This job has already finished."),
+    "JOB_NOT_SUCCEEDED": (409, False, "Corrections can only be saved for completed transcription jobs."),
+    "CORRECTION_REVISION_CONFLICT": (409, False, "This correction is based on an older revision."),
+    "INVALID_CORRECTION": (422, False, "The corrected transcript notes are invalid."),
     "IDEMPOTENCY_CONFLICT": (
         409,
         False,
@@ -659,8 +662,42 @@ def write_transcription_artifacts(job_id: str, transcript: dict[str, Any]) -> No
     atomic_write_bytes(midi_path, build_midi_file(transcript["notes"]))
 
 
+def write_corrected_transcription_artifacts(job_id: str, transcript: dict[str, Any]) -> None:
+    artifact_dir = job_artifacts_dir(job_id)
+    transcript_path = ensure_child_path(artifact_dir, artifact_dir / "corrected-transcript.json")
+    midi_path = ensure_child_path(artifact_dir, artifact_dir / "corrected-transcription.mid")
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    transcript_temp_path = ensure_child_path(artifact_dir, artifact_dir / f"corrected-transcript.{uuid.uuid4().hex}.tmp")
+    midi_temp_path = ensure_child_path(artifact_dir, artifact_dir / f"corrected-transcription.{uuid.uuid4().hex}.tmp")
+    previous_transcript = transcript_path.read_bytes() if transcript_path.exists() else None
+    previous_midi = midi_path.read_bytes() if midi_path.exists() else None
+    try:
+        transcript_temp_path.write_text(json.dumps(transcript, indent=2, sort_keys=True) + "\n")
+        midi_temp_path.write_bytes(build_midi_file(transcript["notes"]))
+        transcript_temp_path.replace(transcript_path)
+        midi_temp_path.replace(midi_path)
+    except Exception:
+        if previous_transcript is None:
+            transcript_path.unlink(missing_ok=True)
+        else:
+            transcript_path.write_bytes(previous_transcript)
+        if previous_midi is None:
+            midi_path.unlink(missing_ok=True)
+        else:
+            midi_path.write_bytes(previous_midi)
+        raise
+    finally:
+        transcript_temp_path.unlink(missing_ok=True)
+        midi_temp_path.unlink(missing_ok=True)
+
+
 def get_transcription_artifact_path(job_id: str, artifact_name: str) -> Path:
-    artifact_filenames = {"transcript.json", "transcription.mid"}
+    artifact_filenames = {
+        "transcript.json",
+        "transcription.mid",
+        "corrected-transcript.json",
+        "corrected-transcription.mid",
+    }
     if artifact_name not in artifact_filenames:
         raise TranscriptionApiError("JOB_NOT_FOUND")
     job = load_job(job_id)
@@ -678,7 +715,150 @@ def get_transcription_artifact_path(job_id: str, artifact_name: str) -> Path:
         raise TranscriptionApiError("JOB_NOT_FOUND")
     if artifact_name == "transcription.mid" and (result.get("exports") or {}).get("midi") != expected_url:
         raise TranscriptionApiError("JOB_NOT_FOUND")
+    correction = result.get("correction") if isinstance(result.get("correction"), dict) else {}
+    correction_exports = correction.get("exports") if isinstance(correction.get("exports"), dict) else {}
+    if artifact_name == "corrected-transcript.json" and correction_exports.get("transcript") != expected_url:
+        raise TranscriptionApiError("JOB_NOT_FOUND")
+    if artifact_name == "corrected-transcription.mid" and correction_exports.get("midi") != expected_url:
+        raise TranscriptionApiError("JOB_NOT_FOUND")
     return path
+
+
+NOTE_NAMES = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
+
+
+def note_name_for_pitch(pitch: int) -> str:
+    return f"{NOTE_NAMES[pitch % 12]}{pitch // 12 - 1}"
+
+
+def current_correction_revision(job: dict[str, Any]) -> int:
+    result = job.get("result")
+    if not isinstance(result, dict):
+        return 0
+    correction = result.get("correction")
+    if not isinstance(correction, dict):
+        return 0
+    revision = correction.get("revision", 0)
+    return revision if isinstance(revision, int) and not isinstance(revision, bool) and revision >= 0 else 0
+
+
+def validate_corrected_notes(value: Any, duration_seconds: float | None) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        raise TranscriptionApiError("INVALID_CORRECTION", details={"field": "notes"})
+
+    normalized_notes: list[dict[str, Any]] = []
+    for index, note in enumerate(value):
+        if not isinstance(note, dict):
+            raise TranscriptionApiError("INVALID_CORRECTION", details={"field": f"notes[{index}]"})
+
+        pitch = note.get("pitch")
+        velocity = note.get("velocity")
+        confidence = note.get("confidence")
+        start = note.get("startTime")
+        end = note.get("endTime")
+        hand = note.get("hand")
+
+        if isinstance(pitch, bool) or not isinstance(pitch, int) or not 21 <= pitch <= 108:
+            raise TranscriptionApiError("INVALID_CORRECTION", details={"field": f"notes[{index}].pitch"})
+        if isinstance(velocity, bool) or not isinstance(velocity, int) or not 1 <= velocity <= 127:
+            raise TranscriptionApiError("INVALID_CORRECTION", details={"field": f"notes[{index}].velocity"})
+        if (
+            isinstance(confidence, bool)
+            or not isinstance(confidence, (int, float))
+            or not math.isfinite(confidence)
+            or not 0 <= float(confidence) <= 1
+        ):
+            raise TranscriptionApiError("INVALID_CORRECTION", details={"field": f"notes[{index}].confidence"})
+        if (
+            isinstance(start, bool)
+            or isinstance(end, bool)
+            or not isinstance(start, (int, float))
+            or not isinstance(end, (int, float))
+            or not math.isfinite(start)
+            or not math.isfinite(end)
+            or start < 0
+            or end <= start
+        ):
+            raise TranscriptionApiError("INVALID_CORRECTION", details={"field": f"notes[{index}].time"})
+        if duration_seconds is not None and (float(start) > duration_seconds or float(end) > duration_seconds):
+            raise TranscriptionApiError("INVALID_CORRECTION", details={"field": f"notes[{index}].time"})
+        if hand != "unknown":
+            raise TranscriptionApiError("INVALID_CORRECTION", details={"field": f"notes[{index}].hand"})
+
+        expected_note_name = note_name_for_pitch(pitch)
+        note_name = note.get("noteName")
+        if note_name is not None and note_name != expected_note_name:
+            raise TranscriptionApiError("INVALID_CORRECTION", details={"field": f"notes[{index}].noteName"})
+
+        normalized_notes.append(
+            {
+                "pitch": pitch,
+                "noteName": expected_note_name,
+                "startTime": float(start),
+                "endTime": float(end),
+                "velocity": velocity,
+                "confidence": float(confidence),
+                "hand": hand,
+            }
+        )
+
+    return normalized_notes
+
+
+def save_transcription_corrections(job_id: str, body: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(body, dict):
+        raise TranscriptionApiError("INVALID_CORRECTION", details={"field": "body"})
+    base_revision = body.get("baseRevision")
+    if isinstance(base_revision, bool) or not isinstance(base_revision, int) or base_revision < 0:
+        raise TranscriptionApiError("INVALID_CORRECTION", details={"field": "baseRevision"})
+
+    with mutation_lock_for_job(job_id):
+        job = load_job(job_id)
+        if job["state"] != "succeeded":
+            raise TranscriptionApiError("JOB_NOT_SUCCEEDED", details={"state": job["state"]})
+        result = job.get("result")
+        if not isinstance(result, dict):
+            raise TranscriptionApiError("JOB_NOT_SUCCEEDED")
+
+        revision = current_correction_revision(job)
+        if base_revision != revision:
+            raise TranscriptionApiError(
+                "CORRECTION_REVISION_CONFLICT",
+                details={"currentRevision": revision},
+            )
+
+        duration = result.get("durationSeconds")
+        duration_seconds = float(duration) if isinstance(duration, (int, float)) and not isinstance(duration, bool) else None
+        if duration_seconds is not None and not math.isfinite(duration_seconds):
+            duration_seconds = None
+        notes = validate_corrected_notes(body.get("notes"), duration_seconds)
+
+        next_revision = revision + 1
+        transcript = {
+            "version": "1.0",
+            "source": {
+                "kind": "uploaded",
+                "filename": f"{job['jobId']}-correction",
+                "duration": duration_seconds if duration_seconds is not None else 0,
+            },
+            "notes": notes,
+        }
+        write_corrected_transcription_artifacts(job["jobId"], transcript)
+
+        next_result = deepcopy(result)
+        next_result["correction"] = {
+            "revision": next_revision,
+            "exports": {
+                "transcript": artifact_download_url(job["jobId"], "corrected-transcript.json"),
+                "midi": artifact_download_url(job["jobId"], "corrected-transcription.mid"),
+            },
+        }
+        job["result"] = next_result
+        save_job(job)
+        return {
+            "revision": next_revision,
+            "exports": dict(next_result["correction"]["exports"]),
+        }
 
 
 def normalize_midi_note(note: dict[str, Any]) -> dict[str, int]:

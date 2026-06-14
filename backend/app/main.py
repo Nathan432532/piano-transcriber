@@ -4,7 +4,7 @@ from pathlib import Path
 
 from typing import Any
 
-from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, UploadFile
+from fastapi import BackgroundTasks, Body, FastAPI, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
@@ -21,6 +21,7 @@ from .transcription_jobs import (
     load_job,
     public_job,
     run_transcription_job,
+    save_transcription_corrections,
 )
 from .transcript import DEMO_TRANSCRIPT
 
@@ -31,7 +32,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
     allow_credentials=False,
-    allow_methods=["GET", "POST", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
 
@@ -134,6 +135,11 @@ def download_transcription_artifact(job_id: str, artifact_name: str) -> FileResp
     path = get_transcription_artifact_path(job_id, artifact_name)
     media_type = "application/json" if path.suffix == ".json" else "audio/midi"
     return FileResponse(path, media_type=media_type, filename=path.name)
+
+
+@app.put("/api/transcriptions/{job_id}/corrections")
+def update_transcription_corrections(job_id: str, payload: dict[str, Any] = Body(...)) -> dict[str, Any]:
+    return save_transcription_corrections(job_id, payload)
 
 
 @app.delete("/api/transcriptions/{job_id}")
