@@ -30,6 +30,7 @@ export type TranscriptionErrorCode =
   | 'JOB_NOT_FOUND'
   | 'JOB_EXPIRED'
   | 'JOB_TERMINAL'
+  | 'JOB_NOT_SUCCEEDED'
   | 'IDEMPOTENCY_CONFLICT'
   | 'UNKNOWN_ERROR';
 
@@ -45,6 +46,13 @@ export type TranscriptionResult = {
   exports: Record<string, string>;
   noteCount?: number;
   durationSeconds?: number;
+  correction?: {
+    revision: number;
+    artifactUrls: {
+      json: string;
+      midi: string;
+    };
+  };
 };
 
 export type TranscriptionJob = {
@@ -62,11 +70,40 @@ export type TranscriptionJob = {
   links?: { self?: string };
 };
 
+export type CorrectionRequest = {
+  notes: Array<{
+    pitch: number;
+    onset: number;
+    offset: number;
+    confidence?: number;
+  }>;
+  metadata?: {
+    noteCount: number;
+    durationSeconds: number;
+  };
+};
+
+export type CorrectionResponse = {
+  jobId: string;
+  revision: number;
+  artifactUrls: {
+    json: string;
+    midi: string;
+  };
+};
+
+export type CorrectionArtifactLink = {
+  key: 'corrected-json' | 'corrected-midi';
+  label: string;
+  href: string;
+  revision: number;
+};
+
 export type TranscriptionArtifactLink = {
   key: 'json' | 'midi';
   label: string;
   href: string;
-};
+} | CorrectionArtifactLink;
 
 export type TranscriptionApiDetail = {
   detail?: Partial<TranscriptionErrorPayload> | string;
@@ -105,6 +142,7 @@ const ERROR_MESSAGES: Record<TranscriptionErrorCode, string> = {
   JOB_NOT_FOUND: 'This transcription job no longer exists.',
   JOB_EXPIRED: 'This transcription job has expired. Upload the audio again.',
   JOB_TERMINAL: 'This job has already finished.',
+  JOB_NOT_SUCCEEDED: 'This job has not succeeded yet. Wait for completion or retry.',
   IDEMPOTENCY_CONFLICT: 'This retry does not match the original request. Start a new transcription.',
   UNKNOWN_ERROR: 'Something went wrong during transcription.',
 };
@@ -119,6 +157,12 @@ const RETRYABLE_CODES = new Set<TranscriptionErrorCode>([
 ]);
 
 const KNOWN_ERROR_CODES = new Set(Object.keys(ERROR_MESSAGES));
+
+const STATUS_CODE_TO_ERROR_CODE: Record<number, TranscriptionErrorCode> = {
+  404: 'JOB_NOT_FOUND',
+  409: 'JOB_NOT_SUCCEEDED',
+  422: 'INVALID_OPTIONS',
+};
 
 export function isTerminalState(state: TranscriptionState): boolean {
   return state === 'succeeded' || state === 'failed' || state === 'cancelled';
@@ -147,6 +191,28 @@ export function transcriptionArtifactLinks(result: TranscriptionResult | null | 
   if (result.exports.midi) {
     links.push({ key: 'midi', label: 'MIDI', href: result.exports.midi });
   }
+
+  // Add corrected artifact links if present
+  if (result.correction) {
+    const { revision, artifactUrls } = result.correction;
+    if (artifactUrls?.json) {
+      links.push({
+        key: 'corrected-json',
+        label: `Corrected JSON (r${revision})`,
+        href: artifactUrls.json,
+        revision,
+      });
+    }
+    if (artifactUrls?.midi) {
+      links.push({
+        key: 'corrected-midi',
+        label: `Corrected MIDI (r${revision})`,
+        href: artifactUrls.midi,
+        revision,
+      });
+    }
+  }
+
   return links;
 }
 
@@ -161,17 +227,17 @@ export function makeIdempotencyKey(): string {
 export function createTranscriptionApiClient(fetchImpl: FetchLike, apiBase: string) {
   const apiUrl = (path: string) => (path.startsWith('http') ? path : `${apiBase}${path}`);
 
-  const requestJson = async (path: string, init?: RequestInit): Promise<TranscriptionJob> => {
+  const requestJson = async <T>(path: string, init?: RequestInit): Promise<T> => {
     const response = await fetchImpl(apiUrl(path), init);
     if (!response.ok) {
       throw await errorFromResponse(response);
     }
-    return (await response.json()) as TranscriptionJob;
+    return (await response.json()) as T;
   };
 
   return {
     create(uploadId: string, idempotencyKey: string, signal?: AbortSignal) {
-      return requestJson('/api/transcriptions', {
+      return requestJson<TranscriptionJob>('/api/transcriptions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -186,11 +252,21 @@ export function createTranscriptionApiClient(fetchImpl: FetchLike, apiBase: stri
       });
     },
     get(jobId: string, signal?: AbortSignal) {
-      return requestJson(`/api/transcriptions/${jobId}`, { signal });
+      return requestJson<TranscriptionJob>(`/api/transcriptions/${jobId}`, { signal });
     },
     cancel(jobId: string, signal?: AbortSignal) {
-      return requestJson(`/api/transcriptions/${jobId}`, {
+      return requestJson<TranscriptionJob>(`/api/transcriptions/${jobId}`, {
         method: 'DELETE',
+        signal,
+      });
+    },
+    putCorrection(jobId: string, body: CorrectionRequest, signal?: AbortSignal): Promise<CorrectionResponse> {
+      return requestJson<CorrectionResponse>(`/api/transcriptions/${jobId}/correction`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
         signal,
       });
     },
@@ -225,11 +301,18 @@ export async function createWithNetworkRetries(
 async function errorFromResponse(response: Response): Promise<TranscriptionApiError> {
   const payload = (await response.json().catch(() => null)) as TranscriptionApiDetail | null;
   const detail = payload?.detail;
-  if (typeof detail === 'object' && detail !== null) {
-    const code = KNOWN_ERROR_CODES.has(String(detail.code)) ? (detail.code as TranscriptionErrorCode) : 'UNKNOWN_ERROR';
-    const error = new TranscriptionApiError(code, response.status, detail.details);
-    error.retryable = Boolean(detail.retryable);
-    return error;
+  
+  let code: TranscriptionErrorCode = 'UNKNOWN_ERROR';
+  if (typeof detail === 'object' && detail !== null && 'code' in detail) {
+    code = KNOWN_ERROR_CODES.has(String(detail.code)) ? (detail.code as TranscriptionErrorCode) : 'UNKNOWN_ERROR';
+  } else if (STATUS_CODE_TO_ERROR_CODE[response.status]) {
+    code = STATUS_CODE_TO_ERROR_CODE[response.status];
   }
-  return new TranscriptionApiError('UNKNOWN_ERROR', response.status);
+  
+  const errorDetails = typeof detail === 'object' && detail !== null && 'details' in detail ? detail.details : undefined;
+  const errorRetryable = typeof detail === 'object' && detail !== null && 'retryable' in detail ? Boolean(detail.retryable) : false;
+  
+  const error = new TranscriptionApiError(code, response.status, errorDetails);
+  error.retryable = errorRetryable;
+  return error;
 }

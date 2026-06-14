@@ -91,6 +91,58 @@ Actieve live configuratie:
 * Multi-process en distributed-worker-garanties vallen nog buiten de huidige scope.
 * **Correction API**: alleen filesystem-backed storage getest; geen deployment- of service-runtimechecks.
 
+## Correction API — Geïmplementeerd (2026-06-14)
+
+### Backendcontract
+- **Requestvalidatie:**
+  - `noteName` is **verboden** (automatisch gegenereerd uit `pitch`).
+  - Onbekende velden in `notes` worden **geweigerd** (422 `INVALID_CORRECTION`).
+  - Verplichte velden: `pitch`, `startTime`, `endTime`, `velocity`, `confidence`.
+  - `hand` mag alleen `"unknown"` zijn.
+  - Lege `notes`-array is toegestaan.
+  - Tijdsgrenzen: `endTime > startTime` **en** `endTime <= durationSeconds`.
+
+- **Responses:**
+  - Succes (200):
+    ```json
+    {
+      "revision": 1,
+      "exports": {
+        "transcript": "/api/transcriptions/{jobId}/artifacts/corrected-r1.json",
+        "midi": "/api/transcriptions/{jobId}/artifacts/corrected-r1.mid"
+      }
+    }
+    ```
+  - Fouten: `CORRECTION_REVISION_CONFLICT` (409), `INVALID_CORRECTION` (422), `JOB_NOT_FOUND` (404), `JOB_NOT_SUCCEEDED` (409).
+
+- **Artifacts:** Immutable `corrected-r<N>.json`/`corrected-r<N>.mid` worden atomisch gepubliceerd.
+
+### Frontendimplementatie
+- **API-client:** `putCorrection(jobId: string, body: CorrectionRequest): Promise<CorrectionResponse>` toegevoegd.
+- **Artifactlinks:** `transcriptionArtifactLinks` uitgebreid met ondersteuning voor `corrected-r<N>.json`/`corrected-r<N>.mid` wanneer `result.correction` aanwezig is.
+- **Types:** `CorrectionRequest`, `CorrectionResponse`, `CorrectionArtifactLink` toegevoegd.
+- **Tests:**
+  - Succesvolle correctie (200, valide response).
+  - Alle vier backendfoutcodes (404, 409, 422, 409 voor JOB_NOT_SUCCEEDED).
+  - URL, PUT-methode, `Content-Type: application/json`.
+  - Artifactlinks alleen wanneer `correction` aanwezig is.
+
+### Reviewer-verdict
+- **Status:** `PASS`
+- **Bevindingen:**
+  - Implementatie sluit exact aan bij het backendcontract.
+  - Geen brekende wijzigingen in UI, editor, state, of backend.
+  - Geen kritieke issues gevonden.
+- **Risico’s:** Geen resterende risico’s geïdentificeerd.
+
+### Huidige Status
+- **Geen bewerkbare noteneditor:** Bevestigd (alleen backend API en artifactstorage).
+- **Corrected-transcript-reload:** Vereist na `PUT /corrections` (nieuwe `revision` in jobmetadata).
+- **Voorkeursbron:** Laad altijd de hoogste `revision` uit `job.result.correction`.
+- **Commit 1:** **VOLTOOID** — Frontend-API-uitbreiding en tests zijn geïmplementeerd en gevalideerd.
+- **Volgende stap:** Geen; alle taken zijn voltooid volgens het contract.
+- **Notitie:** Tijdens deze ronde zijn **geen** backendwijzigingen uitgevoerd; alleen frontend-API-uitbreiding en tests.
+
 ## Open vervolgwerk
 
 Na bewezen live Basic Pitch-inferentie:
