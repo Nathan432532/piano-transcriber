@@ -35,7 +35,7 @@ Controleer het actuele `HEAD` alleen wanneer dit voor de taak nodig is.
 
 ## Huidige live status
 
-De live API draait met echte Basic Pitch-inferentie.
+De live API draait met echte Basic Pitch-inferentie en persistente artifactdownloads.
 
 Bewezen op 2026-06-14:
 
@@ -44,17 +44,20 @@ Bewezen op 2026-06-14:
 * `distutils` laadt via `backend/.deps/setuptools/_distutils`.
 * `tensorflow==2.15.0` en `basic_pitch.inference` importeren in de live runtime.
 * `/api/health` geeft `200 OK`.
-* `backend/data/samples/demo.wav` job `a8484e55-f5d9-4c0e-8eb3-29c6a2ee26e4` eindigde als `succeeded`, `progress.percent=100`, `engine=basic-pitch`, `noteCount=8`.
-* tijdelijke 2s stilte-WAV job `06da1a49-d3a3-4638-bbd5-ea157f1016e2` eindigde als `succeeded`, `progress.percent=100`, `engine=basic-pitch`, `noteCount=0`.
+* `backend/data/samples/demo.wav` job `7b57bce8-c142-4e35-8644-96e69d67f00e` eindigde als `succeeded`, `engine=basic-pitch`, `noteCount=8`.
+* tijdelijke 2s stilte-WAV job `47e851b4-1873-4043-a2a0-8fd44ffccd25` eindigde als `succeeded`, `engine=basic-pitch`, `noteCount=0`.
+* Demo-artifacts: `transcript.json` gaf `200 application/json` en parsebare JSON, `transcription.mid` gaf `200 audio/midi` met MIDI-header `MThd`.
+* Stilte-artifacts: `transcript.json` gaf `200 application/json` en parsebare JSON, `transcription.mid` gaf `200 audio/midi` met MIDI-header `MThd`.
+* Ontbrekende artifacts en path traversal via de artifactdownloadroute geven `404`.
 * containerlogs tonen echte Basic Pitch-inferentie met `Predicting MIDI for ...wav...`.
 
 De dependencycontext vereist nog steeds dat `backend/.deps` via `site.addsitedir(...)` wordt geladen, zodat de setuptools `distutils`-shim actief wordt.
 
 ## Huidig doel
 
-Echte Basic Pitch-inferentie is live geactiveerd en gevalideerd in de bestaande Piano Transcriber-container.
+Echte Basic Pitch-inferentie en persistent artifact export zijn live geactiveerd en gevalideerd in de bestaande Piano Transcriber-container.
 
-Persistent artifact export is lokaal geïmplementeerd en gereviewd:
+Persistent artifact export is live bewezen:
 
 * geslaagde jobs schrijven `transcript.json` en `transcription.mid`;
 * `result.exports` bevat alleen servergegenereerde links voor bestaande artifacts;
@@ -68,10 +71,6 @@ Actieve live configuratie:
 * `PIANO_TRANSCRIBER_BASIC_PITCH_MODEL_PATH=/host/projects/piano-transcriber/backend/.deps/basic_pitch/saved_models/icassp_2022/nmp`
 * `PYTHONPATH=/host/projects/piano-transcriber/backend`
 * laad `/host/projects/piano-transcriber/backend/.deps` met `site.addsitedir(...)`
-
-## Eerstvolgende taak
-
-Voer een live smoke uit voor artifactdownloads tegen de bestaande container wanneer een service-update/deployment expliciet is toegestaan. Zonder deployment is de feature lokaal getest maar nog niet live actief.
 
 ## Belangrijke beperkingen
 
