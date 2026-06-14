@@ -13,6 +13,18 @@ import {
   type TranscriptionJob,
 } from './transcriptionApi';
 import { TranscriptionPoller, type PollerStatus } from './transcriptionPoller';
+import {
+  selectTranscriptUrl,
+  updateJobAfterSave,
+  getBaseRevision,
+  orchestrateRetryReload,
+  orchestrateSaveAndReload,
+  validateCorrectionNote,
+  PITCH_MIN,
+  PITCH_MAX,
+  VELOCITY_MIN,
+  VELOCITY_MAX,
+} from './correctionFlow';
 import './styles.css';
 
 type Hand = 'unknown';
@@ -48,10 +60,14 @@ type UploadResponse = {
 
 type AppState = 'empty' | 'loading' | 'ready' | 'error';
 
+type SaveStatus = 'idle' | 'saving' | 'success' | 'error';
+
+type ReloadStatus = 'idle' | 'reloading' | 'success' | 'error';
+
+type EditorMode = 'view' | 'edit';
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
 const SPEEDS = [0.5, 0.75, 1] as const;
-const PITCH_MIN = 48;
-const PITCH_MAX = 84;
 const transcriptionApi = createTranscriptionApiClient(fetch, API_BASE);
 
 function apiUrl(path: string): string {
@@ -281,6 +297,14 @@ function App() {
   const [state, setState] = useState<AppState>('empty');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<Transcript | null>(null);
+  const [canonicalTranscript, setCanonicalTranscript] = useState<Transcript | null>(null);
+  const [draftNotes, setDraftNotes] = useState<Note[] | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [reloadStatus, setReloadStatus] = useState<ReloadStatus>('idle');
+  const [pendingReloadUrl, setPendingReloadUrl] = useState<string | null>(null);
+  const [editorMode, setEditorMode] = useState<EditorMode>('view');
+  const [selectedNoteIndex, setSelectedNoteIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(1);
@@ -298,8 +322,18 @@ function App() {
   const frameRef = useRef<number | null>(null);
   const pollerRef = useRef<TranscriptionPoller | null>(null);
   const createAbortRef = useRef<AbortController | null>(null);
+  const sessionGenerationRef = useRef(0);
 
   const duration = useMemo(() => durationFromTranscript(transcript), [transcript]);
+
+  const effectiveTranscript = useMemo(() => {
+    if (draftNotes !== null && draftNotes.length > 0) {
+      return { ...(canonicalTranscript || transcript), notes: draftNotes } as Transcript;
+    }
+    return canonicalTranscript || transcript;
+  }, [draftNotes, canonicalTranscript, transcript]);
+
+  const effectiveNotes = useMemo(() => effectiveTranscript?.notes || [], [effectiveTranscript]);
 
   useEffect(() => {
     pollerRef.current = new TranscriptionPoller({
@@ -329,12 +363,113 @@ function App() {
     };
   }, []);
 
-  const startPollingJob = (nextJob: TranscriptionJob) => {
+  const isCurrentSessionGeneration = (sessionGeneration: number) =>
+    sessionGenerationRef.current === sessionGeneration;
+
+  const startPollingJob = (
+    nextJob: TranscriptionJob,
+    sessionGeneration = sessionGenerationRef.current,
+  ): boolean => {
+    if (!isCurrentSessionGeneration(sessionGeneration)) {
+      return false;
+    }
     setJob(nextJob);
     setJobError(nextJob.error ? userMessageForErrorCode(nextJob.error.code) : null);
     window.localStorage.setItem(TRANSCRIPTION_JOB_STORAGE_KEY, nextJob.jobId);
     pollerRef.current?.start(nextJob.jobId, nextJob);
+    // Load the canonical transcript when a job is started
+    const transcriptUrl = selectTranscriptUrl(nextJob);
+    if (transcriptUrl) {
+      void loadCanonicalTranscript(transcriptUrl, sessionGeneration).catch(() => undefined);
+    }
+    return true;
   };
+
+  const fetchCanonicalTranscript = async (transcriptUrl: string, sessionGeneration: number) => {
+    if (!transcriptUrl) {
+      return true;
+    }
+
+    try {
+      const response = await fetch(apiUrl(transcriptUrl));
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return false;
+      }
+      if (!response.ok) {
+        throw new Error('Failed to load transcript');
+      }
+      const loadedTranscript = await response.json();
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return false;
+      }
+      setCanonicalTranscript(loadedTranscript);
+      setDraftNotes(null);
+      setIsDirty(false);
+      return true;
+    } catch (err) {
+      console.error('Failed to load canonical transcript:', err);
+      throw err;
+    }
+  };
+
+  const loadCanonicalTranscript = async (transcriptUrl: string, sessionGeneration: number) => {
+    if (!isCurrentSessionGeneration(sessionGeneration)) {
+      return;
+    }
+    setReloadStatus('reloading');
+    try {
+      const didApply = await fetchCanonicalTranscript(transcriptUrl, sessionGeneration);
+      if (!didApply || !isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
+      setReloadStatus('success');
+    } catch (error) {
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
+      setReloadStatus('error');
+      throw error;
+    }
+  };
+
+  const retryCanonicalReload = async () => {
+    if (!pendingReloadUrl) {
+      return;
+    }
+    const sessionGeneration = sessionGenerationRef.current;
+    const retryUrl = pendingReloadUrl;
+    const setReloadStatusIfCurrent = (status: 'reloading' | 'success' | 'error') => {
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
+      setReloadStatus(status);
+    };
+    const setPendingReloadUrlIfCurrent = (url: string | null) => {
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
+      setPendingReloadUrl(url);
+    };
+
+    await orchestrateRetryReload(
+      retryUrl,
+      async (url) => {
+        const didApply = await fetchCanonicalTranscript(url, sessionGeneration);
+        if (!didApply || !isCurrentSessionGeneration(sessionGeneration)) {
+          return;
+        }
+      },
+      setReloadStatusIfCurrent,
+      setPendingReloadUrlIfCurrent,
+      (error) => {
+        if (!isCurrentSessionGeneration(sessionGeneration)) {
+          return;
+        }
+        console.error('Failed to reload canonical transcript:', error);
+      },
+    );
+  };
+
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -362,24 +497,41 @@ function App() {
   }, [isPlaying]);
 
   const loadDemo = async () => {
+    sessionGenerationRef.current += 1;
+    const sessionGeneration = sessionGenerationRef.current;
     setState('loading');
     setError(null);
     setJob(null);
     setJobError(null);
+    setSaveStatus('idle');
+    setReloadStatus('idle');
+    setPendingReloadUrl(null);
+    setCanonicalTranscript(null);
+    setDraftNotes(null);
+    setIsDirty(false);
     window.localStorage.removeItem(TRANSCRIPTION_JOB_STORAGE_KEY);
     pollerRef.current?.stop();
     setIsPlaying(false);
     try {
       const response = await fetch(apiUrl('/api/transcripts/demo'));
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
       if (!response.ok) {
         throw new Error('Could not load demo transcript');
       }
       const demoTranscript = (await response.json()) as Transcript;
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
       setTranscript(demoTranscript);
       setAudioUrl(apiUrl('/api/samples/demo'));
       setCurrentTime(0);
       setState('ready');
     } catch (err) {
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
       setError(err instanceof Error ? err.message : 'Demo loading failed');
       setState('error');
     }
@@ -390,41 +542,70 @@ function App() {
     if (!file) {
       return;
     }
+    sessionGenerationRef.current += 1;
+    const sessionGeneration = sessionGenerationRef.current;
     setState('loading');
     setError(null);
     setJob(null);
     setJobError(null);
     setIsPlaying(false);
+    setSaveStatus('idle');
+    setReloadStatus('idle');
+    setPendingReloadUrl(null);
+    setCanonicalTranscript(null);
+    setDraftNotes(null);
+    setIsDirty(false);
     pollerRef.current?.stop();
     createAbortRef.current?.abort();
-    createAbortRef.current = new AbortController();
+    const controller = new AbortController();
+    createAbortRef.current = controller;
     try {
       const data = new FormData();
       data.append('file', file);
       const response = await fetch(apiUrl('/api/uploads'), {
         method: 'POST',
         body: data,
+        signal: controller.signal,
       });
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as { detail?: string } | null;
+        if (!isCurrentSessionGeneration(sessionGeneration)) {
+          return;
+        }
         throw new Error(payload?.detail ?? 'Upload failed');
       }
       const payload = (await response.json()) as UploadResponse;
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
       setTranscript(payload.transcript);
       setAudioUrl(apiUrl(payload.audioUrl));
       setCurrentTime(0);
       const idempotencyKey = makeIdempotencyKey();
       const createdJob = await createWithNetworkRetries(
         (signal) => transcriptionApi.create(payload.uploadId, idempotencyKey, signal),
-        { signal: createAbortRef.current.signal },
+        { signal: controller.signal },
       );
-      startPollingJob(createdJob);
-      setState('ready');
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
+      const didInstallJob = startPollingJob(createdJob, sessionGeneration);
+      if (didInstallJob && isCurrentSessionGeneration(sessionGeneration)) {
+        setState('ready');
+      }
     } catch (err) {
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
       setError(err instanceof Error ? err.message : 'Upload failed');
       setState('error');
     } finally {
-      createAbortRef.current = null;
+      if (createAbortRef.current === controller) {
+        createAbortRef.current = null;
+      }
       event.target.value = '';
     }
   };
@@ -446,12 +627,145 @@ function App() {
     }
   };
 
+  const saveCorrections = async () => {
+    if (!job?.jobId || !draftNotes || !isDirty) {
+      return;
+    }
+
+    const sessionGeneration = sessionGenerationRef.current;
+    const originalJobId = job.jobId;
+    setSaveStatus('saving');
+    setReloadStatus('idle');
+    setPendingReloadUrl(null);
+    const baseRevision = getBaseRevision(job);
+    const durationSeconds = effectiveTranscript?.source.duration;
+
+    try {
+      const result = await orchestrateSaveAndReload(
+        (payload) => transcriptionApi.putCorrection(originalJobId, payload),
+        async (url) => {
+          const response = await fetch(apiUrl(url));
+          if (!isCurrentSessionGeneration(sessionGeneration)) {
+            return;
+          }
+          if (!response.ok) throw new Error('Reload failed');
+          const transcript = await response.json() as Transcript;
+          if (!isCurrentSessionGeneration(sessionGeneration)) {
+            return;
+          }
+          setCanonicalTranscript(transcript);
+        },
+        baseRevision,
+        draftNotes.map(note => (
+          {
+            pitch: note.pitch,
+            startTime: note.startTime,
+            endTime: note.endTime,
+            velocity: note.velocity,
+            confidence: note.confidence,
+            hand: "unknown",
+          }
+        )),
+        durationSeconds,
+      );
+
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
+
+      if (result.success) {
+        setSaveStatus('success');
+        setReloadStatus('success');
+        setJob((prevJob) => (
+          prevJob?.jobId === originalJobId ? updateJobAfterSave(prevJob, result.response) : prevJob
+        ));
+        setDraftNotes(null);
+        setIsDirty(false);
+        setPendingReloadUrl(null);
+      } else {
+        setSaveStatus('success');
+        setReloadStatus('error');
+        setJob((prevJob) => (
+          prevJob?.jobId === originalJobId ? updateJobAfterSave(prevJob, result.response) : prevJob
+        ));
+        setIsDirty(false);
+        setPendingReloadUrl(result.response.exports.transcript);
+        console.error('Reload failed after save:', result.reloadError);
+      }
+    } catch (err) {
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
+      setSaveStatus('error');
+      console.error('Save failed:', err);
+    }
+  };
+
   const play = async () => {
     if (!audioRef.current) {
       return;
     }
     audioRef.current.playbackRate = speed;
     await audioRef.current.play();
+  };
+
+  const handleNoteSelect = (index: number) => {
+    setSelectedNoteIndex(index);
+    setEditorMode('edit');
+  };
+
+  const handleNoteChange = (field: keyof Note, value: string | number) => {
+    if (selectedNoteIndex === null || !draftNotes) {
+      return;
+    }
+    const updatedNotes = [...draftNotes];
+    const currentNote = updatedNotes[selectedNoteIndex];
+    let nextNote: Note | null = null;
+    // Validate numeric inputs
+    if (field === 'pitch' || field === 'velocity') {
+      const numValue = Number(value);
+      if (!Number.isInteger(numValue)) return;
+      if (field === 'pitch' && (numValue < PITCH_MIN || numValue > PITCH_MAX)) return;
+      if (field === 'velocity' && (numValue < VELOCITY_MIN || numValue > VELOCITY_MAX)) return;
+      nextNote = { ...currentNote, [field]: numValue };
+    } else if (field === 'startTime' || field === 'endTime' || field === 'confidence') {
+      const numValue = Number(value);
+      if (!Number.isFinite(numValue)) return;
+      if (field === 'confidence' && (numValue < 0 || numValue > 1)) return;
+      nextNote = { ...currentNote, [field]: numValue };
+    } else {
+      nextNote = { ...currentNote, [field]: value };
+    }
+    if (nextNote[field] === currentNote[field]) {
+      return;
+    }
+    updatedNotes[selectedNoteIndex] = nextNote;
+    setSaveStatus('idle');
+    setReloadStatus('idle');
+    setPendingReloadUrl(null);
+    setDraftNotes(updatedNotes);
+    setIsDirty(true);
+  };
+
+  const handleSaveNote = () => {
+    if (selectedNoteIndex !== null && draftNotes) {
+      const noteToValidate = draftNotes[selectedNoteIndex];
+      try {
+        validateCorrectionNote(noteToValidate, effectiveTranscript?.source.duration);
+      } catch (e) {
+        alert(`Invalid note values: ${e instanceof Error ? e.message : 'Unknown error'}`);
+        return;
+      }
+    }
+    setEditorMode('view');
+    setSelectedNoteIndex(null);
+  };
+
+  const handleDiscardChanges = () => {
+    setDraftNotes(null);
+    setIsDirty(false);
+    setEditorMode('view');
+    setSelectedNoteIndex(null);
   };
 
   const pause = () => {
@@ -469,6 +783,60 @@ function App() {
 
   return (
     <main className="app-shell">
+      {editorMode === 'edit' && selectedNoteIndex !== null && draftNotes && (
+        <div className="note-editor-overlay">
+          <div className="note-editor">
+            <h3>Edit Note</h3>
+            <div className="editor-field">
+              <label>Pitch:</label>
+              <input
+                type="number"
+                value={draftNotes[selectedNoteIndex].pitch}
+                onChange={(e) => handleNoteChange('pitch', Number(e.target.value))}
+              />
+            </div>
+            <div className="editor-field">
+              <label>Start Time:</label>
+              <input
+                type="number"
+                step="0.01"
+                value={draftNotes[selectedNoteIndex].startTime}
+                onChange={(e) => handleNoteChange('startTime', Number(e.target.value))}
+              />
+            </div>
+            <div className="editor-field">
+              <label>End Time:</label>
+              <input
+                type="number"
+                step="0.01"
+                value={draftNotes[selectedNoteIndex].endTime}
+                onChange={(e) => handleNoteChange('endTime', Number(e.target.value))}
+              />
+            </div>
+            <div className="editor-field">
+              <label>Velocity:</label>
+              <input
+                type="number"
+                value={draftNotes[selectedNoteIndex].velocity}
+                onChange={(e) => handleNoteChange('velocity', Number(e.target.value))}
+              />
+            </div>
+            <div className="editor-field">
+              <label>Confidence:</label>
+              <input
+                type="number"
+                step="0.01"
+                value={draftNotes[selectedNoteIndex].confidence}
+                onChange={(e) => handleNoteChange('confidence', Number(e.target.value))}
+              />
+            </div>
+            <div className="editor-actions">
+              <button onClick={handleSaveNote}>Save</button>
+              <button onClick={handleDiscardChanges}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
       <section className="topbar">
         <div>
           <h1>Piano Audio Transcriber</h1>
@@ -593,24 +961,80 @@ function App() {
         </section>
       )}
 
-      {state === 'ready' && transcript && (
+      {state === 'ready' && effectiveTranscript && (
         <>
           <section className="meta-strip">
-            <span>{transcript.source.filename}</span>
-            <span>{transcript.notes.length} notes</span>
-            <span>{transcript.source.kind === 'uploaded' ? 'demo visualization for uploaded audio' : 'synthetic demo'}</span>
+            <span>{effectiveTranscript.source.filename}</span>
+            <span>{effectiveTranscript.notes.length} notes</span>
+            <span>{effectiveTranscript.source.kind === 'uploaded' ? 'demo visualization for uploaded audio' : 'synthetic demo'}</span>
+            {job?.result?.correction && (
+              <span>Revision: {job.result.correction.revision}</span>
+            )}
           </section>
 
           <section className="visual-grid">
             <div className="visual-block">
               <div className="visual-title">Piano roll</div>
-              <Visualization kind="roll" notes={transcript.notes} currentTime={currentTime} duration={duration} />
+              <Visualization kind="roll" notes={effectiveNotes} currentTime={currentTime} duration={duration} />
             </div>
             <div className="visual-block">
               <div className="visual-title">Falling keys</div>
-              <Visualization kind="falling" notes={transcript.notes} currentTime={currentTime} duration={duration} />
+              <Visualization kind="falling" notes={effectiveNotes} currentTime={currentTime} duration={duration} />
             </div>
           </section>
+          {effectiveTranscript && (
+            <section className="notes-table">
+              <h3>Notes</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pitch</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Velocity</th>
+                    <th>Confidence</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {effectiveNotes.map((note, index) => (
+                    <tr key={index}>
+                      <td>{note.pitch}</td>
+                      <td>{note.startTime.toFixed(2)}</td>
+                      <td>{note.endTime.toFixed(2)}</td>
+                      <td>{note.velocity}</td>
+                      <td>{note.confidence.toFixed(2)}</td>
+                      <td>
+                        <button onClick={() => {
+                          setDraftNotes(effectiveNotes);
+                          handleNoteSelect(index);
+                        }}>
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+                      {(isDirty || (saveStatus === 'success' && reloadStatus === 'error')) && (
+                <div className="save-actions">
+                  {isDirty && <button onClick={saveCorrections} disabled={saveStatus === 'saving'}>Save Corrections</button>}
+                  {isDirty && <button onClick={handleDiscardChanges}>Discard Changes</button>}
+                  {saveStatus === 'saving' && <span>Saving...</span>}
+                  {saveStatus === 'success' && (
+                    <>
+                      <span>Saved!</span>
+                      {reloadStatus === 'error' && (
+                        <button onClick={retryCanonicalReload}>Retry Reload</button>
+                      )}
+                    </>
+                  )}
+                  {saveStatus === 'error' && <span>Error saving</span>}
+                  {reloadStatus === 'error' && <span>Reload failed</span>}
+                </div>
+              )}
+            </section>
+          )}
         </>
       )}
     </main>

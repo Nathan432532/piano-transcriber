@@ -7,5 +7,5 @@
     "outDir": "./dist-tests",
     "rootDir": "."
   },
-  "include": ["src/keyboardGeometry.ts", "src/transcriptionApi.ts", "src/transcriptionPoller.ts", "tests/**/*.ts"]
+  "include": ["src/keyboardGeometry.ts", "src/transcriptionApi.ts", "src/transcriptionPoller.ts", "src/correctionFlow.ts", "tests/**/*.ts"]
 }

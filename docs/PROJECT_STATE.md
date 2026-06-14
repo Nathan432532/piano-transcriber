@@ -97,8 +97,12 @@ Actieve live configuratie:
 - **Requestvalidatie:**
   - `noteName` is **verboden** (automatisch gegenereerd uit `pitch`).
   - Onbekende velden in `notes` worden **geweigerd** (422 `INVALID_CORRECTION`).
-  - Verplichte velden: `pitch`, `startTime`, `endTime`, `velocity`, `confidence`.
-  - `hand` mag alleen `"unknown"` zijn.
+  - Verplichte velden: `baseRevision`, `pitch`, `startTime`, `endTime`, `velocity`, `confidence`, `hand`.
+  - `baseRevision` is verplicht, integer, en `>= 0`.
+  - `pitch` is integer `21..108`.
+  - `velocity` is integer `1..127`.
+  - `confidence` is eindig en `0..1`.
+  - `hand` is exact `"unknown"`.
   - Lege `notes`-array is toegestaan.
   - Tijdsgrenzen: `endTime > startTime` **en** `endTime <= durationSeconds`.
 
@@ -120,7 +124,7 @@ Actieve live configuratie:
 ### Frontendimplementatie
 - **API-client:** `putCorrection(jobId: string, body: CorrectionRequest): Promise<CorrectionResponse>` toegevoegd, nu met:
   - Route: `PUT /api/transcriptions/{jobId}/corrections` (meervoud).
-  - Request: `baseRevision` + `notes` met `startTime`, `endTime`, `velocity` (verplicht), `confidence`, `hand` (optioneel).
+  - Request: `baseRevision` + `notes` met `startTime`, `endTime`, `velocity`, `confidence`, `hand` (alles verplicht); `confidence` tussen `0` en `1`; `hand` exact `"unknown"`.
   - Response: `revision` + `exports.transcript`/`exports.midi`.
 - **Artifactlinks:** `transcriptionArtifactLinks` uitgebreid met ondersteuning voor `corrected-r<N>.json`/`corrected-r<N>.mid` wanneer `result.correction` aanwezig is.
 - **Types:** `CorrectionRequest`, `CorrectionResponse`, `CorrectionArtifactLink` gecorrigeerd naar het definitieve contract.
@@ -130,34 +134,56 @@ Actieve live configuratie:
   - URL, PUT-methode, `Content-Type: application/json`.
   - Artifactlinks alleen wanneer `correction` aanwezig is.
 
-### Reviewer-verdict
-- **Status:** `PASS`
-- **Bevindingen:**
-  - Implementatie sluit exact aan bij het backendcontract.
-  - Geen brekende wijzigingen in UI, editor, state, of backend.
-  - Geen kritieke issues gevonden.
-- **Risico’s:** Geen resterende risico’s geïdentificeerd.
+### Commit 2 — Revision-aware editor/draft/save-flow en canonical corrected-transcript reload
+
+#### Herstelronde (2026-06-14)
+- **Status:** HERZIEN NODIG
+- **Reviewer:** FAIL (4e2806c)
+- **Opmerkingen:**
+  - Validatie, orchestration-helper, en backendgrenzen zijn hersteld.
+  - Wacht op onafhankelijke review van de herstelwijzigingen.
+- **Belangrijk:**
+  - Commit 2 is **niet** voltooid.
+  - Commit 3 is **niet** gestart.
+  - Geen onbewezen PASS/VOLTOOID-claims.
+
+#### Wijzigingen in herstelronde
+- `confidence` en `hand` zijn nu verplicht in `CorrectionRequest`.
+- `hand` is een literal type `"unknown"`.
+- `VELOCITY_MIN` is gecorrigeerd van `0` naar `1`.
+- Validatie voor `pitch` (21–108), `velocity` (1–127), `confidence` (0–1), en `hand` (exact `"unknown"`).
+- `buildCorrectionPayload` gebruikt nu de gecorrigeerde backendgrenzen.
+- `orchestrateSaveAndReload` is toegevoegd voor de kritieke save-flow.
+- `loadCanonicalTranscript` gebruikt nu de nieuwe transcript-URL.
+- Tests zijn uitgebreid met validatie, orchestration, en backendgrenzen.
+- `styles.css` is hersteld naar HEAD.
+- `package.json` bevat de bedoelde correction-flow-test; `package-lock.json` is hersteld naar HEAD.
+
+## Bewust uitgesteld na Commit 2
+
+- Dit is een persoonlijke tool en stagedemo, geen productie-service voor externe gebruikers.
+- Commit 2 is functioneel compleet zodra de normale correctieflow, tests en build slagen.
+- Zeldzame concurrency-hardening is geen releaseblocker voor deze scope.
+- Bekend uitgesteld issue: een late `cancelJob`-response kan een oudere job opnieuw installeren wanneer cancellation en het starten van een nieuwe sessie overlappen.
+- Bekend uitgesteld issue: een stale canonical fetch kan nog een misleidende `console.error` emitten, hoewel stale React state writes zijn afgeschermd.
+- De UI-pitchrange `21..108` is bewust en volgt het volledige piano/backend-contract; de eerdere `48..84`-weergaverange komt niet terug.
+- Start niet direct een nieuwe demo of upload terwijl een cancellation nog afloopt.
+- Deze punten kunnen later worden herzien, maar openen Commit 2 niet automatisch opnieuw.
 
 ### Huidige Status
-- **Geen bewerkbare noteneditor:** Bevestigd (alleen backend API en artifactstorage).
-- **Corrected-transcript-reload:** Vereist na `PUT /corrections` (nieuwe `revision` in jobmetadata).
-- **Voorkeursbron:** Laad altijd de hoogste `revision` uit `job.result.correction`.
-- **Commit 1:** **VOLTOOID** — Frontend-API-uitbreiding en tests zijn gecorrigeerd naar het definitieve backendcontract, gevalideerd met `npm test` en `npm run build`.
-- **Volgende stap:** Geen; alle taken zijn voltooid volgens het contract.
-- **Notitie:** Tijdens deze ronde zijn **geen** backendwijzigingen uitgevoerd; alleen frontend-API-uitbreiding en tests.
+- **Commit 2:** FUNCTIONEEL KLAAR — De normale correctieflow, tests en build slagen. Bekende zeldzame concurrency-randgevallen zijn bewust uitgesteld voor deze persoonlijke tool en stagedemo.
+- **Volgende stap:** Laatste mechanische controles uitvoeren en Commit 2 afronden. Commit 3 is nog niet gestart.
+- **Notitie:** Tijdens deze ronde zijn **geen** backendwijzigingen uitgevoerd; alleen frontend-uitbreiding en tests.
 
-## Open vervolgwerk
-
+### Open vervolgwerk
 Na bewezen live Basic Pitch-inferentie:
-
-* benchmark uitvoeren met MIDI-ground-truth;
-* exacte licenties en hashes van package, model en weights vastleggen;
-* queue-timeout, heartbeat en stale-worker-detectie;
-* MP3-ondersteuning;
-* correctie-editor in een latere fase.
+- benchmark uitvoeren met MIDI-ground-truth;
+- exacte licenties en hashes van package, model en weights vastleggen;
+- queue-timeout, heartbeat en stale-worker-detectie;
+- MP3-ondersteuning;
+- correctie-editor in een latere fase.
 
 ## Context- en tokenregel
-
 Gebruik dit bestand als canonieke actuele projectstatus.
 
 * Lees het eenmaal bij de start van een projecttaak.

@@ -78,8 +78,8 @@ export type CorrectionRequest = {
     startTime: number;
     endTime: number;
     velocity: number;
-    confidence?: number;
-    hand?: "unknown";
+    confidence: number;
+    hand: "unknown";
   }>;
 };
 
