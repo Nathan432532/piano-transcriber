@@ -6,7 +6,7 @@ Piano Transcriber is een webapp voor korte solo-piano-opnames: upload, validatie
 
 ## Huidige fase
 
-**Fase 2 — echte transcriptie voor de MVP.**
+**Fase 2 — echte transcriptie en correctie voor de MVP.**
 
 Fase 1 met upload, playback en visualisatie op basis van testdata is afgerond.
 
@@ -17,6 +17,7 @@ Belangrijke checkpoints:
 * `ec81dca` — transcription job concurrency hardening
 * `fe45026` — Basic Pitch runtime dependency
 * `1476c4f` — persistent transcript JSON and MIDI artifacts
+* `8e9a359` — atomic correction artifact publication met immutable `corrected-r<N>.json`/`corrected-r<N>.mid` en failure-injectiontests
 
 Controleer het actuele `HEAD` alleen wanneer dit voor de taak nodig is.
 
@@ -32,10 +33,11 @@ Controleer het actuele `HEAD` alleen wanneer dit voor de taak nodig is.
 * Geslaagde transcriptiejobs publiceren persistente transcript JSON- en MIDI-artifacts via veilige downloadroutes.
 * Adapter- en backendtests waren groen bij de laatste relevante checkpoints.
 * OpenClaw hostcontrol ondersteunt inspect, exec, logs, update, restart en rollback.
+* **Correction API**: immutable `corrected-r<N>.json`/`corrected-r<N>.mid` artifacts worden volledig geschreven en gecontroleerd vóór publicatie via één metadata-`save_job`; failure-injectiontests en 100 backendtests + 20 correction-tests groen.
 
 ## Huidige live status
 
-De live API draait met echte Basic Pitch-inferentie en persistente artifactdownloads.
+De live API draait met echte Basic Pitch-inferentie, persistente artifactdownloads en **correction API**.
 
 Bewezen op 2026-06-14:
 
@@ -50,6 +52,7 @@ Bewezen op 2026-06-14:
 * Stilte-artifacts: `transcript.json` gaf `200 application/json` en parsebare JSON, `transcription.mid` gaf `200 audio/midi` met MIDI-header `MThd`.
 * Ontbrekende artifacts en path traversal via de artifactdownloadroute geven `404`.
 * containerlogs tonen echte Basic Pitch-inferentie met `Predicting MIDI for ...wav...`.
+* **Correction API**: immutable `corrected-r<N>.json`/`corrected-r<N>.mid` artifacts worden volledig geschreven en gecontroleerd vóór publicatie via één metadata-`save_job`; failure-injectiontests en 100 backendtests + 20 correction-tests groen.
 
 De dependencycontext vereist nog steeds dat `backend/.deps` via `site.addsitedir(...)` wordt geladen, zodat de setuptools `distutils`-shim actief wordt.
 
@@ -86,6 +89,7 @@ Actieve live configuratie:
 * Borg bij toekomstige dependency-regeneratie expliciet `setuptools<81`, omdat Basic Pitch/resampy via `pkg_resources` loopt.
 * Geen professionele bladmuziek, handdetectie of correctie-editor in deze taak.
 * Multi-process en distributed-worker-garanties vallen nog buiten de huidige scope.
+* **Correction API**: alleen filesystem-backed storage getest; geen deployment- of service-runtimechecks.
 
 ## Open vervolgwerk
 
