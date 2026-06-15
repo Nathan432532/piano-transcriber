@@ -1,6 +1,6 @@
 # Piano Audio Transcriber
 
-Persoonlijke lokale tool en stagedemo voor korte piano-audio. De app laat lokaal een WAV/MP3 uploaden of een synthetische demo laden, speelt de audio in de browser af, visualiseert noten als piano-roll en falling keys, en ondersteunt een asynchrone transcriptiejob met correcties en exports wanneer de runner echte transcript-artifacts produceert.
+Persoonlijke lokale tool voor korte piano-audio. De app laat lokaal een WAV/MP3 uploaden of een synthetische demo laden, speelt de audio in de browser af, visualiseert noten als piano-roll en falling keys, en ondersteunt een asynchrone transcriptiejob met correcties en exports wanneer de runner echte transcript-artifacts produceert.
 
 Dit is geen productieproduct voor externe gebruikers: opslag is lokaal op schijf, er is geen authenticatie, geen database, geen externe queue en geen automatische cleanup.
 
