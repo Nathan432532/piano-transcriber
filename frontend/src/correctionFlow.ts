@@ -32,6 +32,30 @@ export function selectTranscriptUrl(job: TranscriptionJob | null): string | null
 }
 
 /**
+ * Returns the transcript URL that should be fetched next, skipping URLs that are already loaded.
+ */
+export function selectPendingTranscriptUrl(
+  job: TranscriptionJob | null,
+  loadedTranscriptUrl: string | null,
+): string | null {
+  const transcriptUrl = selectTranscriptUrl(job);
+  if (!transcriptUrl || transcriptUrl === loadedTranscriptUrl) {
+    return null;
+  }
+  return transcriptUrl;
+}
+
+/**
+ * Reconstructs the audio URL for a recovered job from its upload id.
+ */
+export function selectJobAudioUrl(job: TranscriptionJob | null): string | null {
+  if (!job?.uploadId) {
+    return null;
+  }
+  return `/api/uploads/${job.uploadId}`;
+}
+
+/**
  * Returns the base revision for a correction request.
  */
 export function getBaseRevision(job: TranscriptionJob | null): number {
@@ -203,4 +227,3 @@ export async function orchestrateSaveAndReload(
     return { success: false, response, reloadError };
   }
 }
-

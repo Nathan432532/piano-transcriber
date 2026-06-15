@@ -74,6 +74,8 @@ const assertRejects = async (
 
 import {
   selectTranscriptUrl,
+  selectPendingTranscriptUrl,
+  selectJobAudioUrl,
   validateCorrectionNote,
   buildCorrectionPayload,
   updateJobAfterSave,
@@ -167,6 +169,26 @@ describe('selectTranscriptUrl', () => {
   it('returns null when job or result is missing', () => {
     assertEqual(selectTranscriptUrl(null), null);
     assertEqual(selectTranscriptUrl({ jobId: 'job-123' } as any), null);
+  });
+});
+
+describe('selectPendingTranscriptUrl', () => {
+  it('returns the corrected transcript url for a restored succeeded job when nothing is loaded yet', () => {
+    assertEqual(selectPendingTranscriptUrl(mockJobWithCorrection, null), 'corrected-r1.json');
+  });
+
+  it('skips already loaded transcript urls to avoid duplicate fetches', () => {
+    assertEqual(selectPendingTranscriptUrl(mockJobWithCorrection, 'corrected-r1.json'), null);
+  });
+});
+
+describe('selectJobAudioUrl', () => {
+  it('reconstructs the upload audio url from upload id', () => {
+    assertEqual(selectJobAudioUrl({ uploadId: 'upload-123' } as any), '/api/uploads/upload-123');
+  });
+
+  it('returns null when upload id is missing', () => {
+    assertEqual(selectJobAudioUrl(mockJobWithoutCorrection as any), null);
   });
 });
 

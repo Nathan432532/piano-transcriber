@@ -901,7 +901,7 @@ def normalize_midi_note(note: dict[str, Any]) -> dict[str, int]:
 
 
 def seconds_to_midi_ticks(seconds: float) -> int:
-    ticks_per_second = 480
+    ticks_per_second = 960
     return max(0, int(round(seconds * ticks_per_second)))
 
 
@@ -931,8 +931,8 @@ def build_midi_file(notes: list[dict[str, Any]]) -> bytes:
         midi_note = normalize_midi_note(note)
         pitch = midi_note["pitch"]
         velocity = midi_note["velocity"]
-        events.append((midi_note["startTick"], 0, bytes((0x90, pitch, velocity))))
-        events.append((midi_note["endTick"], 1, bytes((0x80, pitch, 0))))
+        events.append((midi_note["startTick"], 1, bytes((0x90, pitch, velocity))))
+        events.append((midi_note["endTick"], 0, bytes((0x80, pitch, 0))))
 
     track = bytearray()
     track.extend(b"\x00\xff\x51\x03\x07\xa1\x20")

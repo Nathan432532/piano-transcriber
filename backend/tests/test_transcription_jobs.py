@@ -14,6 +14,7 @@ from app import config
 from app.main import app
 from app.transcription_jobs import (
     ALLOWED_TRANSITIONS,
+    build_midi_file,
     TranscriptionAdapterContext,
     TranscriptionAdapterInferenceError,
     TranscriptionAdapterLoadError,
@@ -28,6 +29,7 @@ from app.transcription_jobs import (
     run_demo_transcription_job,
     run_transcription_job,
     save_job,
+    seconds_to_midi_ticks,
     transition_job,
 )
 
@@ -76,6 +78,23 @@ def create_job(upload_id: str, key: str = "transcription-key") -> dict:
 
 def error_code(response) -> str:
     return response.json()["detail"]["code"]
+
+
+def test_seconds_to_midi_ticks_matches_export_tempo() -> None:
+    assert seconds_to_midi_ticks(1.0) == 960
+
+
+def test_midi_note_off_precedes_retrigger_at_same_tick() -> None:
+    midi = build_midi_file(
+        [
+            {"pitch": 60, "startTime": 0.0, "endTime": 0.5, "velocity": 80},
+            {"pitch": 60, "startTime": 0.5, "endTime": 1.0, "velocity": 81},
+        ]
+    )
+
+    note_off = bytes((0x80, 60, 0))
+    retrigger = bytes((0x90, 60, 81))
+    assert midi.index(note_off) < midi.index(retrigger)
 
 
 def test_create_and_run_deterministic_transcription_job(tmp_path: Path) -> None:

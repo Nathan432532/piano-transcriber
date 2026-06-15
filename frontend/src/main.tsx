@@ -14,7 +14,8 @@ import {
 } from './transcriptionApi';
 import { TranscriptionPoller, type PollerStatus } from './transcriptionPoller';
 import {
-  selectTranscriptUrl,
+  selectPendingTranscriptUrl,
+  selectJobAudioUrl,
   updateJobAfterSave,
   getBaseRevision,
   orchestrateRetryReload,
@@ -323,6 +324,12 @@ function App() {
   const pollerRef = useRef<TranscriptionPoller | null>(null);
   const createAbortRef = useRef<AbortController | null>(null);
   const sessionGenerationRef = useRef(0);
+  const loadedCanonicalTranscriptUrlRef = useRef<string | null>(null);
+  const canonicalTranscriptFetchInFlightRef = useRef<string | null>(null);
+  const persistedRecoveryRef = useRef<{ active: boolean; jobId: string | null }>({
+    active: false,
+    jobId: null,
+  });
 
   const duration = useMemo(() => durationFromTranscript(transcript), [transcript]);
 
@@ -342,6 +349,21 @@ function App() {
         setJob(nextJob);
         setJobError(nextJob.error ? userMessageForErrorCode(nextJob.error.code) : null);
         window.localStorage.setItem(TRANSCRIPTION_JOB_STORAGE_KEY, nextJob.jobId);
+        if (persistedRecoveryRef.current.active && persistedRecoveryRef.current.jobId === nextJob.jobId) {
+          const recoveredAudioUrl = selectJobAudioUrl(nextJob);
+          if (recoveredAudioUrl) {
+            setAudioUrl(apiUrl(recoveredAudioUrl));
+          }
+          const transcriptUrl = selectPendingTranscriptUrl(nextJob, loadedCanonicalTranscriptUrlRef.current);
+          if (transcriptUrl) {
+            void recoverPersistedJobTranscript(transcriptUrl, sessionGenerationRef.current).catch(() => undefined);
+          }
+          return;
+        }
+        const transcriptUrl = selectPendingTranscriptUrl(nextJob, loadedCanonicalTranscriptUrlRef.current);
+        if (transcriptUrl) {
+          void loadCanonicalTranscript(transcriptUrl, sessionGenerationRef.current).catch(() => undefined);
+        }
       },
       onTerminalError: (apiError) => {
         setJobError(apiError.message);
@@ -354,6 +376,7 @@ function App() {
 
     const storedJobId = window.localStorage.getItem(TRANSCRIPTION_JOB_STORAGE_KEY);
     if (storedJobId) {
+      persistedRecoveryRef.current = { active: true, jobId: storedJobId };
       pollerRef.current.start(storedJobId);
     }
 
@@ -377,9 +400,9 @@ function App() {
     setJobError(nextJob.error ? userMessageForErrorCode(nextJob.error.code) : null);
     window.localStorage.setItem(TRANSCRIPTION_JOB_STORAGE_KEY, nextJob.jobId);
     pollerRef.current?.start(nextJob.jobId, nextJob);
-    // Load the canonical transcript when a job is started
-    const transcriptUrl = selectTranscriptUrl(nextJob);
+    const transcriptUrl = selectPendingTranscriptUrl(nextJob, loadedCanonicalTranscriptUrlRef.current);
     if (transcriptUrl) {
+      loadedCanonicalTranscriptUrlRef.current = transcriptUrl;
       void loadCanonicalTranscript(transcriptUrl, sessionGeneration).catch(() => undefined);
     }
     return true;
@@ -389,6 +412,10 @@ function App() {
     if (!transcriptUrl) {
       return true;
     }
+    if (canonicalTranscriptFetchInFlightRef.current === transcriptUrl) {
+      return false;
+    }
+    canonicalTranscriptFetchInFlightRef.current = transcriptUrl;
 
     try {
       const response = await fetch(apiUrl(transcriptUrl));
@@ -405,10 +432,15 @@ function App() {
       setCanonicalTranscript(loadedTranscript);
       setDraftNotes(null);
       setIsDirty(false);
+      loadedCanonicalTranscriptUrlRef.current = transcriptUrl;
       return true;
     } catch (err) {
       console.error('Failed to load canonical transcript:', err);
       throw err;
+    } finally {
+      if (canonicalTranscriptFetchInFlightRef.current === transcriptUrl) {
+        canonicalTranscriptFetchInFlightRef.current = null;
+      }
     }
   };
 
@@ -428,6 +460,32 @@ function App() {
         return;
       }
       setReloadStatus('error');
+      throw error;
+    }
+  };
+
+  const recoverPersistedJobTranscript = async (transcriptUrl: string, sessionGeneration: number) => {
+    if (!isCurrentSessionGeneration(sessionGeneration)) {
+      return;
+    }
+    setReloadStatus('reloading');
+    try {
+      const didApply = await fetchCanonicalTranscript(transcriptUrl, sessionGeneration);
+      if (!didApply || !isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
+      setReloadStatus('success');
+      if (persistedRecoveryRef.current.active) {
+        setState('ready');
+        persistedRecoveryRef.current = { active: false, jobId: null };
+      }
+    } catch (error) {
+      if (!isCurrentSessionGeneration(sessionGeneration)) {
+        return;
+      }
+      setReloadStatus('error');
+      setError('Failed to load persisted transcription transcript.');
+      setState('error');
       throw error;
     }
   };
@@ -507,6 +565,9 @@ function App() {
     setReloadStatus('idle');
     setPendingReloadUrl(null);
     setCanonicalTranscript(null);
+    loadedCanonicalTranscriptUrlRef.current = null;
+    canonicalTranscriptFetchInFlightRef.current = null;
+    persistedRecoveryRef.current = { active: false, jobId: null };
     setDraftNotes(null);
     setIsDirty(false);
     window.localStorage.removeItem(TRANSCRIPTION_JOB_STORAGE_KEY);
@@ -553,6 +614,9 @@ function App() {
     setReloadStatus('idle');
     setPendingReloadUrl(null);
     setCanonicalTranscript(null);
+    loadedCanonicalTranscriptUrlRef.current = null;
+    canonicalTranscriptFetchInFlightRef.current = null;
+    persistedRecoveryRef.current = { active: false, jobId: null };
     setDraftNotes(null);
     setIsDirty(false);
     pollerRef.current?.stop();
@@ -654,6 +718,8 @@ function App() {
             return;
           }
           setCanonicalTranscript(transcript);
+          loadedCanonicalTranscriptUrlRef.current = url;
+          canonicalTranscriptFetchInFlightRef.current = null;
         },
         baseRevision,
         draftNotes.map(note => (

@@ -369,6 +369,7 @@ def test_basic_pitch_production_predict_receives_loaded_model_object(
     loaded_models: list[Any] = []
     received_models: list[Any] = []
     received_audio_paths: list[str] = []
+    received_options: list[dict[str, Any]] = []
     inference = ModuleType("basic_pitch.inference")
 
     class FakeModel:
@@ -376,9 +377,10 @@ def test_basic_pitch_production_predict_receives_loaded_model_object(
             self.model_path_arg = model_path_arg
             loaded_models.append(self)
 
-    def predict(audio_path_arg: str, *, model_or_model_path: Any) -> Any:
+    def predict(audio_path_arg: str, *, model_or_model_path: Any, **options: Any) -> Any:
         received_audio_paths.append(audio_path_arg)
         received_models.append(model_or_model_path)
+        received_options.append(options)
         return {"notes": [], "durationSeconds": 0.25}
 
     inference.Model = FakeModel
@@ -395,6 +397,7 @@ def test_basic_pitch_production_predict_receives_loaded_model_object(
     assert received_audio_paths == [str(audio_path)]
     assert received_models == [loaded_models[0]]
     assert received_models[0] != str(model_path)
+    assert received_options == [{"onset_threshold": 0.70, "frame_threshold": 0.40}]
 
 
 def test_basic_pitch_binding_load_error_maps_to_model_load_failed(tmp_path: Path) -> None:

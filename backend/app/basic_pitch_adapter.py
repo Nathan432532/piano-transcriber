@@ -44,7 +44,12 @@ class BasicPitchProductionBinding:
     def predict(self, audio_path: Path) -> Any:
         if self._predict is None or self._model is None:
             raise RuntimeError("Basic Pitch model is not loaded")
-        return self._predict(str(audio_path), model_or_model_path=self._model)
+        return self._predict(
+            str(audio_path),
+            model_or_model_path=self._model,
+            onset_threshold=0.70,
+            frame_threshold=0.40,
+        )
 
 
 class BasicPitchTranscriptionAdapter:
