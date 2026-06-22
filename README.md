@@ -19,14 +19,14 @@ De backend valideert uploads voordat ze worden opgeslagen. Alleen echte `.wav` e
 Vanaf deze repository:
 
 ```bash
-cd /apps/projects/piano-transcriber
+cd /piano-transcriber
 
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r backend/requirements.txt
 
-cd /apps/projects/piano-transcriber/frontend
+cd /piano-transcriber/frontend
 npm ci
 ```
 
@@ -35,7 +35,7 @@ npm ci
 Terminal 1, backend:
 
 ```bash
-cd /apps/projects/piano-transcriber
+cd /piano-transcriber
 . .venv/bin/activate
 PYTHONPATH=backend python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
@@ -43,7 +43,7 @@ PYTHONPATH=backend python -m uvicorn app.main:app --reload --host 127.0.0.1 --po
 Terminal 2, frontend:
 
 ```bash
-cd /apps/projects/piano-transcriber/frontend
+cd /piano-transcriber/frontend
 npm run dev
 ```
 
@@ -52,7 +52,7 @@ Open daarna `http://127.0.0.1:5173`.
 Als `backend/data/samples/demo.wav` ontbreekt, kan de demo opnieuw worden gegenereerd met:
 
 ```bash
-cd /apps/projects/piano-transcriber
+cd /piano-transcriber
 . .venv/bin/activate
 python backend/scripts/generate_demo_wav.py
 ```
@@ -184,7 +184,7 @@ FastAPI CORS staat alleen de lokale Vite-origins `http://localhost:5173` en `htt
 Backend tests:
 
 ```bash
-cd /apps/projects/piano-transcriber
+cd /piano-transcriber
 . .venv/bin/activate
 PYTHONPATH=backend python -m pytest
 ```
@@ -192,14 +192,14 @@ PYTHONPATH=backend python -m pytest
 Frontend tests:
 
 ```bash
-cd /apps/projects/piano-transcriber/frontend
+cd /piano-transcriber/frontend
 npm run test
 ```
 
 Frontend lint, typecheck en build:
 
 ```bash
-cd /apps/projects/piano-transcriber/frontend
+cd /piano-transcriber/frontend
 npm run lint
 npm run typecheck
 npm run build
