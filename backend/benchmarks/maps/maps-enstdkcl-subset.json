@@ -1,0 +1,7308 @@
+{
+  "version": 1,
+  "frozenAt": "2026-10-07T18:32:35.222882+00:00",
+  "source": "https://zenodo.org/records/18160555",
+  "release": "0.4",
+  "subset": "ENSTDkCl",
+  "zipFilename": "ENSTDkCl.zip",
+  "zipBytes": 2608287080,
+  "zipMd5": "72bbdf40eb7af69225755e165a0a0a08",
+  "alignmentOffsetSeconds": 0.0,
+  "alignmentPolicy": "Raw official MIDI timeline; no predicted/per-note shifts",
+  "selectionPolicy": "Deterministic MIDI/metadata-only nearest targets; lexical tie-breaks; 24 cases",
+  "inventory": {
+    "pairs": 3999,
+    "validMidiPairs": 3989,
+    "categories": {
+      "ISOL": 999,
+      "MUS": 20,
+      "RAND": 1200,
+      "UCHO": 1770
+    },
+    "audioFormats": {
+      "44100Hz/2ch/PCM_16": 3989
+    },
+    "pairErrors": [
+      {
+        "audio": "MUS/MAPS_MUS-alb_se2_ENSTDkCl.wav",
+        "error": "MIDI/TXT pitches differ"
+      },
+      {
+        "audio": "MUS/MAPS_MUS-bk_xmas5_ENSTDkCl.wav",
+        "error": "MIDI/TXT pitches differ"
+      },
+      {
+        "audio": "MUS/MAPS_MUS-liz_et_trans5_ENSTDkCl.wav",
+        "error": "MIDI/TXT pitches differ"
+      },
+      {
+        "audio": "MUS/MAPS_MUS-liz_rhap09_ENSTDkCl.wav",
+        "error": "MIDI/TXT pitches differ"
+      },
+      {
+        "audio": "MUS/MAPS_MUS-mz_333_2_ENSTDkCl.wav",
+        "error": "MIDI/TXT pitches differ"
+      },
+      {
+        "audio": "MUS/MAPS_MUS-mz_570_1_ENSTDkCl.wav",
+        "error": "MIDI/TXT pitches differ"
+      },
+      {
+        "audio": "MUS/MAPS_MUS-pathetique_1_ENSTDkCl.wav",
+        "error": "MIDI/TXT pitches differ"
+      },
+      {
+        "audio": "MUS/MAPS_MUS-schu_143_3_ENSTDkCl.wav",
+        "error": "MIDI/TXT pitches differ"
+      },
+      {
+        "audio": "MUS/MAPS_MUS-schuim-1_ENSTDkCl.wav",
+        "error": "MIDI/TXT pitches differ"
+      },
+      {
+        "audio": "MUS/MAPS_MUS-scn16_3_ENSTDkCl.wav",
+        "error": "MIDI/TXT pitches differ"
+      }
+    ],
+    "cc64DownPairs": 2024
+  },
+  "cases": [
+    {
+      "caseId": "01_isolated",
+      "category": "isolated",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/NO/MAPS_ISOL_NO_P_S0_M36_ENSTDkCl.wav",
+      "midi": "ISOL/NO/MAPS_ISOL_NO_P_S0_M36_ENSTDkCl.mid",
+      "txt": "ISOL/NO/MAPS_ISOL_NO_P_S0_M36_ENSTDkCl.txt",
+      "audioSha256": "ef2c8b8e295e759b030cc7c32b89e78287d899f800c9ed9f848418d92594e324",
+      "midiSha256": "0f75a420946ed3e350e88a6062712d8bdd24f493a6373fca0ea11daf1bd3c7f4",
+      "txtSha256": "0719dd3ebaae6f5d33ef0f2a705f1c7605ed27aa4f1bdfc4b80e3db6813aeb63",
+      "reason": "Normal no-pedal single note nearest pitch 36, then velocity 80",
+      "audioWindowSeconds": [
+        0.0,
+        4.120997732426304
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        4.120997732426304
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 4.120997732426304,
+      "pitchRange": [
+        36,
+        36
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 2.6209893002105775,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        2.0020021118808558
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 1.2414929650983453e-07,
+        "maxEffectiveOffsetDifference": 1.7639698479676724e-06
+      }
+    },
+    {
+      "caseId": "02_isolated",
+      "category": "isolated",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/NO/MAPS_ISOL_NO_F_S0_M60_ENSTDkCl.wav",
+      "midi": "ISOL/NO/MAPS_ISOL_NO_F_S0_M60_ENSTDkCl.mid",
+      "txt": "ISOL/NO/MAPS_ISOL_NO_F_S0_M60_ENSTDkCl.txt",
+      "audioSha256": "d2fafabf3be5fca3e620f0aaf801cfd7083caadb2a573a9e1a5e1fa72b6a04e5",
+      "midiSha256": "ac69403be207cb36e112aac3905efcfb7db7e4c1869498cc1f111ab85e6fd517",
+      "txtSha256": "fb59155b0c753822fc9969a59a0514769246a560164b068a26a3ff126f552fe5",
+      "reason": "Normal no-pedal single note nearest pitch 60, then velocity 80",
+      "audioWindowSeconds": [
+        0.0,
+        4.126984126984127
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        4.126984126984127
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 4.126984126984127,
+      "pitchRange": [
+        60,
+        60
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 2.626984041261025,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        2.0020021118808558
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 2.1085238188778277e-07,
+        "maxEffectiveOffsetDifference": 1.0989715262255118e-06
+      }
+    },
+    {
+      "caseId": "03_isolated",
+      "category": "isolated",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/NO/MAPS_ISOL_NO_F_S0_M84_ENSTDkCl.wav",
+      "midi": "ISOL/NO/MAPS_ISOL_NO_F_S0_M84_ENSTDkCl.mid",
+      "txt": "ISOL/NO/MAPS_ISOL_NO_F_S0_M84_ENSTDkCl.txt",
+      "audioSha256": "ae541e0ff9c5686a4b3daf8d59ed40a0a11d48dfbf94041367a21a22b8161191",
+      "midiSha256": "be886b8398439e4563aab39a980baaac138f22151d72b2d24e5e4c5d22a7cd19",
+      "txtSha256": "299c2dc8b8a486b872f73e2f888caa9c8cd32e840d740e2982690be44aa127d1",
+      "reason": "Normal no-pedal single note nearest pitch 84, then velocity 80",
+      "audioWindowSeconds": [
+        0.0,
+        4.139002267573696
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        4.139002267573696
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 4.139002267573696,
+      "pitchRange": [
+        84,
+        84
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 2.6390003454695274,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        1.9989980358287303
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 3.403729362805308e-07,
+        "maxEffectiveOffsetDifference": 6.237983334322905e-07
+      }
+    },
+    {
+      "caseId": "04_isolated",
+      "category": "isolated",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/NO/MAPS_ISOL_NO_M_S0_M100_ENSTDkCl.wav",
+      "midi": "ISOL/NO/MAPS_ISOL_NO_M_S0_M100_ENSTDkCl.mid",
+      "txt": "ISOL/NO/MAPS_ISOL_NO_M_S0_M100_ENSTDkCl.txt",
+      "audioSha256": "ae9f675d27ddb3e38d453f8f365c730595dd1839e363599a89beb9bf0ba8283f",
+      "midiSha256": "b77cfea50f0270bb6a15d9dc868751e2d8d7cdfda5a6f86d5f683d90834bee89",
+      "txtSha256": "06524053c48979c807a8238ab25de653ed4c793677b2aa8c1015e2756564d8fd",
+      "reason": "Normal no-pedal single note nearest pitch 100, then velocity 80",
+      "audioWindowSeconds": [
+        0.0,
+        4.120997732426304
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        4.120997732426304
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 4.120997732426304,
+      "pitchRange": [
+        100,
+        100
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 2.620989300210578,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        1.995001541795099
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 1.3480025629064585e-07,
+        "maxEffectiveOffsetDifference": 2.4069948425520238e-06
+      }
+    },
+    {
+      "caseId": "05_long",
+      "category": "long",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/LG/MAPS_ISOL_LG_F_S0_M105_ENSTDkCl.wav",
+      "midi": "ISOL/LG/MAPS_ISOL_LG_F_S0_M105_ENSTDkCl.mid",
+      "txt": "ISOL/LG/MAPS_ISOL_LG_F_S0_M105_ENSTDkCl.txt",
+      "audioSha256": "e808a1d9a8eed42bdc28f7b41377141f357d1a667a12f6b44cf28296743429eb",
+      "midiSha256": "25dca09dcdce9181a8c63f950d9a0dfc358306386a090bc0731ee3fa73a05d64",
+      "txtSha256": "099e3223963edc6f1fe942db02827b2c5c87f71a69f94b1934b2d6947d9f5b23",
+      "reason": "No-pedal long note nearest official MIDI duration 3.5s",
+      "audioWindowSeconds": [
+        0.0,
+        5.702993197278912
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        5.702993197278912
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 5.702993197278912,
+      "pitchRange": [
+        105,
+        105
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 4.202984029053621,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        3.5869875057222207
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 1.2414929650983453e-07,
+        "maxEffectiveOffsetDifference": 3.6298715171412255e-06
+      }
+    },
+    {
+      "caseId": "06_long",
+      "category": "long",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/LG/MAPS_ISOL_LG_F_S0_M95_ENSTDkCl.wav",
+      "midi": "ISOL/LG/MAPS_ISOL_LG_F_S0_M95_ENSTDkCl.mid",
+      "txt": "ISOL/LG/MAPS_ISOL_LG_F_S0_M95_ENSTDkCl.txt",
+      "audioSha256": "cef1893cf23a44a29176beca724c823741f92a0a0639c204cbf9180c734b3274",
+      "midiSha256": "705994c797b5eec95314011dba475da15a8ac44331f4f7bce23a555ffec6024c",
+      "txtSha256": "30a7632f25a42a930f1462887893d892a9f53606bfd242a69293c569d4f1160a",
+      "reason": "No-pedal long note nearest official MIDI duration 5.5s",
+      "audioWindowSeconds": [
+        0.0,
+        7.661995464852608
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        7.661995464852608
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 7.661995464852608,
+      "pitchRange": [
+        95,
+        95
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 6.161990302438429,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        5.53700837305826
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 1.3480025629064585e-07,
+        "maxEffectiveOffsetDifference": 7.617419957028915e-07
+      }
+    },
+    {
+      "caseId": "07_long",
+      "category": "long",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/LG/MAPS_ISOL_LG_M_S0_M82_ENSTDkCl.wav",
+      "midi": "ISOL/LG/MAPS_ISOL_LG_M_S0_M82_ENSTDkCl.mid",
+      "txt": "ISOL/LG/MAPS_ISOL_LG_M_S0_M82_ENSTDkCl.txt",
+      "audioSha256": "65514fdbbb33fe39e5bfe820f0f484bd2429cfd652d4177467eda64359f3a79e",
+      "midiSha256": "2a2671c4bdd80d9358842ad829992aff21e0542129160d0cab112e5d363d2a33",
+      "txtSha256": "a4d1e95d7c54b781ae3b964517a4b3fa1728de24a2a5b6ab798c8db2b8b29f49",
+      "reason": "No-pedal long note nearest official MIDI duration 8.0s",
+      "audioWindowSeconds": [
+        0.0,
+        10.197981859410431
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        10.197981859410431
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 10.197981859410431,
+      "pitchRange": [
+        82,
+        82
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 8.697980343638417,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        8.077987326273385
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 1.2414929650983453e-07,
+        "maxEffectiveOffsetDifference": 3.4504226817944073e-06
+      }
+    },
+    {
+      "caseId": "08_long",
+      "category": "long",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/LG/MAPS_ISOL_LG_F_S0_M62_ENSTDkCl.wav",
+      "midi": "ISOL/LG/MAPS_ISOL_LG_F_S0_M62_ENSTDkCl.mid",
+      "txt": "ISOL/LG/MAPS_ISOL_LG_F_S0_M62_ENSTDkCl.txt",
+      "audioSha256": "034437cd1f15a91ce4f08f62ae7d89fb2735f6a30edbb81e12d0525d7b57aa85",
+      "midiSha256": "de4c64407305bb63e5f79575726852fa72a83dfa570a165ea0a2096230eb9773",
+      "txtSha256": "1b56b6bb506ca3422405de39b560e26358dfeb6f470595123c53d42e9d5eb186",
+      "reason": "No-pedal long note nearest official MIDI duration 12.0s",
+      "audioWindowSeconds": [
+        0.0,
+        14.109002267573697
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        14.109002267573697
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 14.109002267573697,
+      "pitchRange": [
+        62,
+        62
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 12.608992320322274,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        11.994001626026185
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.8097170912697607e-08,
+        "maxEffectiveOffsetDifference": 6.325876643842321e-06
+      }
+    },
+    {
+      "caseId": "09_long",
+      "category": "long",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/LG/MAPS_ISOL_LG_F_S0_M31_ENSTDkCl.wav",
+      "midi": "ISOL/LG/MAPS_ISOL_LG_F_S0_M31_ENSTDkCl.mid",
+      "txt": "ISOL/LG/MAPS_ISOL_LG_F_S0_M31_ENSTDkCl.txt",
+      "audioSha256": "eadb4cb943c2da42bcf50521c99d2f11b09115896ff0f9d43d3211eda6ede980",
+      "midiSha256": "8d8f6d78ae8e08a6ff68fa1995214e7a2829ce7e567b53a88b3b2f0493ac6f90",
+      "txtSha256": "5632a7eb20ac7a07dac3b0df825b49f27b890a2264df35ff666a35fdaee21f6c",
+      "reason": "No-pedal long note nearest official MIDI duration 18.0s",
+      "audioWindowSeconds": [
+        0.0,
+        20.16498866213152
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        20.16498866213152
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 20.16498866213152,
+      "pitchRange": [
+        31,
+        31
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 18.66499506454665,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        18.048998541215248
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.8097170912697607e-08,
+        "maxEffectiveOffsetDifference": 9.410687578537136e-06
+      }
+    },
+    {
+      "caseId": "10_repeated",
+      "category": "repeated",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/RE/MAPS_ISOL_RE_F_S0_M49_ENSTDkCl.wav",
+      "midi": "ISOL/RE/MAPS_ISOL_RE_F_S0_M49_ENSTDkCl.mid",
+      "txt": "ISOL/RE/MAPS_ISOL_RE_F_S0_M49_ENSTDkCl.txt",
+      "audioSha256": "8a66422415da222eddb86ec1cad48adf9bc8379b7bcff5a563e9797a49c1ee83",
+      "midiSha256": "3bb54ee071f8ab76318737ba1413e36cd9e873cc68046d1678d891a46743505c",
+      "txtSha256": "f337d0b0ae47c1aad291e13994bc829241595185e3f80187e24b01118ea3e797",
+      "reason": "Accelerating repeated-note sequence nearest pitch 48",
+      "audioWindowSeconds": [
+        0.0,
+        6.203990929705215
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        6.203990929705215
+      ],
+      "groundTruthNotes": 15,
+      "sourceDurationSeconds": 6.203990929705215,
+      "pitchRange": [
+        49,
+        49
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 4.703994177068391,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        0.35299234717856376,
+        0.29799361552781756,
+        0.2510012829981383,
+        0.2130077675710318,
+        0.1750142521439253,
+        0.14199623767815162,
+        0.12200035645619067,
+        0.10099864619891985,
+        0.0880033350627154,
+        0.07699285988952287,
+        0.06300513077181336,
+        0.049003990600299474,
+        0.048011572618793075,
+        0.042003420514541645,
+        0.028002280343027763
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.350413526310604e-06,
+        "maxEffectiveOffsetDifference": 4.46150090027686e-06
+      }
+    },
+    {
+      "caseId": "11_repeated",
+      "category": "repeated",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/RE/MAPS_ISOL_RE_M_S0_M66_ENSTDkCl.wav",
+      "midi": "ISOL/RE/MAPS_ISOL_RE_M_S0_M66_ENSTDkCl.mid",
+      "txt": "ISOL/RE/MAPS_ISOL_RE_M_S0_M66_ENSTDkCl.txt",
+      "audioSha256": "925d3ad7cf74b58616b7635037d6444c1a91529e5edb4509289a26639ae21174",
+      "midiSha256": "72a5b8a4680d6d49f9dfd0a60e1216439eccd13f20b8c695e52505a94e231bfd",
+      "txtSha256": "016eb855545c4e2b3ca69ddb511735cc092a4a5b1c13e0e232854d1d503c4d28",
+      "reason": "Accelerating repeated-note sequence nearest pitch 67",
+      "audioWindowSeconds": [
+        0.0,
+        6.203990929705215
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        6.203990929705215
+      ],
+      "groundTruthNotes": 15,
+      "sourceDurationSeconds": 6.203990929705215,
+      "pitchRange": [
+        66,
+        66
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 4.703994177068392,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        0.35399817621387375,
+        0.29399712149418633,
+        0.2520071120334484,
+        0.20901127353740057,
+        0.1820014111758783,
+        0.1509950547807244,
+        0.1290009265419476,
+        0.1089916342661823,
+        0.0880033350627154,
+        0.07699285988952287,
+        0.0600010547196872,
+        0.051002237617114865,
+        0.049003990600299474,
+        0.035995268410291104,
+        0.035002850428784704
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.242072817461917e-06,
+        "maxEffectiveOffsetDifference": 4.699850459033428e-06
+      }
+    },
+    {
+      "caseId": "12_repeated",
+      "category": "repeated",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/RE/MAPS_ISOL_RE_M_S0_M89_ENSTDkCl.wav",
+      "midi": "ISOL/RE/MAPS_ISOL_RE_M_S0_M89_ENSTDkCl.mid",
+      "txt": "ISOL/RE/MAPS_ISOL_RE_M_S0_M89_ENSTDkCl.txt",
+      "audioSha256": "54f6ba8994e491c3d9b563340564002f9b80b283c70d0dc7d3b5272803767467",
+      "midiSha256": "ba0ee024182ee2782419ddffa27365483b4184da6f3d801f789b86bf4ba24413",
+      "txtSha256": "20fae4c0b1d0745637a53d47691ae4327e58889eaeb089d4d217b717bce82fae",
+      "reason": "Accelerating repeated-note sequence nearest pitch 90",
+      "audioWindowSeconds": [
+        0.0,
+        6.202993197278912
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        6.202993197278912
+      ],
+      "groundTruthNotes": 15,
+      "sourceDurationSeconds": 6.202993197278912,
+      "pitchRange": [
+        89,
+        89
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 4.703001759086887,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        0.3450127701651051,
+        0.3009842805261391,
+        0.24900303598132267,
+        0.20898445142979227,
+        0.18100899319437236,
+        0.14901021881771292,
+        0.1290009265419476,
+        0.10499514023255108,
+        0.08400684102908418,
+        0.07600044190801736,
+        0.06399754875331887,
+        0.051994655598620376,
+        0.044994085512863435,
+        0.035002850428784704,
+        0.031998774376659433
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.22956022827492e-06,
+        "maxEffectiveOffsetDifference": 4.968413342076872e-06
+      }
+    },
+    {
+      "caseId": "13_sustain",
+      "category": "sustain",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/NO/MAPS_ISOL_NO_P_S1_M48_ENSTDkCl.wav",
+      "midi": "ISOL/NO/MAPS_ISOL_NO_P_S1_M48_ENSTDkCl.mid",
+      "txt": "ISOL/NO/MAPS_ISOL_NO_P_S1_M48_ENSTDkCl.txt",
+      "audioSha256": "f02273a3bcb1a0aa1b214b4c935dbf0f5db42243334ec372bfcb3da8dd03be27",
+      "midiSha256": "a38ad0e2d68e476189938f2687d96108d8873be645e855e93699f3fae3f887e3",
+      "txtSha256": "8405da96d3da0f4ad00292aec7c668ca85154f5c9bdb2ecd454592f33ccb6abd",
+      "reason": "Explicit CC64 down/up and extended release, nearest pitch 48",
+      "audioWindowSeconds": [
+        0.0,
+        4.57
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        4.57
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 4.57,
+      "pitchRange": [
+        48,
+        48
+      ],
+      "sustain": true,
+      "cc64": [
+        {
+          "time": 0.5179885421308024,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 2.9229794097720267,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.020987390972625,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.069991381572924,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        1.9950015417950988
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 3.3643604835376095e-07,
+        "maxEffectiveOffsetDifference": 5.902279731628823e-07
+      }
+    },
+    {
+      "caseId": "14_sustain",
+      "category": "sustain",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/NO/MAPS_ISOL_NO_M_S1_M67_ENSTDkCl.wav",
+      "midi": "ISOL/NO/MAPS_ISOL_NO_M_S1_M67_ENSTDkCl.mid",
+      "txt": "ISOL/NO/MAPS_ISOL_NO_M_S1_M67_ENSTDkCl.txt",
+      "audioSha256": "b2f8a5b404cf61477ab6da2af12e649f6285c100172818f61fada14c367958be",
+      "midiSha256": "cb5ee0bb1170c0b76c14bb88b2f810eeaa6b9013f50c35dc9b2d8bcf1124a4c7",
+      "txtSha256": "1c4f047c82202467e567f1fb5e08306e01f411a7de50832be1102bcb0d8cd499",
+      "reason": "Explicit CC64 down/up and extended release, nearest pitch 67",
+      "audioWindowSeconds": [
+        0.0,
+        4.573990929705215
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        4.573990929705215
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 4.573990929705215,
+      "pitchRange": [
+        67,
+        67
+      ],
+      "sustain": true,
+      "cc64": [
+        {
+          "time": 0.5249891122165593,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 2.9189829157383955,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.027974550004578,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.0739878756065555,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        2.0040003588976716
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.124881740619202e-07,
+        "maxEffectiveOffsetDifference": 2.915738395614653e-06
+      }
+    },
+    {
+      "caseId": "15_sustain",
+      "category": "sustain",
+      "mapsCategory": "ISOL",
+      "audio": "ISOL/NO/MAPS_ISOL_NO_M_S1_M90_ENSTDkCl.wav",
+      "midi": "ISOL/NO/MAPS_ISOL_NO_M_S1_M90_ENSTDkCl.mid",
+      "txt": "ISOL/NO/MAPS_ISOL_NO_M_S1_M90_ENSTDkCl.txt",
+      "audioSha256": "3f18e40b642bd0e42a7752add61c006bbc8f37bbbedf6bd6aca7acf7a153d6cb",
+      "midiSha256": "455a0b71b9e72bb1840d105dd8faecb9e3ab74e7304304534a05610a4f65093c",
+      "txtSha256": "39c7a3185a04aef1bb39cb7e8d8d365b20101492aab0e1b5a2f2242ff7d3dc22",
+      "reason": "Explicit CC64 down/up and extended release, nearest pitch 90",
+      "audioWindowSeconds": [
+        0.0,
+        4.57
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        4.57
+      ],
+      "groundTruthNotes": 1,
+      "sourceDurationSeconds": 4.57,
+      "pitchRange": [
+        90,
+        90
+      ],
+      "sustain": true,
+      "cc64": [
+        {
+          "time": 0.5189943711661122,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 2.9199887447737054,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.0219798089541308,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.0699913815729243,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        1.9989980358287305
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.124881740619202e-07,
+        "maxEffectiveOffsetDifference": 1.2552262944609538e-06
+      }
+    },
+    {
+      "caseId": "16_chords",
+      "category": "chords",
+      "mapsCategory": "UCHO",
+      "audio": "UCHO/I60-68/C0-24/MAPS_UCHO_C0-24_I60-68_S0_n1_ENSTDkCl.wav",
+      "midi": "UCHO/I60-68/C0-24/MAPS_UCHO_C0-24_I60-68_S0_n1_ENSTDkCl.mid",
+      "txt": "UCHO/I60-68/C0-24/MAPS_UCHO_C0-24_I60-68_S0_n1_ENSTDkCl.txt",
+      "audioSha256": "91169d92149b4a2d5a1b0db5af1d4a97a8ecb7167c3d6ea5b0c4c8bac7e1657b",
+      "midiSha256": "8b8b9209e5d2fedbc9ca8af3b7897504830186ed872bbbdf72974085adc9e6f9",
+      "txtSha256": "f90ed5d92a30a08cf696db3437b5e934ac168982bcc987951d5b6f055db83d34",
+      "reason": "UCHO no-pedal 2-note chord nearest average pitch 55, then velocity 80",
+      "audioWindowSeconds": [
+        0.0,
+        3.1229931972789116
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        3.1229931972789116
+      ],
+      "groundTruthNotes": 2,
+      "sourceDurationSeconds": 3.1229931972789116,
+      "pitchRange": [
+        43,
+        67
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 1.6229789092684717,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        0.9970045619067966,
+        1.001001055940428
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.5786919766754863e-07,
+        "maxEffectiveOffsetDifference": 3.1040375989555002e-06
+      }
+    },
+    {
+      "caseId": "17_chords",
+      "category": "chords",
+      "mapsCategory": "UCHO",
+      "audio": "UCHO/I32-96/C0-5-9/MAPS_UCHO_C0-5-9_I32-96_S0_n3_ENSTDkCl.wav",
+      "midi": "UCHO/I32-96/C0-5-9/MAPS_UCHO_C0-5-9_I32-96_S0_n3_ENSTDkCl.mid",
+      "txt": "UCHO/I32-96/C0-5-9/MAPS_UCHO_C0-5-9_I32-96_S0_n3_ENSTDkCl.txt",
+      "audioSha256": "fa337bccd84b52a359f8ee9bf76e8db10e4b15ac44e6103e34d79dbdca017451",
+      "midiSha256": "cf77e404abb77eca2cc24ce0cf0688bde76495496c7b2b758175d8c923b0d0cc",
+      "txtSha256": "27f64467495d7da5e1cc4d4216c03aef8481e0fdb7ca7d527b0030b3bf68c7d3",
+      "reason": "UCHO no-pedal 3-note chord nearest average pitch 67, then velocity 80",
+      "audioWindowSeconds": [
+        0.0,
+        3.1219954648526076
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        3.1219954648526076
+      ],
+      "groundTruthNotes": 3,
+      "sourceDurationSeconds": 3.1219954648526076,
+      "pitchRange": [
+        62,
+        71
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 1.6219864912869655,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        1.0039917209387492,
+        1.0029858919034393,
+        1.0019934739219336
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 3.711661122896004e-07,
+        "maxEffectiveOffsetDifference": 2.154911954210803e-06
+      }
+    },
+    {
+      "caseId": "18_chords",
+      "category": "chords",
+      "mapsCategory": "RAND",
+      "audio": "RAND/M36-95/I60-68/P2/MAPS_RAND_P2_M36-95_I60-68_S0_n1_ENSTDkCl.wav",
+      "midi": "RAND/M36-95/I60-68/P2/MAPS_RAND_P2_M36-95_I60-68_S0_n1_ENSTDkCl.mid",
+      "txt": "RAND/M36-95/I60-68/P2/MAPS_RAND_P2_M36-95_I60-68_S0_n1_ENSTDkCl.txt",
+      "audioSha256": "8e2fbe7c5783d84ef2dd0b611cd66fc27c46bbdc1aa97be80c400ce32568f900",
+      "midiSha256": "9777c98472571d3f65c19dfd0d9588fef7fa657ccf72b22b6d2da02fa5d0fc72",
+      "txtSha256": "e9317da17be30beb14574a4877a1d89295940f359b59a45410def1f483888f76",
+      "reason": "RAND no-pedal 2-note chord nearest average pitch 55, then velocity 80",
+      "audioWindowSeconds": [
+        0.0,
+        2.7660090702947846
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        2.7660090702947846
+      ],
+      "groundTruthNotes": 2,
+      "sourceDurationSeconds": 2.7660090702947846,
+      "pitchRange": [
+        38,
+        72
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 1.2659900680562761,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        0.6439853926206244,
+        0.6429929746391186
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.5786919777857094e-07,
+        "maxEffectiveOffsetDifference": 1.5167699209950314e-06
+      }
+    },
+    {
+      "caseId": "19_chords",
+      "category": "chords",
+      "mapsCategory": "RAND",
+      "audio": "RAND/M21-108/I32-96/P3/MAPS_RAND_P3_M21-108_I32-96_S0_n17_ENSTDkCl.wav",
+      "midi": "RAND/M21-108/I32-96/P3/MAPS_RAND_P3_M21-108_I32-96_S0_n17_ENSTDkCl.mid",
+      "txt": "RAND/M21-108/I32-96/P3/MAPS_RAND_P3_M21-108_I32-96_S0_n17_ENSTDkCl.txt",
+      "audioSha256": "d2ad0dd8dd1e3c9a262b060b4eae9bbaa46bbb4ad78faee51374204f3667c451",
+      "midiSha256": "c3a06845840ec44829faeec4828b34f02b1546bf8ee4813e0415e74418209d48",
+      "txtSha256": "e5cd4a9758488de40e9645ee8fe54fc4c9f5b11e6d6fa48375e7372f88faa65a",
+      "reason": "RAND no-pedal 3-note chord nearest average pitch 70, then velocity 80",
+      "audioWindowSeconds": [
+        0.0,
+        2.7549886621315194
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        2.7549886621315194
+      ],
+      "groundTruthNotes": 3,
+      "sourceDurationSeconds": 2.7549886621315194,
+      "pitchRange": [
+        61,
+        83
+      ],
+      "sustain": false,
+      "cc64": [
+        {
+          "time": 1.2549930039368877,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": [
+        0.6330017395550401,
+        0.6330017395550401,
+        0.6340075685903501
+      ],
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.5786919777857094e-07,
+        "maxEffectiveOffsetDifference": 4.357737968030406e-06
+      }
+    },
+    {
+      "caseId": "20_music",
+      "category": "music",
+      "mapsCategory": "MUS",
+      "audio": "MUS/MAPS_MUS-bk_xmas1_ENSTDkCl.wav",
+      "midi": "MUS/MAPS_MUS-bk_xmas1_ENSTDkCl.mid",
+      "txt": "MUS/MAPS_MUS-bk_xmas1_ENSTDkCl.txt",
+      "audioSha256": "02b6be62c39b48f40352d3eaccd1c492f55592fa116f0b4448d26e1e41a4a8d1",
+      "midiSha256": "9616860640c8553af2e1e84d92f405488b82c843ee58a97d0c6d318402e244aa",
+      "txtSha256": "48a7308b3ee3013282bb3e64a9241ab07031d93294e297b32d63ea7ccb2873b2",
+      "reason": "First five lexicographic MUS pairs; original first 15s audio, score onsets in [0,10)s; boundaries fixed before inference",
+      "audioWindowSeconds": [
+        0.0,
+        15.0
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        10.0
+      ],
+      "groundTruthNotes": 71,
+      "sourceDurationSeconds": 385.52498866213153,
+      "pitchRange": [
+        25,
+        102
+      ],
+      "sustain": true,
+      "cc64": [
+        {
+          "time": 0.5289856062501906,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 2.3899704873805967,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 4.031966270943328,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 5.936952819605089,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 7.667930945158237,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 7.7279319998779235,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 11.276899168065432,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 11.395908859523301,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 14.854874445631276,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 16.530880661641287,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 17.751849822077094,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 19.903841159703376,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 21.27681120395523,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 24.954765887630902,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 27.10774964323869,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 28.431742518997844,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 29.76773828791169,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 30.156739314554354,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 31.91574654255815,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 32.04973638111524,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 34.653707054048354,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 35.49169675099956,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 37.81867551866214,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 39.08466558671841,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 41.75463205542169,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 42.50461841731018,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 43.837610110171894,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 44.2335982958465,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 45.98758978972754,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 46.10959014618373,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 48.7555642396314,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 49.59854284859774,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 51.91954028626367,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 63.704423350322024,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 67.12354469557789,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 67.21754277169106,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 70.36761155552841,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 146.1922211371192,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 148.32319735343438,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 149.56318338816445,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 151.4071496420174,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 151.5291634095274,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 152.93313981017437,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 153.1501306607252,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 155.1561158555859,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 155.2541238367865,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 156.40611994750765,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 156.72012636127758,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 158.55811128513392,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 158.62711115695618,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 160.1081072396003,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 160.28709116367023,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 162.10007788323566,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 162.1900794653152,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 163.67807611804506,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 163.85708686422262,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 165.71206359324879,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 165.84806508987648,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 167.43405631275317,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 167.6370460231325,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 169.23302848109324,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 169.43603160252638,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 170.7340070339055,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 171.0070024451424,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 172.92497089388655,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 173.06496888454788,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 174.59094564165105,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 174.8179411383398,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 176.39092363902645,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 176.51191816644734,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 177.8849284438606,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 178.2659230713822,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 179.95690943449142,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 180.04691101657096,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 181.72191140354565,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 181.84690242500017,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 183.6168933060695,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 183.82188126346566,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 185.06984687520915,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 185.3368475453956,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 187.1358331247895,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 187.31383804193177,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 188.9478140153196,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 189.2038176213867,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 191.4958203607281,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 192.71481809625467,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 194.5028066115292,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 194.58380937650617,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 195.0768131253999,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 195.19281874080565,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 195.6048197247224,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 195.7028142948692,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 196.0598165471352,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 196.14080590105834,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 199.15779679799732,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 199.5368065895559,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 201.2328086867879,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 201.32482192693806,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 201.80782102969388,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 201.908806264839,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 202.39180536759483,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 202.4618110684524,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 202.72780590960355,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 202.9318014490182,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 206.32277299233917,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 206.40977049836658,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 208.0617709280672,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 208.14977426312993,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 208.59676468642164,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 208.65975640613965,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 209.11176256355412,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 209.2067664687026,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 209.61977328165466,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 209.81577583300205,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 211.49577854304567,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 211.56877490890156,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 211.92176725608013,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 212.00977059114285,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 212.60778289132293,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 212.67178044007625,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 213.05277506759785,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 213.15177546677995,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 214.589775710928,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 214.99576854274048,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 216.58473701956166,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 216.7007426349674,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 220.1207625208282,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 220.2317524021112,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 221.87673885067227,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 221.90873762504893,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 222.37672975859792,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 222.44373138340336,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 222.9057421869557,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 223.06973255287264,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 223.51774221625348,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 223.63673849665756,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 226.9107254176451,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 227.0457210852375,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 228.62870823206205,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 228.72870104922566,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 229.13869037507177,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 229.25068608539007,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 229.69968816675242,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 229.7826891787462,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 230.30268937894763,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 230.38768863795823,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 233.69966907437293,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 233.86466526932517,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 235.9386445069728,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 237.06364416638624,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 239.30664291512736,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 240.43062333445167,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 243.89861455976987,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 243.97261675466106,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 245.34660603900204,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 247.33559942869292,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 249.57560751243574,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 250.69960134281388,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 252.94260009155502,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 254.06757292886084,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 257.5045577977839,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 257.68456096194296,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 259.8725609790333,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 276.28858937589604,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 279.893601337931,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 279.9736116849264,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 283.4885684206667,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 283.6035816180909,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 287.0885512375252,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 287.19054230170565,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 290.68751481429456,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 290.80152218268347,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 294.2864918021178,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 294.3755009662158,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 297.8844897830132,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 297.98048610614313,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 301.4844591888178,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 301.6104560393076,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 305.0834227655871,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 305.16241387249346,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 308.6884079055143,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 308.83139656117396,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 312.28635224219465,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 312.39736894558524,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 314.21335974120285,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 314.31835488143537,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 316.05536798120033,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 316.20637644703487,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 317.83934659138754,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 317.9063213940854,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 319.70532038453325,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 319.80331495468005,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 321.87533617847214,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 323.5803370928066,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 327.24631570543505,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 327.3493125986508,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 330.82929330606987,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 330.9542977385782,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 334.37528322031267,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 334.4442830921349,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 336.11725840998537,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 336.2192628852196,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 337.8112354380929,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 337.93422821253057,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 341.35320203619443,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 341.54620051148964,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 345.16216930448246,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 345.24817439252837,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 346.88015211889933,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 346.96716303598055,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 348.5911209521768,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 348.68212836329167,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 350.56911727774826,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 354.15610478347065,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 355.92011433454337,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 357.79610618488067,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 359.53911402569605,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 363.2391030707718,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 373.70306439039206,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 383.97404064577097,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 384.02304463637125,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": null,
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 0.0004999163795673667,
+        "maxEffectiveOffsetDifference": 1.6326235529651285
+      }
+    },
+    {
+      "caseId": "21_music",
+      "category": "music",
+      "mapsCategory": "MUS",
+      "audio": "MUS/MAPS_MUS-bk_xmas4_ENSTDkCl.wav",
+      "midi": "MUS/MAPS_MUS-bk_xmas4_ENSTDkCl.mid",
+      "txt": "MUS/MAPS_MUS-bk_xmas4_ENSTDkCl.txt",
+      "audioSha256": "c3659b98b0dba1e981d9e45ac5e24007f3d0902cf1ba22102be4c200534aad5b",
+      "midiSha256": "1d18e5cc88adc18f85cf58a5230a74a3b68a91fcc2bd0b97c99e86bf67734c62",
+      "txtSha256": "f4e3fd4acfbd30e423ce38d465e77495d3129c46bf1f4bc32e9854db152b7e2d",
+      "reason": "First five lexicographic MUS pairs; original first 15s audio, score onsets in [0,10)s; boundaries fixed before inference",
+      "audioWindowSeconds": [
+        0.0,
+        15.0
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        10.0
+      ],
+      "groundTruthNotes": 83,
+      "sourceDurationSeconds": 230.5239909297052,
+      "pitchRange": [
+        31,
+        96
+      ],
+      "sustain": true,
+      "cc64": [
+        {
+          "time": 0.7929822003845333,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 2.0189670949430827,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 2.627963048188726,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 3.845941543626209,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 4.47994911221656,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 5.066937526169622,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 8.128922508621477,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 8.671909255043184,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 11.670875695669437,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 13.165872918485077,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 13.661867332377101,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 14.254863898434413,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 15.678849591357174,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 16.87983628162483,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 17.0608452748192,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 17.508828116092435,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 17.595839033173643,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 18.11182932828763,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 18.23983783684807,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 18.723815946531598,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 19.38481996642967,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 20.722827393414136,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 21.27482636799222,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 22.615824459975006,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 23.127818261055364,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 24.019800860622002,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 25.138792367931188,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 25.71978604083381,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 25.87778166570029,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 26.081777205114946,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 27.304758023621375,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 27.938752181157923,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 28.099751882076532,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 29.468752254402347,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 29.864753851130764,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 32.916747598498546,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 33.01774624469746,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 34.323728075197685,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 34.62471235572383,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 36.01769169225142,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 36.436706657307724,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 36.93570514725188,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 37.04570261055337,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 37.51170990813935,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 37.606713813287826,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 38.109708797265604,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 38.26471375713376,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 39.82671260475484,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 39.930715327005885,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 40.4127086007264,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 40.50470842982274,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 41.54372982329788,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 41.683727813959216,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 42.12171942014837,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 42.215717496261526,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 43.267720789819066,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 43.374714177068434,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 43.86069053376878,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 43.94770145084999,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 44.98569019318221,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 45.12768643086036,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 45.561668131962065,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 45.6526621320231,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 46.73666419995729,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 46.7866740195929,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 47.32266019592885,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 47.423658842127765,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 48.45964933744317,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 48.511657404095594,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 49.04466632648702,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 49.183658488113046,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 50.17163741080965,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 50.356642898037656,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 51.9146318405713,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 52.081626282540356,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 53.079609851374855,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 53.285603637806325,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 53.6885923935667,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 53.82158981414228,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 54.25958142033142,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 54.35658357249671,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 54.83357452314828,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 55.03656423352762,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 55.39756297982725,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 55.52256741233557,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 55.9705636646626,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 56.10356108523818,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 56.537556197393705,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 56.691555328226556,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 57.11854987029632,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 57.2515472908719,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 58.87153553514205,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 59.05753344035156,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 59.48053148838768,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 60.79354071108124,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 61.95253739188814,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 62.62852155888542,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 63.67351087130339,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 64.39851243995476,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 65.03549726248963,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 65.23549630787065,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 65.66848559099085,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 65.93946934415715,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 66.29947567247527,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 66.57547515976431,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 66.85948104617442,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 68.32946665364533,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 68.83345405560459,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 69.14845288735606,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 70.04743605700844,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 70.29643909298976,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 70.65643201025406,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 70.84843806756783,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 71.84742746543762,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 71.96244066286185,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 72.47242280587157,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 72.75243219824804,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 73.66341826105513,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 73.91841603808689,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 74.2903984374521,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 74.48939165379781,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 75.2134008044677,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 75.6093889901423,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 76.77438041199966,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 77.44337741996497,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 78.48636848536613,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 79.21936304208477,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 79.85134554155069,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 80.0503521689502,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 80.48533969908722,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 80.75034212225687,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 81.112333286538,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 81.39133684987917,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 81.6783334012876,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 83.15432716086276,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 83.64531925168583,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 83.93932978423382,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 84.50334506302039,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 85.05233996154635,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 85.40232823267279,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 85.59432087893275,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 86.2663219629502,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 86.67632469985013,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 87.17331153172366,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 88.57730134342442,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 88.93029369060297,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 89.12628283089656,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 89.84728790551432,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 90.24328950224272,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 91.62128869167108,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 92.11929476363372,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 93.4492957914971,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 93.93528555925124,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 94.60025925107531,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 94.81027635364802,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 95.26126327097337,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 95.44027401715093,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 95.93826667805976,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 96.23825854060439,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 97.87725024811498,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 98.17425144566128,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 99.0902398315373,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 99.20924952299518,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 99.72025090609402,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 99.90624881130353,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 100.92523409039528,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 101.08522796227858,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 101.54123061372667,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 101.69823382061165,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 102.75120271004306,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 103.03121210241953,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 103.36719923337445,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 103.50120248298533,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 105.19617192907437,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 105.40515638050415,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 106.42014516556227,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 106.6571453083889,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 107.0391457649458,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 107.19415072481397,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 108.25314117740345,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 108.40814613727161,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 108.86913770073485,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 109.16414065126435,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 111.47011770866963,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 113.25909864192563,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 114.29209847224273,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 114.45610224921346,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 114.8790868861958,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 115.09609114780045,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 115.49209274452886,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 115.69108596087457,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 116.69208701681497,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 117.00308935453279,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 117.87208540787913,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 118.04307634388181,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 119.06506569902567,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 119.22007065889383,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 119.64305529587615,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 119.86005955748081,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 120.24506409008983,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 120.44805380046917,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 121.40703802484124,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 121.73603799676421,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 122.5860305868701,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 122.75802735190808,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 123.75901499679466,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 123.91302753868132,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 124.3300174346132,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 124.53201472701103,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 124.90100646137792,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 125.06700848536546,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 126.05400840113435,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 126.20901336100252,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 126.62900733298653,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 126.83901102450544,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 127.31201889217716,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 129.74097531296633,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 130.4539605774092,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 130.91597138096154,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 131.59097654103113,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 132.56196365855791,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 133.87196880519934,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 134.138956064332,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 135.15495067842545,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 135.3229509494298,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 136.43294363963642,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 136.6429473311553,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 137.05895822015947,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 137.36393899471923,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 137.6929389666422,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 137.866933978697,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 138.9879371440768,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 139.25393198522795,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 140.2689207702861,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 140.43591521225514,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 141.5289026862381,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 141.73788713766788,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 142.16189101473933,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 142.4768898464908,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 142.81787930051465,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 142.94488198003978,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 144.1188722189997,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 144.3908618012013,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 145.40684300424095,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 145.5748432752453,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 146.6838301364166,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 146.9808313339629,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 147.30983130588587,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 147.61481208044563,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 147.94681612842072,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 148.11080649433765,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 149.22081259559806,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 149.49080393078285,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 150.50280205084266,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 150.95779887325546,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 152.4897971935167,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 153.550785893123,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 154.5867763884384,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 154.70578607989628,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 155.13278062196605,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 155.261781548508,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 155.76276487441515,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 155.93177097445482,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 156.86174708944856,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 157.14573956480484,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 158.0057368010486,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 158.2127498275692,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 159.14072769554613,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 159.26272805200233,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 159.6757348649544,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 159.8097515256191,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 160.29574129337325,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 160.4607374883255,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 161.3767258742015,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 161.64973469649223,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 162.496723210546,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 162.54873127719844,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 163.0717221423982,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 163.1717283706156,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 163.6417321622352,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 163.7387343144005,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 164.22272583513782,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 164.32772097537037,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 164.83472586443557,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 165.01773310464677,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 166.03171606066957,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 166.19971633167393,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 166.6437026789135,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 166.8616993584997,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 167.08170769615649,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 167.26570735434916,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 168.50669921811453,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 168.80469283364235,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 169.13268697653,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 169.3886905825971,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 169.80168398449536,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 172.24768585466967,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 173.92067458357374,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 174.4956735154259,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 176.18565404949976,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 176.9276608343748,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 177.89664970488477,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 178.14165624683247,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 178.47065621875544,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 179.2056490224909,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 180.19664543229345,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 180.486646059754,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 181.36563334818445,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 181.68363625598803,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 182.5306381810956,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 182.81463065645193,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 183.70662666707236,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 183.89861931333232,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 184.9216144975115,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 185.08961476851587,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 186.1405988219843,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 186.44061750663653,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 187.39260116092285,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 187.62359315164522,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 188.6595702359068,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 188.88357506759723,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 190.96957060945337,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 191.24056777367346,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 192.0825673757121,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 192.35156629291538,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 193.25556519669053,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 193.4365607788311,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 194.36758295602158,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 194.65857600146364,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 195.50556451551742,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 195.7255728531742,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 196.61857469282998,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 196.929563619494,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 197.74955568224004,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 197.9655541148094,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 199.42957180333755,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 199.61456387951176,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 200.00756140018805,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 200.14255706778044,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 201.662552494887,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 201.84356148808138,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 202.239549673756,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 202.45255744132703,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 203.90555124362814,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 204.05555388042737,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 204.4765536814467,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 204.6995526841018,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 228.87447920407615,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 228.97347960325826,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 229.02248359385857,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": null,
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 0.0004995684693938074,
+        "maxEffectiveOffsetDifference": 0.0004995684693938074
+      }
+    },
+    {
+      "caseId": "22_music",
+      "category": "music",
+      "mapsCategory": "MUS",
+      "audio": "MUS/MAPS_MUS-bor_ps6_ENSTDkCl.wav",
+      "midi": "MUS/MAPS_MUS-bor_ps6_ENSTDkCl.mid",
+      "txt": "MUS/MAPS_MUS-bor_ps6_ENSTDkCl.txt",
+      "audioSha256": "1d9631a549883fc28e10f34d03928df788ba50178dbfc8807b1099777bb49712",
+      "midiSha256": "d07c097ffd4cde0329c52c237ce37b4d88d00e951fa82b6e993471e6ca496da7",
+      "txtSha256": "c9e71f521a44e2094ca6320e60b0a38cb78fde3d9cae582beac6b56ba8271ec5",
+      "reason": "First five lexicographic MUS pairs; original first 15s audio, score onsets in [0,10)s; boundaries fixed before inference",
+      "audioWindowSeconds": [
+        0.0,
+        15.0
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        10.0
+      ],
+      "groundTruthNotes": 76,
+      "sourceDurationSeconds": 114.71498866213152,
+      "pitchRange": [
+        37,
+        82
+      ],
+      "sustain": true,
+      "cc64": [
+        {
+          "time": 0.5249891122165594,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 0.5449984044923246,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 1.794989085360271,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 1.8639889571825312,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 2.8619859370708336,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.180981262855923,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 4.282980964995271,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 4.3839796111941896,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 5.384967256080811,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 5.654972002319404,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 6.785966402783285,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 6.87296390881069,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 7.937949102450632,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 8.30796007690664,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 10.883941880550555,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 10.960934740440079,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 15.776911216772978,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 16.508913355510128,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 17.282918914761815,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 17.827903908200337,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 18.541895001678533,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 19.056892878811016,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 19.82289203894164,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 20.022891084322666,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 20.97388232062749,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 21.589878843958893,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 22.360853505050848,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 22.899870579546533,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 23.61386167302473,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 24.1388776073489,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 24.890862216254206,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 25.43785886776335,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 26.046868232062796,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 26.662851344340396,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 27.43184116946934,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 27.981855308084413,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 28.68884583147685,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 29.209865271767388,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 30.01785444135875,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 30.175850066225234,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 31.127847131565368,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 31.733839008758896,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 32.50784456801058,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 33.053835390484416,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 33.76683406598111,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 33.983838327585765,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 35.18482501785342,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 35.23382900845372,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 36.19982721396537,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 36.29784860621977,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 37.602838018738474,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 37.72583079317617,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 38.86281993469051,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 39.055818409985775,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 40.29880852076796,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 40.35081658742039,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 41.29581308267476,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 41.91180960600615,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 42.68479592516873,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 42.789791065401275,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 43.945783670156054,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 44.466789699392784,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 45.2197801373334,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 45.76477854182572,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 46.37777098910499,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 46.51776897976632,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 47.78176080080579,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 47.90077049226366,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 49.04174271675781,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 49.22673479293201,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 50.472715568712516,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 50.521719559312814,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 51.47371662465293,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 52.090705565965834,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 52.85969539109477,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 52.989675324564416,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 54.112676736961035,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 54.6376792602314,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 55.38967728019052,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 55.93667393169965,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 56.54566988494529,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 57.16166640827668,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 57.92865798638881,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 58.474635397808825,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 59.18062009216595,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 59.70261853938419,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 60.538609989318566,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 60.66861674489583,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 61.619634803308244,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 62.22161677541433,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 62.99560892361222,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 63.53561841608939,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 64.24859026947847,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 64.7706021277505,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 65.51859024262215,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 66.0665793121128,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 66.67458284737691,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 67.29056595965451,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 68.06356568987088,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 68.60455418927576,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 69.31654703573713,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 69.83854548295535,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 70.67453693288972,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 70.80453027741318,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 71.74954018372135,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 72.36553670705273,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 73.1395154441968,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 73.68251560167229,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 74.3985049421673,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 74.91249699026447,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 76.82350510208428,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 77.09448885525057,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 78.10249048127676,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 78.46547406353939,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 79.26046792199455,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 79.62146666829418,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 80.7334576055176,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 80.85045563890485,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 81.75244288460935,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 82.1054218207341,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 83.11040595965434,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 83.4743953709523,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 84.27140088747805,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 84.63639612781131,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 85.74538298898258,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 85.86236761131603,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 86.78535656727783,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 87.1393413324379,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 88.14333305337662,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 88.50633004669305,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 89.30533381023562,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 89.66633255653525,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 90.77231534165442,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 90.89031920407697,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 91.80029943784875,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 92.24129512009002,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 93.15827592394756,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 93.52628865138674,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 94.31628018677296,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 94.70927770744925,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 97.34426814783131,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 97.76825861384894,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 99.01126213568492,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 99.08125442548868,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 100.08524614642741,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 100.39724090212674,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 101.50622776329801,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 101.6042357444986,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 102.60122689535157,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 102.87423571764228,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 104.00222604205402,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 104.08922354808142,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 105.14921982970621,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 105.52022322214371,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 108.10018810876743,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 108.17720779076456,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 113.06019930295668,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 113.16519444318922,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 113.21419843378952,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": null,
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 0.00025846003561014186,
+        "maxEffectiveOffsetDifference": 0.00025846003561014186
+      }
+    },
+    {
+      "caseId": "23_music",
+      "category": "music",
+      "mapsCategory": "MUS",
+      "audio": "MUS/MAPS_MUS-chpn-e01_ENSTDkCl.wav",
+      "midi": "MUS/MAPS_MUS-chpn-e01_ENSTDkCl.mid",
+      "txt": "MUS/MAPS_MUS-chpn-e01_ENSTDkCl.txt",
+      "audioSha256": "4b80cb0650391f834ea83cb8fc033fffa82bacd4a7375ab519d1179417751d7c",
+      "midiSha256": "4a31ae737a72ad30391f1a1ba378b4cf63d2cc73f6b3a3f4684347deb438b61d",
+      "txtSha256": "387f272dc70b8304e3ee5dbf5dbe6205855a01fb22bc913d87c7e7223efa1490",
+      "reason": "First five lexicographic MUS pairs; original first 15s audio, score onsets in [0,10)s; boundaries fixed before inference",
+      "audioWindowSeconds": [
+        0.0,
+        15.0
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        10.0
+      ],
+      "groundTruthNotes": 119,
+      "sourceDurationSeconds": 112.6480045351474,
+      "pitchRange": [
+        24,
+        101
+      ],
+      "sustain": true,
+      "cc64": [
+        {
+          "time": 0.5299914352855006,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 3.253092499160741,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.3720753685110014,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 4.6310916885891285,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 4.772095508285775,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 6.077151976073487,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 6.1921517624439195,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 7.575180097048857,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 7.659173527024136,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 8.961212507705916,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 9.094209928281495,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 10.431265170445867,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 10.467260438856158,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 11.743308797265533,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 11.923298550370792,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 14.534403903927723,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 14.684393129673136,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 15.954446747032067,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 16.03944600604266,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 17.35249546189764,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 17.476507476424448,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 18.737548865627,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 18.86654979216895,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 20.15460104373303,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 20.25759793694877,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 21.596651426129956,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 21.646634423657957,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 22.958704872585244,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 23.062707594836287,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 24.34074078920868,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 24.42574004821927,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 25.7688034424879,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 25.860803271584246,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 27.133860964995304,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 27.228851459089974,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 28.582898506424193,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 28.638903067110252,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 29.94496536393328,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 30.01596348277236,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 31.331011185644144,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 31.449015048066705,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 32.76304351084939,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 32.83905736381122,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 34.19710090517907,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 34.23210375560786,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 35.54814387646116,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 35.608144931180846,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 36.966188472548694,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 37.02918019226669,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 38.29924722067942,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 38.404242360911965,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 39.71729181676696,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 39.79828117069011,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 41.09331958128614,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 41.152314806970516,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 42.45836369273973,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 42.55535243385121,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 43.850404255501054,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 43.92739711539057,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 45.21543495590084,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 45.331440571306594,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 46.64449002716158,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 46.72450037415704,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 48.05454163518186,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 48.120537430952,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 50.79163042817481,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 50.91663486068313,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 52.19869137119677,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 52.279680725119924,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 53.58074069887402,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 53.70673754936383,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 54.973787090670626,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 55.07277407879892,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 56.39584159184558,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 56.46983037568298,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 57.74287465804024,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 57.858880273445976,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 58.48490826502287,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 58.582916246223476,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 59.160932665181576,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 59.26893188146625,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 59.89595229102464,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 59.99393345011763,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 60.5919591613515,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 60.66195145115527,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 61.270960815454714,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 61.36895538560151,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 61.985984560075835,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 62.06199841303765,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 63.33201179723516,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 63.437999355449215,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 64.77804526261188,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 64.8410503933837,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 66.89211014008002,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 67.64514081118205,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 70.35421391277809,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 70.47220436414685,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 71.74325039948722,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 71.88024431409643,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 73.20331182714304,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 73.2733041169468,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 74.65633245155175,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 74.74633403363127,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 76.09036302377378,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 76.192367499008,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 77.49042339670989,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 77.55841743949684,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 78.9144895559554,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 78.9644725534834,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 81.67358588824082,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 81.74757467207822,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 83.0356393346961,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 83.13363390484288,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 83.79766882290066,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 83.86067395367247,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 84.48768095217704,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 84.56067731803293,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 85.84872856959694,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 85.93374123966133,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 87.2707964818257,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 87.38477702810702,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 88.67282827967102,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 88.74882872157903,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 89.3628538200012,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 89.45085715506391,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 90.06686708944913,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 90.14685061433698,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 92.84594589190273,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 92.92995273293182,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 94.20298360423524,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 94.28497878719371,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 95.57702653279135,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 95.69202631916177,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 96.96905368449883,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 97.06706166569943,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 97.66206988982734,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 97.75007322489004,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 98.40811340189735,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 98.49509749687094,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 99.75511964598431,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 99.83610899990747,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 100.4691241505163,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 100.54613042145961,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 101.16616367198607,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 101.23615596178983,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 102.49620493301086,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 102.61120471938128,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 103.8752367735821,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 103.99324063600466,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 105.28530179265613,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 105.37030105166671,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 106.68536216559225,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 106.7903707168786,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 110.81847460432624,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 111.10046883266573,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 111.15148448133664,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": null,
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 0.0004747593602729694,
+        "maxEffectiveOffsetDifference": 0.0004747593602729694
+      }
+    },
+    {
+      "caseId": "24_music",
+      "category": "music",
+      "mapsCategory": "MUS",
+      "audio": "MUS/MAPS_MUS-chpn-p19_ENSTDkCl.wav",
+      "midi": "MUS/MAPS_MUS-chpn-p19_ENSTDkCl.mid",
+      "txt": "MUS/MAPS_MUS-chpn-p19_ENSTDkCl.txt",
+      "audioSha256": "a933095af15ccd9b286520ed0a022551693d71102ff814423e1635da9b89e3ce",
+      "midiSha256": "ccd9bd631bdaa06771db39905fa4987900d244d5c231642ce66b3f086f1ef116",
+      "txtSha256": "76a5ba40a6dce9b850d6c3c739ec441f3b830c32bbcbed2113fe9f97dfa22c1d",
+      "reason": "First five lexicographic MUS pairs; original first 15s audio, score onsets in [0,10)s; boundaries fixed before inference",
+      "audioWindowSeconds": [
+        0.0,
+        15.0
+      ],
+      "evaluationOnsetWindowSeconds": [
+        0.0,
+        10.0
+      ],
+      "groundTruthNotes": 169,
+      "sourceDurationSeconds": 68.89900226757369,
+      "pitchRange": [
+        31,
+        99
+      ],
+      "sustain": true,
+      "cc64": [
+        {
+          "time": 0.5229908651997437,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 1.4339769280068364,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 3.2709292007202366,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.298931481063265,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 3.575923386333812,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.6029332486953343,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 3.900926864223152,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 3.9319198095645014,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 4.201911144749291,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 4.239918071230202,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 4.530911116672262,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 4.5659139671010465,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 5.140886076845608,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 5.167882528153326,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 5.447878509475997,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 5.4688802197332675,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 5.749868619037445,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 5.7768650703451625,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 6.049860481582077,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 6.080866837977231,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 6.356852914212467,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 6.392848182622758,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 6.665857004913476,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 6.7248656416516575,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 6.9508418982512845,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 6.9808424256111286,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 7.264834900967431,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 7.288840687276828,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 7.575823827631451,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 7.610826678060236,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 7.902825552537606,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 7.93282607989745,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 8.226809790337834,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 8.26580913480025,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 8.541795211035485,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 8.603794512771987,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 8.849780061647381,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 8.912785192419195,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 10.670746358226268,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 10.704743379619742,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 10.978731208838163,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 11.001744577166054,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 11.302715446638388,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 11.334714221015048,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 11.601714891201517,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 11.64271248268075,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 11.932713110141306,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 11.971712454603722,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 12.539683994262528,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 12.570676939603878,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 12.850672920926552,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 12.870682213202317,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 13.151670612506495,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 13.186660051881475,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 13.459655463118391,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 13.487657743461419,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 13.760653154698335,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 13.784658941007732,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 14.054650276192524,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 14.092643791619631,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 14.356640385753975,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 14.393641483199575,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 14.664638647419673,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 14.691635098727392,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 14.971631080050066,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 15.002624025391416,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 15.285624082766216,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 15.314632192144554,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 15.604619408551304,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 15.643605341959917,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 15.936623456526402,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 16.000621005279722,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 16.22761650196847,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 16.255618782311497,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 16.539611257667808,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 16.563617043977203,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 16.840608949247752,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 16.8716018945891,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 17.151597875911783,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 17.17960015625481,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 17.46258680257581,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 17.497576241950792,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 17.763571083101958,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 17.798573933530744,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 18.05556995757933,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 18.085570484939172,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 18.36256239020972,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 18.386568176519116,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 18.667556575823298,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 18.695558856166326,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 18.968554267403245,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 18.996556547746273,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 19.251554324778045,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 19.276539118015144,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 19.58455079073465,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 19.598538519852358,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 19.86753743705565,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 19.902540287484435,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 20.186519351786938,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 20.210525138096333,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 20.49151353740051,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 20.522519893795664,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 20.795515305032584,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 20.826508250373934,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 21.09550716757722,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 21.120505371868123,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 21.397497277138672,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 21.428503633533825,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 21.701485633716942,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 21.736488484145728,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 22.019475130466727,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 22.037486175725675,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 22.327473392132433,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 22.362462831507415,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 22.640460565813278,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 22.67046109317312,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 22.96144072756138,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 22.978445943785022,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 23.293444775536482,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 23.314459896847556,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 23.5784564909819,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 23.612453512375374,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 24.191435527207382,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 24.221436054567224,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 24.49142738975202,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 24.522433746147172,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 25.103414007995994,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 25.124415718253264,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 25.391416388439737,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 25.422409333781086,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 26.003403006683705,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 26.038392446058687,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 26.308397192297285,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 26.332389567552877,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 26.919391392559753,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 26.983388941313073,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 27.207380361949696,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 27.238373307291045,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 27.80836991607428,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 27.836358785363505,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 28.405349565111432,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 28.422354781335073,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 28.992351390118312,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 29.02035367046134,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 29.57734155705457,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 29.608347913449723,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 30.178331111179155,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 30.210329885555815,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 30.48634278389866,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 30.54933450361667,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 30.616336128422116,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 30.83334039002678,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 32.6712850807217,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 32.70128560808155,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 32.97528684835377,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 32.99528272957573,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 33.297286250190986,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 33.32827919553233,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 33.602280435804566,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 33.63627745719804,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 33.934271072725856,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 33.96626984710252,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 34.54023612781177,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 34.57124248420692,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 34.84423789544384,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 34.86523960570111,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 35.15223615710954,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 35.18023843745257,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 35.44723910763904,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 35.47723963499889,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 35.75423154026942,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 35.789220979644405,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 36.05823330790149,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 36.08623558824452,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 36.33923511825947,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 36.37722863368657,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 36.66021528000757,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 36.68522689535228,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 36.96920595965477,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 36.996215822016296,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 37.29120536149199,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 37.321205888851836,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 37.61219893429388,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 37.64720178472266,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 37.9481994763026,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 37.98320232673138,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 38.2452006738489,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 38.27320295419193,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 40.07315412945972,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 40.101156409802755,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 40.37015532700603,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 40.395153531296934,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 40.685154158757484,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 40.713156439100516,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 40.96615596911547,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 40.990161755424865,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 41.29114603595101,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 41.32915296243192,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 41.57114201727369,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 41.588147233497324,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 41.87914027893938,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 41.90714255928241,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 42.18413446455297,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 42.21114432691449,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 42.488136232185035,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 42.51912917752638,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 42.78912051271117,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 42.823130945158454,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 43.096112945341574,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 43.11712806665265,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 43.395112389904696,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 43.42910941129817,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 43.69611008148463,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 43.73010710287811,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 44.010089673146965,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 44.032097212439545,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 44.316089687795845,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 44.34708263313719,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 44.62007804437411,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 44.64808032471714,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 44.927070477004484,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 44.949078016297065,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 45.22806816858442,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 45.26406343699471,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 45.54004951322994,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 45.56106463454101,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 45.87606346629248,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 45.8790541312908,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 46.187065804010295,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 46.22206865443908,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 46.475054773400224,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 46.50604771874157,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 46.776039053926354,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 46.80304891628788,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 47.104046607867815,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 47.132048888210846,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 47.39903614734351,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 47.416041363567146,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 47.72405303628664,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 47.75904247566162,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 48.025023905758985,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 48.063030832239896,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 48.31601695120104,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 48.34700989654239,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 48.62400180181294,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 48.640014600055075,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 48.94500878566865,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 48.97301106601168,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 49.24599306619479,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 49.25599771233267,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 49.54799658681003,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 49.58998659627077,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 49.86197617847237,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 49.89697902890115,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 50.16797619312125,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 50.197976720481094,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 50.46496397961376,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 50.49197384197529,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 50.789967457503096,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 50.81796973784613,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 51.07795642689302,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 51.10894937223436,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 51.38093895443596,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 51.40595056978067,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 51.68893721610165,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 51.70993892635892,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 51.99692206671355,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 52.02492434705658,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 52.297919758293496,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 52.32592203863653,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 52.62390224311056,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 52.65490859950571,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 52.9259057637258,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 52.9388876638082,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 53.54388712302021,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 53.582873056428824,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 53.835859175389984,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 53.86585970274983,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 54.13986094302204,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 54.16286090029613,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 54.46385859187607,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 54.4928532902006,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 54.75884813135175,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 54.7768591766107,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 55.3818452247689,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 55.416848075197684,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 55.669834194158824,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 55.70082713950017,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 55.97382255073709,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 56.00482890713224,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 56.29882602862642,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 56.32682830896945,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 56.59981030915257,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 56.61080737327196,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 57.5407968993195,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 57.57679216772979,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 57.853784073000334,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 57.87678403027442,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 58.17476423474844,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 58.20276651509147,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 58.46876135624262,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 58.49676363658565,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 58.77076487685787,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 58.800765404217714,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 59.098759019745536,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 59.12676130008857,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 59.38676140018928,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 59.420758421582754,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 59.69375383281965,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 59.71774620807525,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 60.01874389965519,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 60.05074267403185,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 60.31374685018468,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 60.33374273140664,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 61.19874229071936,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 61.22674457106239,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 61.79375051484729,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 61.81874871913819,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 62.381758168889455,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 62.38875873897521,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 62.94475420758693,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 62.97675298196359,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 63.55375016083258,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 63.58175244117561,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 65.10176127933595,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 65.8117558787805,
+          "value": 127,
+          "channel": 0
+        },
+        {
+          "time": 67.24774446485796,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 67.34874311105688,
+          "value": 0,
+          "channel": 0
+        },
+        {
+          "time": 67.39776051271097,
+          "value": 0,
+          "channel": 0
+        }
+      ],
+      "noteDurationsSeconds": null,
+      "sampleRate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "keyCensoredNotes": 0,
+      "pedalCensoredNotes": 0,
+      "txtAgreement": {
+        "maxOnsetDifference": 4.9971617819721814e-05,
+        "maxEffectiveOffsetDifference": 4.9839167424181596e-05
+      }
+    }
+  ]
+}

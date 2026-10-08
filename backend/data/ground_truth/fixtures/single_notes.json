@@ -1,0 +1,59 @@
+{
+  "name": "single_notes",
+  "category": "isolated",
+  "notePlan": [
+    [
+      60,
+      0.5,
+      1,
+      80
+    ],
+    [
+      64,
+      1.5,
+      2,
+      80
+    ],
+    [
+      67,
+      2.5,
+      3,
+      80
+    ],
+    [
+      71,
+      3.5,
+      4,
+      80
+    ]
+  ],
+  "pedalPlan": [],
+  "groundTruthNotes": 4,
+  "midi": "backend/data/ground_truth/fixtures/single_notes.mid",
+  "audio": "backend/data/ground_truth/rendered/single_notes.wav",
+  "midiSha256": "3f49b345905980c8de12fcc58a2b2e2cf65fcebf59354adf322365c8437ce0b4",
+  "audioSha256": "bdda5ea1692bb82c4686f3455e201142812cddf3a2c95e15aa10e11ca68f1062",
+  "renderCommand": [
+    "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\.deps\\fluidsynth-2.5.6\\bin\\fluidsynth.exe",
+    "-ni",
+    "-R",
+    "0",
+    "-C",
+    "0",
+    "-r",
+    "44100",
+    "-g",
+    "0.2",
+    "-T",
+    "wav",
+    "-O",
+    "s16",
+    "-F",
+    "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\rendered\\single_notes.wav",
+    "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\.venv\\Lib\\site-packages\\pretty_midi\\TimGM6mb.sf2",
+    "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\fixtures\\single_notes.mid"
+  ],
+  "durationSeconds": 7.058866213151927,
+  "peakAmplitude": 0.019439697265625,
+  "velocityReliable": true
+}

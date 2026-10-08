@@ -30,3 +30,16 @@ backend/data/tmp/
 .env.local
 
 backend/.deps.rollback-*/
+
+# Local user recordings; not redistributable benchmark fixtures
+/120_G_Offbeat_01_53_SP.wav
+/140_Cm_Piano_VKeys_02_268_2.wav
+
+# Local raw research dumps; compact CSV/Markdown evidence remains tracked
+/backend/benchmarks/maps/experiments/long_note_cap/results/full-summary.json
+/backend/benchmarks/maps/experiments/long_note_cap/results/targeted-summary.json
+/backend/benchmarks/reports/bytedance-offset-independent-validation.json
+/backend/benchmarks/reports/bytedance-offset-policy-results.json
+
+# Personal recording sessions, including original MIDI and native project files
+/backend/data/ground_truth/real_recordings/

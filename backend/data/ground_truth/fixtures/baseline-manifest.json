@@ -1,0 +1,305 @@
+{
+  "version": 1,
+  "provenance": "New hand-authored note plans, frozen before inference; not derived from predictions",
+  "audioKind": "synthetic piano SoundFont rendering, not microphone recordings",
+  "rendererVersion": "FluidSynth runtime version 2.5.6\nCopyright (C) 2000-2026 Peter Hanappe and others.\nDistributed under the LGPL license.\nSoundFont(R) is a registered trademark of Creative Technology Ltd.\n\nFluidSynth executable version 2.5.6\nSample type=float",
+  "rendererExeSha256": "23bfbfa8d2e8fe88cb2698969e06fce8ed56217de834133904884784ff69ed1e",
+  "soundfont": "pretty_midi/TimGM6mb.sf2",
+  "soundfontSha256": "82475b91a76de15cb28a104707d3247ba932e228bada3f47bba63c6b31aaf7a1",
+  "prettyMidiVersion": "0.2.11.post0",
+  "sampleRate": 44100,
+  "gain": 0.2,
+  "reverb": false,
+  "chorus": false,
+  "normalization": "none",
+  "velocityReference": "Known MIDI note-on commands; no acoustic/loudness calibration",
+  "fragments": [
+    {
+      "name": "single_notes",
+      "category": "isolated",
+      "notePlan": [
+        [
+          60,
+          0.5,
+          1,
+          80
+        ],
+        [
+          64,
+          1.5,
+          2,
+          80
+        ],
+        [
+          67,
+          2.5,
+          3,
+          80
+        ],
+        [
+          71,
+          3.5,
+          4,
+          80
+        ]
+      ],
+      "pedalPlan": [],
+      "groundTruthNotes": 4,
+      "midi": "backend/data/ground_truth/fixtures/single_notes.mid",
+      "audio": "backend/data/ground_truth/rendered/single_notes.wav",
+      "midiSha256": "3f49b345905980c8de12fcc58a2b2e2cf65fcebf59354adf322365c8437ce0b4",
+      "audioSha256": "bdda5ea1692bb82c4686f3455e201142812cddf3a2c95e15aa10e11ca68f1062",
+      "renderCommand": [
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\.deps\\fluidsynth-2.5.6\\bin\\fluidsynth.exe",
+        "-ni",
+        "-R",
+        "0",
+        "-C",
+        "0",
+        "-r",
+        "44100",
+        "-g",
+        "0.2",
+        "-T",
+        "wav",
+        "-O",
+        "s16",
+        "-F",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\rendered\\single_notes.wav",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\.venv\\Lib\\site-packages\\pretty_midi\\TimGM6mb.sf2",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\fixtures\\single_notes.mid"
+      ],
+      "durationSeconds": 7.058866213151927,
+      "peakAmplitude": 0.019439697265625,
+      "velocityReliable": true
+    },
+    {
+      "name": "melody_repeated",
+      "category": "melody/repeated pitch",
+      "notePlan": [
+        [
+          60,
+          0.5,
+          0.8,
+          80
+        ],
+        [
+          62,
+          0.9,
+          1.2000000000000002,
+          80
+        ],
+        [
+          64,
+          1.3,
+          1.6,
+          80
+        ],
+        [
+          67,
+          1.7000000000000002,
+          2.0,
+          80
+        ],
+        [
+          67,
+          2.1,
+          2.4000000000000004,
+          80
+        ],
+        [
+          64,
+          2.5,
+          2.8,
+          80
+        ],
+        [
+          62,
+          2.9000000000000004,
+          3.2,
+          80
+        ],
+        [
+          60,
+          3.3000000000000003,
+          3.6000000000000005,
+          80
+        ]
+      ],
+      "pedalPlan": [],
+      "groundTruthNotes": 8,
+      "midi": "backend/data/ground_truth/fixtures/melody_repeated.mid",
+      "audio": "backend/data/ground_truth/rendered/melody_repeated.wav",
+      "midiSha256": "0c3f7442c7cd38680cdd327b462b6395daacfbbc707d7531da7e250156d9a50d",
+      "audioSha256": "7be587f3696ce212f9040587b1c64e1c0846ed318ecb6a5de6f2aa7051a5fb76",
+      "renderCommand": [
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\.deps\\fluidsynth-2.5.6\\bin\\fluidsynth.exe",
+        "-ni",
+        "-R",
+        "0",
+        "-C",
+        "0",
+        "-r",
+        "44100",
+        "-g",
+        "0.2",
+        "-T",
+        "wav",
+        "-O",
+        "s16",
+        "-F",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\rendered\\melody_repeated.wav",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\.venv\\Lib\\site-packages\\pretty_midi\\TimGM6mb.sf2",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\fixtures\\melody_repeated.mid"
+      ],
+      "durationSeconds": 7.012426303854875,
+      "peakAmplitude": 0.01800537109375,
+      "velocityReliable": true
+    },
+    {
+      "name": "overlapping_chords",
+      "category": "triads/overlap",
+      "notePlan": [
+        [
+          60,
+          0.5,
+          1.7,
+          80
+        ],
+        [
+          64,
+          0.5,
+          1.7,
+          80
+        ],
+        [
+          67,
+          0.5,
+          1.7,
+          80
+        ],
+        [
+          62,
+          1.4,
+          2.8,
+          80
+        ],
+        [
+          65,
+          1.4,
+          2.8,
+          80
+        ],
+        [
+          69,
+          1.4,
+          2.8,
+          80
+        ]
+      ],
+      "pedalPlan": [],
+      "groundTruthNotes": 6,
+      "midi": "backend/data/ground_truth/fixtures/overlapping_chords.mid",
+      "audio": "backend/data/ground_truth/rendered/overlapping_chords.wav",
+      "midiSha256": "bc994cfe5aa81c1cb53a0e22b4c3cbcf9b556fe2f7f0f5dd619958169b9e47c7",
+      "audioSha256": "369d68738e098d44c9a485fa46345f833e878b804526d749409894ecee8ae974",
+      "renderCommand": [
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\.deps\\fluidsynth-2.5.6\\bin\\fluidsynth.exe",
+        "-ni",
+        "-R",
+        "0",
+        "-C",
+        "0",
+        "-r",
+        "44100",
+        "-g",
+        "0.2",
+        "-T",
+        "wav",
+        "-O",
+        "s16",
+        "-F",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\rendered\\overlapping_chords.wav",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\.venv\\Lib\\site-packages\\pretty_midi\\TimGM6mb.sf2",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\fixtures\\overlapping_chords.mid"
+      ],
+      "durationSeconds": 6.013968253968254,
+      "peakAmplitude": 0.03387451171875,
+      "velocityReliable": true
+    },
+    {
+      "name": "long_notes_sustain",
+      "category": "long notes/CC64",
+      "notePlan": [
+        [
+          48,
+          0.5,
+          2.5,
+          80
+        ],
+        [
+          55,
+          1,
+          2.8,
+          80
+        ],
+        [
+          60,
+          3.1,
+          3.35,
+          80
+        ],
+        [
+          64,
+          3.5,
+          3.75,
+          80
+        ],
+        [
+          67,
+          3.9,
+          4.15,
+          80
+        ]
+      ],
+      "pedalPlan": [
+        [
+          3,
+          127
+        ],
+        [
+          5,
+          0
+        ]
+      ],
+      "groundTruthNotes": 5,
+      "midi": "backend/data/ground_truth/fixtures/long_notes_sustain.mid",
+      "audio": "backend/data/ground_truth/rendered/long_notes_sustain.wav",
+      "midiSha256": "2ea24dce3bb5b5aad263059c0c9a518622e5e6567f069279583b0345b13cfc80",
+      "audioSha256": "a58359d22baed6585714e06075ffc12d07cbd5b04bce02a91f43937f1ed15c1a",
+      "renderCommand": [
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\.deps\\fluidsynth-2.5.6\\bin\\fluidsynth.exe",
+        "-ni",
+        "-R",
+        "0",
+        "-C",
+        "0",
+        "-r",
+        "44100",
+        "-g",
+        "0.2",
+        "-T",
+        "wav",
+        "-O",
+        "s16",
+        "-F",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\rendered\\long_notes_sustain.wav",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\.venv\\Lib\\site-packages\\pretty_midi\\TimGM6mb.sf2",
+        "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\fixtures\\long_notes_sustain.mid"
+      ],
+      "durationSeconds": 8.057324263038549,
+      "peakAmplitude": 0.021270751953125,
+      "velocityReliable": true
+    }
+  ]
+}

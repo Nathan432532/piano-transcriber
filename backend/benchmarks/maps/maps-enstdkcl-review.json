@@ -1,0 +1,1093 @@
+{
+  "manifestSha256": "eb6560e2f7306400a6f561bb6f615709fb20cb722fea801cc3a29ff968b021c1",
+  "commonMatchedGroundTruth": {
+    "bytedance": {
+      "matched": 337,
+      "onset_error": {
+        "n": 337,
+        "mae_ms": 13.227278189108214,
+        "median_ms": 9.7682194858848
+      },
+      "key_error": {
+        "n": 337,
+        "mae_ms": 274.2377312063809,
+        "median_ms": 81.9602130215209
+      },
+      "pedal_error": {
+        "n": 337,
+        "mae_ms": 160.5599163564443,
+        "median_ms": 46.99547242361568
+      }
+    },
+    "basic_pitch": {
+      "matched": 337,
+      "onset_error": {
+        "n": 337,
+        "mae_ms": 13.884918624718427,
+        "median_ms": 10.807610386175615
+      },
+      "key_error": {
+        "n": 337,
+        "mae_ms": 222.12950705276293,
+        "median_ms": 123.44582145896865
+      },
+      "pedal_error": {
+        "n": 337,
+        "mae_ms": 276.961041269406,
+        "median_ms": 124.23580464472295
+      }
+    }
+  },
+  "annotationAudit": {
+    "pairs": 3999,
+    "maxOnsetDifferenceSeconds": 0.0004999993891487975,
+    "selectedMaxEffectiveDifferenceSeconds": 4.980864894932324e-05,
+    "selectedEffectiveDifferencesOver1ms": [],
+    "fullDatasetEffectiveDifferencesOver1ms": [
+      {
+        "audio": "MUS/MAPS_MUS-bk_xmas1_ENSTDkCl.wav",
+        "pitch": 37,
+        "onset": 316.0523639051482,
+        "keyRelease": 316.20637644703487,
+        "effectiveRelease": 316.20637644703487,
+        "txtRelease": 317.839,
+        "difference": -1.6326235529651285,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-deb_clai_ENSTDkCl.wav",
+        "pitch": 53,
+        "onset": 180.1293889974664,
+        "keyRelease": 181.30539089449695,
+        "effectiveRelease": 181.30539089449695,
+        "txtRelease": 182.351,
+        "difference": -1.045609105503047,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-deb_clai_ENSTDkCl.wav",
+        "pitch": 72,
+        "onset": 176.6923907174896,
+        "keyRelease": 177.8403903341771,
+        "effectiveRelease": 177.8403903341771,
+        "txtRelease": 178.879,
+        "difference": -1.0386096658228894,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-liz_et_trans5_ENSTDkCl.wav",
+        "pitch": 86,
+        "onset": 190.2424366832452,
+        "keyRelease": 190.3194295431347,
+        "effectiveRelease": 190.3194295431347,
+        "txtRelease": 191.33,
+        "difference": -1.0105704568653096,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-liz_rhap09_ENSTDkCl.wav",
+        "pitch": 92,
+        "onset": 167.2043383721423,
+        "keyRelease": 167.26332018677286,
+        "effectiveRelease": 167.26332018677286,
+        "txtRelease": 168.225,
+        "difference": -0.9616798132271356,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-schuim-1_ENSTDkCl.wav",
+        "pitch": 34,
+        "onset": 68.36940477187406,
+        "keyRelease": 68.50240219244964,
+        "effectiveRelease": 68.50240219244964,
+        "txtRelease": 68.9114,
+        "difference": -0.40899780755036375,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-liz_rhap09_ENSTDkCl.wav",
+        "pitch": 33,
+        "onset": 492.1857416669139,
+        "keyRelease": 492.24473689259827,
+        "effectiveRelease": 492.24473689259827,
+        "txtRelease": 492.56,
+        "difference": -0.3152631074017336,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-liz_et6_ENSTDkCl.wav",
+        "pitch": 74,
+        "onset": 191.067980922267,
+        "keyRelease": 191.19097369670467,
+        "effectiveRelease": 191.19097369670467,
+        "txtRelease": 191.504,
+        "difference": -0.31302630329531667,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-liz_rhap09_ENSTDkCl.wav",
+        "pitch": 33,
+        "onset": 489.30581173985297,
+        "keyRelease": 489.3678110415895,
+        "effectiveRelease": 489.3678110415895,
+        "txtRelease": 489.679,
+        "difference": -0.3111889584104688,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-mz_332_2_ENSTDkCl.wav",
+        "pitch": 60,
+        "onset": 76.61356846583438,
+        "keyRelease": 76.80557452314814,
+        "effectiveRelease": 76.80557452314814,
+        "txtRelease": 77.0076,
+        "difference": -0.20202547685185834,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-liz_et6_ENSTDkCl.wav",
+        "pitch": 41,
+        "onset": 143.20250832361623,
+        "keyRelease": 143.30150872279833,
+        "effectiveRelease": 143.30150872279833,
+        "txtRelease": 143.491,
+        "difference": -0.18949127720168235,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-liz_et6_ENSTDkCl.wav",
+        "pitch": 38,
+        "onset": 143.20350074159774,
+        "keyRelease": 143.30150872279833,
+        "effectiveRelease": 143.30150872279833,
+        "txtRelease": 143.49,
+        "difference": -0.18849127720167758,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      },
+      {
+        "audio": "MUS/MAPS_MUS-liz_rhap09_ENSTDkCl.wav",
+        "pitch": 45,
+        "onset": 489.30581173985297,
+        "keyRelease": 489.3678110415895,
+        "effectiveRelease": 489.3678110415895,
+        "txtRelease": 489.479,
+        "difference": -0.11118895841048015,
+        "pedalDownAtSameTimestampAsKeyRelease": true
+      }
+    ]
+  },
+  "correctByteDanceLongNoteFound": false,
+  "selectedTraces": [
+    {
+      "selection": "late",
+      "case": "12_repeated",
+      "category": "repeated",
+      "classification": "late",
+      "match": "TP",
+      "referenceIndex": 13,
+      "predictionIndex": 24,
+      "pitch": 89,
+      "gt_onset": 4.499006219672232,
+      "gt_key_release": 4.534009070101017,
+      "gt_pedal_release": 4.534009070101017,
+      "pred_onset": 4.538790225982666,
+      "pred_end": 6.203,
+      "key_error": 1.6689909298989836,
+      "pedal_error": 1.6689909298989836,
+      "onset_error": 0.039784006310433995,
+      "engine": "bytedance",
+      "onset": 4.538790225982666,
+      "upstreamOffset": 10.0,
+      "canonicalOffset": 6.203,
+      "policyBOffset": 6.194382120966911,
+      "policyBReason": "accepted_offset_peak_frame_619",
+      "rawCandidate": 6.194382120966911,
+      "offsetPeaks": [
+        {
+          "frame": 619,
+          "time": 6.194382120966911,
+          "score": 0.8660808801651001
+        }
+      ],
+      "decoder": {
+        "beginFrame": 454,
+        "endFrame": 1000,
+        "onsetShift": -0.12097901105880737,
+        "offsetShift": 0.0,
+        "velocityRaw": 0.47943395376205444,
+        "reason": "sequence_end",
+        "firstOffsetFrame": 619,
+        "firstFrameDisappear": null,
+        "onsetSeconds": 4.538790209889412,
+        "offsetSeconds": 10.0
+      },
+      "audioDuration": 6.203,
+      "outputFrames": 1001,
+      "realAudioFrameLimit": 620,
+      "predictedPedalEvents": [
+        {
+          "onset_time": 4.179999828338623,
+          "offset_time": 5.320000171661377
+        }
+      ],
+      "clippingApplied": true,
+      "headObservations": [
+        {
+          "landmark": "key_release",
+          "frame": 453,
+          "frameActivation": 0.9996280670166016,
+          "offsetRegression": 0.025453492999076843,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "pedal_release",
+          "frame": 453,
+          "frameActivation": 0.9996280670166016,
+          "offsetRegression": 0.025453492999076843,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "decoder_end",
+          "frame": 620,
+          "frameActivation": 0.9996553659439087,
+          "offsetRegression": 0.8554942607879639,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "B_end",
+          "frame": 619,
+          "frameActivation": 0.9997652173042297,
+          "offsetRegression": 0.8660808801651001,
+          "acceptedOffsetPeak": true
+        }
+      ]
+    },
+    {
+      "selection": "late",
+      "case": "15_sustain",
+      "category": "sustain",
+      "classification": "late",
+      "match": "TP",
+      "referenceIndex": 0,
+      "predictionIndex": 0,
+      "pitch": 90,
+      "gt_onset": 0.7179875875118259,
+      "gt_key_release": 2.7169856233405563,
+      "gt_pedal_release": 2.9199887447737054,
+      "pred_onset": 0.7124173641204834,
+      "pred_end": 4.57,
+      "key_error": 1.853014376659444,
+      "pedal_error": 1.6500112552262949,
+      "onset_error": -0.005570223391342499,
+      "engine": "bytedance",
+      "onset": 0.7124173641204834,
+      "upstreamOffset": 6.710000038146973,
+      "canonicalOffset": 4.57,
+      "policyBOffset": 2.8432388055324553,
+      "policyBReason": "accepted_offset_peak_frame_284",
+      "rawCandidate": 2.8432388055324553,
+      "offsetPeaks": [
+        {
+          "frame": 284,
+          "time": 2.8432388055324553,
+          "score": 0.4782070815563202
+        }
+      ],
+      "decoder": {
+        "beginFrame": 71,
+        "endFrame": 671,
+        "onsetShift": 0.24173612892627716,
+        "offsetShift": 0.0,
+        "velocityRaw": 0.7192466259002686,
+        "reason": "six_second_cap",
+        "firstOffsetFrame": 284,
+        "firstFrameDisappear": null,
+        "onsetSeconds": 0.7124173612892628,
+        "offsetSeconds": 6.71
+      },
+      "audioDuration": 4.57,
+      "outputFrames": 1001,
+      "realAudioFrameLimit": 457,
+      "predictedPedalEvents": [
+        {
+          "onset_time": 0.4399999976158142,
+          "offset_time": 2.8405354022979736
+        }
+      ],
+      "clippingApplied": true,
+      "headObservations": [
+        {
+          "landmark": "key_release",
+          "frame": 272,
+          "frameActivation": 0.9972578883171082,
+          "offsetRegression": 0.10174798965454102,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "pedal_release",
+          "frame": 292,
+          "frameActivation": 0.9516085386276245,
+          "offsetRegression": 0.008661824278533459,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "decoder_end",
+          "frame": 457,
+          "frameActivation": 0.8925765752792358,
+          "offsetRegression": 0.02241823822259903,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "B_end",
+          "frame": 284,
+          "frameActivation": 0.9895679354667664,
+          "offsetRegression": 0.4782070815563202,
+          "acceptedOffsetPeak": true
+        }
+      ]
+    },
+    {
+      "selection": "early",
+      "case": "09_long",
+      "category": "long",
+      "classification": "early",
+      "match": "TP",
+      "referenceIndex": 0,
+      "predictionIndex": 0,
+      "pitch": 31,
+      "gt_onset": 0.5139920480971709,
+      "gt_key_release": 18.56299058931242,
+      "gt_pedal_release": 18.56299058931242,
+      "pred_onset": 0.505710780620575,
+      "pred_end": 6.510000228881836,
+      "key_error": -12.052990360430584,
+      "pedal_error": -12.052990360430584,
+      "onset_error": -0.008281267476595966,
+      "engine": "bytedance",
+      "onset": 0.505710780620575,
+      "upstreamOffset": 6.510000228881836,
+      "canonicalOffset": 6.510000228881836,
+      "policyBOffset": 6.510000228881836,
+      "policyBReason": "no_usable_accepted_offset_peak",
+      "rawCandidate": null,
+      "offsetPeaks": [
+        {
+          "frame": 1722,
+          "time": 17.224831343591212,
+          "score": 0.3114771842956543
+        }
+      ],
+      "decoder": {
+        "beginFrame": 51,
+        "endFrame": 651,
+        "onsetShift": -0.42892226576805115,
+        "offsetShift": 0.0,
+        "velocityRaw": 0.6767486929893494,
+        "reason": "six_second_cap",
+        "firstOffsetFrame": null,
+        "firstFrameDisappear": null,
+        "onsetSeconds": 0.5057107773423195,
+        "offsetSeconds": 6.51
+      },
+      "audioDuration": 20.165,
+      "outputFrames": 3000,
+      "realAudioFrameLimit": 2016,
+      "predictedPedalEvents": [
+        {
+          "onset_time": 12.5,
+          "offset_time": 17.218645095825195
+        }
+      ],
+      "clippingApplied": false,
+      "headObservations": [
+        {
+          "landmark": "key_release",
+          "frame": 1856,
+          "frameActivation": 0.02315671183168888,
+          "offsetRegression": 0.002850951626896858,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "pedal_release",
+          "frame": 1856,
+          "frameActivation": 0.02315671183168888,
+          "offsetRegression": 0.002850951626896858,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "decoder_end",
+          "frame": 651,
+          "frameActivation": 0.9744588136672974,
+          "offsetRegression": 0.0025615140330046415,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "B_end",
+          "frame": 651,
+          "frameActivation": 0.9744588136672974,
+          "offsetRegression": 0.0025615140330046415,
+          "acceptedOffsetPeak": false
+        }
+      ]
+    },
+    {
+      "selection": "early",
+      "case": "08_long",
+      "category": "long",
+      "classification": "early",
+      "match": "TP",
+      "referenceIndex": 0,
+      "predictionIndex": 1,
+      "pitch": 62,
+      "gt_onset": 0.5139920480971709,
+      "gt_key_release": 12.507993674123355,
+      "gt_pedal_release": 12.507993674123355,
+      "pred_onset": 0.4980824291706085,
+      "pred_end": 6.5,
+      "key_error": -6.007993674123355,
+      "pedal_error": -6.007993674123355,
+      "onset_error": -0.015909618926562397,
+      "engine": "bytedance",
+      "onset": 0.4980824291706085,
+      "upstreamOffset": 6.5,
+      "canonicalOffset": 6.5,
+      "policyBOffset": 0.5423905484378337,
+      "policyBReason": "accepted_offset_peak_frame_54",
+      "rawCandidate": 0.5423905484378337,
+      "offsetPeaks": [
+        {
+          "frame": 54,
+          "time": 0.5423905484378337,
+          "score": 0.40435341000556946
+        }
+      ],
+      "decoder": {
+        "beginFrame": 50,
+        "endFrame": 650,
+        "onsetShift": -0.19175708293914795,
+        "offsetShift": 0.0,
+        "velocityRaw": 0.7341673374176025,
+        "reason": "six_second_cap",
+        "firstOffsetFrame": 54,
+        "firstFrameDisappear": null,
+        "onsetSeconds": 0.4980824291706085,
+        "offsetSeconds": 6.5
+      },
+      "audioDuration": 14.1090625,
+      "outputFrames": 2000,
+      "realAudioFrameLimit": 1410,
+      "predictedPedalEvents": [
+        {
+          "onset_time": 7.5,
+          "offset_time": 12.507926940917969
+        },
+        {
+          "onset_time": 12.789999961853027,
+          "offset_time": 13.890000343322754
+        }
+      ],
+      "clippingApplied": false,
+      "headObservations": [
+        {
+          "landmark": "key_release",
+          "frame": 1251,
+          "frameActivation": 0.005123014561831951,
+          "offsetRegression": 0.32965531945228577,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "pedal_release",
+          "frame": 1251,
+          "frameActivation": 0.005123014561831951,
+          "offsetRegression": 0.32965531945228577,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "decoder_end",
+          "frame": 650,
+          "frameActivation": 0.7630592584609985,
+          "offsetRegression": 0.0037654300685971975,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "B_end",
+          "frame": 54,
+          "frameActivation": 0.9958551526069641,
+          "offsetRegression": 0.40435341000556946,
+          "acceptedOffsetPeak": true
+        }
+      ]
+    },
+    {
+      "selection": "sustain",
+      "case": "15_sustain",
+      "category": "sustain",
+      "classification": "late",
+      "match": "TP",
+      "referenceIndex": 0,
+      "predictionIndex": 0,
+      "pitch": 90,
+      "gt_onset": 0.7179875875118259,
+      "gt_key_release": 2.7169856233405563,
+      "gt_pedal_release": 2.9199887447737054,
+      "pred_onset": 0.7124173641204834,
+      "pred_end": 4.57,
+      "key_error": 1.853014376659444,
+      "pedal_error": 1.6500112552262949,
+      "onset_error": -0.005570223391342499,
+      "engine": "bytedance",
+      "onset": 0.7124173641204834,
+      "upstreamOffset": 6.710000038146973,
+      "canonicalOffset": 4.57,
+      "policyBOffset": 2.8432388055324553,
+      "policyBReason": "accepted_offset_peak_frame_284",
+      "rawCandidate": 2.8432388055324553,
+      "offsetPeaks": [
+        {
+          "frame": 284,
+          "time": 2.8432388055324553,
+          "score": 0.4782070815563202
+        }
+      ],
+      "decoder": {
+        "beginFrame": 71,
+        "endFrame": 671,
+        "onsetShift": 0.24173612892627716,
+        "offsetShift": 0.0,
+        "velocityRaw": 0.7192466259002686,
+        "reason": "six_second_cap",
+        "firstOffsetFrame": 284,
+        "firstFrameDisappear": null,
+        "onsetSeconds": 0.7124173612892628,
+        "offsetSeconds": 6.71
+      },
+      "audioDuration": 4.57,
+      "outputFrames": 1001,
+      "realAudioFrameLimit": 457,
+      "predictedPedalEvents": [
+        {
+          "onset_time": 0.4399999976158142,
+          "offset_time": 2.8405354022979736
+        }
+      ],
+      "clippingApplied": true,
+      "headObservations": [
+        {
+          "landmark": "key_release",
+          "frame": 272,
+          "frameActivation": 0.9972578883171082,
+          "offsetRegression": 0.10174798965454102,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "pedal_release",
+          "frame": 292,
+          "frameActivation": 0.9516085386276245,
+          "offsetRegression": 0.008661824278533459,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "decoder_end",
+          "frame": 457,
+          "frameActivation": 0.8925765752792358,
+          "offsetRegression": 0.02241823822259903,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "B_end",
+          "frame": 284,
+          "frameActivation": 0.9895679354667664,
+          "offsetRegression": 0.4782070815563202,
+          "acceptedOffsetPeak": true
+        }
+      ]
+    },
+    {
+      "selection": "repeated",
+      "case": "12_repeated",
+      "category": "repeated",
+      "classification": "late",
+      "match": "TP",
+      "referenceIndex": 0,
+      "predictionIndex": 0,
+      "pitch": 89,
+      "gt_onset": 0.5239832831812494,
+      "gt_key_release": 0.8689960533463545,
+      "gt_pedal_release": 0.8689960533463545,
+      "pred_onset": 0.5111894607543945,
+      "pred_end": 1.2000000476837158,
+      "key_error": 0.3310039943373613,
+      "pedal_error": 0.3310039943373613,
+      "onset_error": -0.012793822426854895,
+      "engine": "bytedance",
+      "onset": 0.5111894607543945,
+      "upstreamOffset": 1.2000000476837158,
+      "canonicalOffset": 1.2000000476837158,
+      "policyBOffset": 0.877828224003315,
+      "policyBReason": "accepted_offset_peak_frame_88",
+      "rawCandidate": 0.877828224003315,
+      "offsetPeaks": [
+        {
+          "frame": 88,
+          "time": 0.877828224003315,
+          "score": 0.5037904381752014
+        }
+      ],
+      "decoder": {
+        "beginFrame": 51,
+        "endFrame": 120,
+        "onsetShift": 0.11894471943378448,
+        "offsetShift": 0.0,
+        "velocityRaw": 0.6308762431144714,
+        "reason": "next_onset",
+        "firstOffsetFrame": 88,
+        "firstFrameDisappear": null,
+        "onsetSeconds": 0.5111894471943379,
+        "offsetSeconds": 1.2
+      },
+      "audioDuration": 6.203,
+      "outputFrames": 1001,
+      "realAudioFrameLimit": 620,
+      "predictedPedalEvents": [
+        {
+          "onset_time": 4.179999828338623,
+          "offset_time": 5.320000171661377
+        }
+      ],
+      "clippingApplied": false,
+      "headObservations": [
+        {
+          "landmark": "key_release",
+          "frame": 87,
+          "frameActivation": 0.998021125793457,
+          "offsetRegression": 0.4781866669654846,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "pedal_release",
+          "frame": 87,
+          "frameActivation": 0.998021125793457,
+          "offsetRegression": 0.4781866669654846,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "decoder_end",
+          "frame": 120,
+          "frameActivation": 0.9941332936286926,
+          "offsetRegression": 0.13423261046409607,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "B_end",
+          "frame": 88,
+          "frameActivation": 0.9980953335762024,
+          "offsetRegression": 0.5037904381752014,
+          "acceptedOffsetPeak": true
+        }
+      ]
+    },
+    {
+      "selection": "chords",
+      "case": "17_chords",
+      "category": "chords",
+      "classification": "reasonable",
+      "match": "TP",
+      "referenceIndex": 0,
+      "predictionIndex": 0,
+      "pitch": 62,
+      "gt_onset": 0.5159902951139866,
+      "gt_key_release": 1.519982016052736,
+      "gt_pedal_release": 1.519982016052736,
+      "pred_onset": 0.5177741646766663,
+      "pred_end": 1.5499999523162842,
+      "key_error": 0.030017936263548206,
+      "pedal_error": 0.030017936263548206,
+      "onset_error": 0.0017838695626796186,
+      "engine": "bytedance",
+      "onset": 0.5177741646766663,
+      "upstreamOffset": 1.5499999523162842,
+      "canonicalOffset": 1.5499999523162842,
+      "policyBOffset": 0.5735403028130531,
+      "policyBReason": "accepted_offset_peak_frame_57",
+      "rawCandidate": 0.5735403028130531,
+      "offsetPeaks": [
+        {
+          "frame": 57,
+          "time": 0.5735403028130531,
+          "score": 0.3058417737483978
+        },
+        {
+          "frame": 153,
+          "time": 1.5341419157385827,
+          "score": 0.6988202333450317
+        }
+      ],
+      "decoder": {
+        "beginFrame": 52,
+        "endFrame": 155,
+        "onsetShift": -0.22258414328098297,
+        "offsetShift": 0.0,
+        "velocityRaw": 0.49646228551864624,
+        "reason": "frame_disappearance",
+        "firstOffsetFrame": 57,
+        "firstFrameDisappear": 155,
+        "onsetSeconds": 0.5177741585671902,
+        "offsetSeconds": 1.55
+      },
+      "audioDuration": 3.122,
+      "outputFrames": 1001,
+      "realAudioFrameLimit": 312,
+      "predictedPedalEvents": [
+        {
+          "onset_time": 1.5199999809265137,
+          "offset_time": 1.526942253112793
+        }
+      ],
+      "clippingApplied": false,
+      "headObservations": [
+        {
+          "landmark": "key_release",
+          "frame": 152,
+          "frameActivation": 0.7442663908004761,
+          "offsetRegression": 0.6118452548980713,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "pedal_release",
+          "frame": 152,
+          "frameActivation": 0.7442663908004761,
+          "offsetRegression": 0.6118452548980713,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "decoder_end",
+          "frame": 155,
+          "frameActivation": 0.0588332861661911,
+          "offsetRegression": 0.6105908751487732,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "B_end",
+          "frame": 57,
+          "frameActivation": 0.9957196116447449,
+          "offsetRegression": 0.3058417737483978,
+          "acceptedOffsetPeak": true
+        }
+      ]
+    },
+    {
+      "selection": "B_correct_cut",
+      "case": "02_isolated",
+      "category": "isolated",
+      "classification": "reasonable",
+      "match": "TP",
+      "referenceIndex": 0,
+      "predictionIndex": 0,
+      "pitch": 60,
+      "gt_onset": 0.5199867891476181,
+      "gt_key_release": 2.521988901028474,
+      "gt_pedal_release": 2.521988901028474,
+      "pred_onset": 0.5226254463195801,
+      "pred_end": 2.549999952316284,
+      "key_error": 0.02801105128781023,
+      "pedal_error": 0.02801105128781023,
+      "onset_error": 0.002638657171961989,
+      "engine": "bytedance",
+      "onset": 0.5226254463195801,
+      "upstreamOffset": 2.549999952316284,
+      "canonicalOffset": 2.549999952316284,
+      "policyBOffset": 0.5632020661234856,
+      "policyBReason": "accepted_offset_peak_frame_56",
+      "rawCandidate": 0.5632020661234856,
+      "offsetPeaks": [
+        {
+          "frame": 56,
+          "time": 0.5632020661234856,
+          "score": 0.5188730955123901
+        },
+        {
+          "frame": 256,
+          "time": 2.5559528067708017,
+          "score": 0.5913597941398621
+        }
+      ],
+      "decoder": {
+        "beginFrame": 52,
+        "endFrame": 255,
+        "onsetShift": 0.2625453770160675,
+        "offsetShift": 0.0,
+        "velocityRaw": 0.7319803833961487,
+        "reason": "frame_disappearance",
+        "firstOffsetFrame": 56,
+        "firstFrameDisappear": 255,
+        "onsetSeconds": 0.5226254537701607,
+        "offsetSeconds": 2.55
+      },
+      "audioDuration": 4.127,
+      "outputFrames": 1001,
+      "realAudioFrameLimit": 412,
+      "predictedPedalEvents": [
+        {
+          "onset_time": 0.7099999785423279,
+          "offset_time": 2.5330288410186768
+        }
+      ],
+      "clippingApplied": false,
+      "headObservations": [
+        {
+          "landmark": "key_release",
+          "frame": 252,
+          "frameActivation": 0.42110419273376465,
+          "offsetRegression": 0.43975189328193665,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "pedal_release",
+          "frame": 252,
+          "frameActivation": 0.42110419273376465,
+          "offsetRegression": 0.43975189328193665,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "decoder_end",
+          "frame": 255,
+          "frameActivation": 0.09449110180139542,
+          "offsetRegression": 0.5792790055274963,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "B_end",
+          "frame": 56,
+          "frameActivation": 0.9940388202667236,
+          "offsetRegression": 0.5188730955123901,
+          "acceptedOffsetPeak": true
+        }
+      ]
+    },
+    {
+      "selection": "B_sustain_regression",
+      "case": "24_music",
+      "category": "music",
+      "classification": "sustain_ambiguity",
+      "match": "TP",
+      "referenceIndex": 153,
+      "predictionIndex": 152,
+      "pitch": 55,
+      "gt_onset": 9.259769387493508,
+      "gt_key_release": 9.361773862727738,
+      "gt_pedal_release": 9.973760480971706,
+      "pred_onset": 9.21484661102295,
+      "pred_end": 9.979999542236328,
+      "key_error": 0.6182256795085905,
+      "pedal_error": 0.006239061264622592,
+      "onset_error": -0.044922776470558645,
+      "engine": "bytedance",
+      "onset": 9.21484661102295,
+      "upstreamOffset": 9.979999542236328,
+      "canonicalOffset": 9.979999542236328,
+      "policyBOffset": 9.234872553646564,
+      "policyBReason": "accepted_offset_peak_frame_923",
+      "rawCandidate": 9.234872553646564,
+      "offsetPeaks": [
+        {
+          "frame": 923,
+          "time": 9.234872553646564,
+          "score": 0.3602161705493927
+        },
+        {
+          "frame": 999,
+          "time": 9.991560459434986,
+          "score": 0.8202177286148071
+        }
+      ],
+      "decoder": {
+        "beginFrame": 921,
+        "endFrame": 998,
+        "onsetShift": 0.4846612513065338,
+        "offsetShift": 0.0,
+        "velocityRaw": 0.4333173632621765,
+        "reason": "next_onset",
+        "firstOffsetFrame": 923,
+        "firstFrameDisappear": null,
+        "onsetSeconds": 9.214846612513066,
+        "offsetSeconds": 9.98
+      },
+      "audioDuration": 15.0,
+      "outputFrames": 2000,
+      "realAudioFrameLimit": 1500,
+      "predictedPedalEvents": [
+        {
+          "onset_time": 1.4900000095367432,
+          "offset_time": 2.0627529621124268
+        },
+        {
+          "onset_time": 2.0999999046325684,
+          "offset_time": 2.7645089626312256
+        },
+        {
+          "onset_time": 2.7899999618530273,
+          "offset_time": 3.187032699584961
+        },
+        {
+          "onset_time": 3.2699999809265137,
+          "offset_time": 3.4870409965515137
+        },
+        {
+          "onset_time": 3.5899999141693115,
+          "offset_time": 3.8202974796295166
+        },
+        {
+          "onset_time": 3.930000066757202,
+          "offset_time": 4.125947952270508
+        },
+        {
+          "onset_time": 4.230000019073486,
+          "offset_time": 4.455996990203857
+        },
+        {
+          "onset_time": 4.550000190734863,
+          "offset_time": 5.0549750328063965
+        },
+        {
+          "onset_time": 5.159999847412109,
+          "offset_time": 5.35727071762085
+        },
+        {
+          "onset_time": 5.480000019073486,
+          "offset_time": 5.663409233093262
+        },
+        {
+          "onset_time": 5.75,
+          "offset_time": 5.976263999938965
+        },
+        {
+          "onset_time": 6.079999923706055,
+          "offset_time": 6.2887864112854
+        },
+        {
+          "onset_time": 6.420000076293945,
+          "offset_time": 6.606518745422363
+        },
+        {
+          "onset_time": 6.75,
+          "offset_time": 6.884039402008057
+        },
+        {
+          "onset_time": 7.0,
+          "offset_time": 7.1757307052612305
+        },
+        {
+          "onset_time": 7.309999942779541,
+          "offset_time": 7.494029521942139
+        },
+        {
+          "onset_time": 7.570000171661377,
+          "offset_time": 7.816684246063232
+        },
+        {
+          "onset_time": 7.949999809265137,
+          "offset_time": 8.149731636047363
+        },
+        {
+          "onset_time": 8.279999732971191,
+          "offset_time": 8.489225387573242
+        },
+        {
+          "onset_time": 8.619999885559082,
+          "offset_time": 8.795597076416016
+        },
+        {
+          "onset_time": 8.920000076293945,
+          "offset_time": 9.218092918395996
+        },
+        {
+          "onset_time": 9.239999771118164,
+          "offset_time": 10.595376014709473
+        },
+        {
+          "onset_time": 10.680000305175781,
+          "offset_time": 10.888941764831543
+        },
+        {
+          "onset_time": 10.979999542236328,
+          "offset_time": 11.219755172729492
+        },
+        {
+          "onset_time": 11.3100004196167,
+          "offset_time": 11.527379989624023
+        },
+        {
+          "onset_time": 11.630000114440918,
+          "offset_time": 11.86178970336914
+        },
+        {
+          "onset_time": 11.960000038146973,
+          "offset_time": 12.455451965332031
+        },
+        {
+          "onset_time": 12.579999923706055,
+          "offset_time": 12.753865242004395
+        },
+        {
+          "onset_time": 12.880000114440918,
+          "offset_time": 13.068682670593262
+        },
+        {
+          "onset_time": 13.170000076293945,
+          "offset_time": 13.375123977661133
+        },
+        {
+          "onset_time": 13.449999809265137,
+          "offset_time": 13.675164222717285
+        },
+        {
+          "onset_time": 13.770000457763672,
+          "offset_time": 13.964444160461426
+        },
+        {
+          "onset_time": 14.0600004196167,
+          "offset_time": 14.28488540649414
+        },
+        {
+          "onset_time": 14.369999885559082,
+          "offset_time": 14.577938079833984
+        },
+        {
+          "onset_time": 14.680000305175781,
+          "offset_time": 14.890936851501465
+        }
+      ],
+      "clippingApplied": false,
+      "headObservations": [
+        {
+          "landmark": "key_release",
+          "frame": 936,
+          "frameActivation": 0.9366655349731445,
+          "offsetRegression": 0.008666886016726494,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "pedal_release",
+          "frame": 997,
+          "frameActivation": 0.9763430953025818,
+          "offsetRegression": 0.5761904716491699,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "decoder_end",
+          "frame": 998,
+          "frameActivation": 0.9808230996131897,
+          "offsetRegression": 0.7545756697654724,
+          "acceptedOffsetPeak": false
+        },
+        {
+          "landmark": "B_end",
+          "frame": 923,
+          "frameActivation": 0.9971494078636169,
+          "offsetRegression": 0.3602161705493927,
+          "acceptedOffsetPeak": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "name": "overlapping_chords",
+  "category": "triads/overlap",
+  "notePlan": [
+    [
+      60,
+      0.5,
+      1.7,
+      80
+    ],
+    [
+      64,
+      0.5,
+      1.7,
+      80
+    ],
+    [
+      67,
+      0.5,
+      1.7,
+      80
+    ],
+    [
+      62,
+      1.4,
+      2.8,
+      80
+    ],
+    [
+      65,
+      1.4,
+      2.8,
+      80
+    ],
+    [
+      69,
+      1.4,
+      2.8,
+      80
+    ]
+  ],
+  "pedalPlan": [],
+  "groundTruthNotes": 6,
+  "midi": "backend/data/ground_truth/fixtures/overlapping_chords.mid",
+  "audio": "backend/data/ground_truth/rendered/overlapping_chords.wav",
+  "midiSha256": "bc994cfe5aa81c1cb53a0e22b4c3cbcf9b556fe2f7f0f5dd619958169b9e47c7",
+  "audioSha256": "369d68738e098d44c9a485fa46345f833e878b804526d749409894ecee8ae974",
+  "renderCommand": [
+    "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\.deps\\fluidsynth-2.5.6\\bin\\fluidsynth.exe",
+    "-ni",
+    "-R",
+    "0",
+    "-C",
+    "0",
+    "-r",
+    "44100",
+    "-g",
+    "0.2",
+    "-T",
+    "wav",
+    "-O",
+    "s16",
+    "-F",
+    "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\rendered\\overlapping_chords.wav",
+    "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\.venv\\Lib\\site-packages\\pretty_midi\\TimGM6mb.sf2",
+    "C:\\Users\\nterh\\Desktop\\projects\\piano-transcriber\\backend\\data\\ground_truth\\fixtures\\overlapping_chords.mid"
+  ],
+  "durationSeconds": 6.013968253968254,
+  "peakAmplitude": 0.03387451171875,
+  "velocityReliable": true
+}
