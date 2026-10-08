@@ -1,5 +1,62 @@
 # Project State
 
+## Definitief checkpoint — 2026-10-08
+
+- ByteDance primary: `BYTEDANCE READY WITH KNOWN OFFSET LIMITATION` voor de
+  stagedemo met menselijke correctie. Basic Pitch blijft expliciet selecteerbaar;
+  er is geen automatische fallback of tweede correctie-/MIDI-pipeline.
+- MAPS ENSTDkCl: 24 bevroren cases, 585 officiële MIDI-noten; F1 ByteDance 85,5%
+  versus Basic Pitch 65,3%, recall 92,5% versus 58,5%, onset-MAE 13,1 versus
+  14,2 ms. Deze subset rechtvaardigt geen algemene accuracyclaim.
+- ByteDance is trager op CPU en offsets zijn een bekende beperking. Key-release-
+  MAE 301,8 versus 219,8 ms op verschillende matched sets; beide modellen zijn
+  ook op dezelfde GT-identiteiten vergeleken in het MAPS-rapport.
+- Policy B en C: **DO NOT SHIP** als algemene offsetfix. Alleen offline bewijs;
+  geen productiepolicy of gepatchte dependency.
+- **KEEP CURRENT CAP**: de upstream 600-framegrens blijft bewust behouden.
+  Verhogen/verwijderen geeft slechts beperkte winst, een concrete regressie en
+  geen herstel van de segmenthead-discontinuïteit bij 7,5 s. Lange noten vereisen
+  menselijke correctie.
+- Startprocedure: `scripts/start-bytedance.ps1` en README. Resultaten:
+  [MAPS](../backend/benchmarks/maps/maps-enstdkcl-validation.md),
+  [capdiagnose](../backend/benchmarks/maps/maps-long-note-cap-diagnosis.md).
+- De volgende secties bevatten historische runtime- en testobservaties. De
+  oude containerconfiguratie is geen beschrijving van de huidige Windows-demo.
+
+## Huidige richting: ByteDance primair (2026-10-05)
+
+ByteDance is nu de primaire engine via piano-transcription-inference 0.0.6 /
+CPU PyTorch 2.7.1. De bestaande adapterinterface, jobs, canonical JSON, correcties
+en MIDI-export worden gedeeld met de behouden Basic Pitch-referentie.
+De echte browserflow met dezelfde 3,43 s piano-WAV is bewezen: 15 noten,
+correctie 67 naar 68 en start 0,23 s, revisie 1 blijft na refresh bestaan.
+Alle 15 corrected MIDI-noten matchen JSON. Backend: 112 passed, 2 bestaande
+Windows-fouten; frontendtests/typecheck/build geslaagd. Geen commit gemaakt.
+Starten: scripts/start-bytedance.ps1; details: local-bytedance-verification.md.
+De eerdere Basic Pitch-aanbevelingen hieronder zijn historische projectstatus
+en zijn vervangen door deze richting; Basic Pitch blijft reference.
+
+## Lokale Windows-verificatie — 2026-10-05
+
+- Echte lokale keten bewezen met Basic Pitch 0.4.0 / TensorFlow 2.15.0 op
+  CPython 3.11.9 x64. Interpreter: `backend/.deps/python311`; environment: `.venv`.
+- Runtime-lock: `backend/requirements-windows.lock.txt`; starten:
+  `scripts/start-basic-pitch.ps1`. Model en appcode zijn ongewijzigd.
+- Browserproef op `140_Cm_Piano_VKeys_02_268_2.wav` (3.432 s): 27 noten;
+  één noot gewijzigd (pitch 53 naar 54, start naar 0.03 s), revisie 1 opgeslagen,
+  corrected JSON/MIDI gemaakt en na echte browserrefresh opnieuw geladen.
+- Job: `12ad5149-7f41-44a4-9965-03906b087cd0`. Alle 27 MIDI-noten matchen
+  corrected JSON op pitch/velocity en timing binnen één MIDI-tick.
+- Ook de synthetische demo-audio is door echte inferentie verwerkt; dit was geen
+  demo-runner. De nieuwe piano-WAVs blijven ongewijzigde, untracked gebruikersbestanden.
+- Backend: 100 passed / 2 failed (bestaande Windows-oversize-uploadbug en
+  concurrency-startup/padvalidatiefout). Schematests draaien nu wel.
+- Frontendtests, typecheck en build slagen. De bekende UX-/lint-/editorissues
+  zijn niet aangepakt. Geen ByteDance, refactor of commit uitgevoerd.
+- Volledige procedure en bewijs: README en `docs/local-basic-pitch-verification.md`.
+- De container/live-status hieronder is historische context; hij beschrijft
+  niet de nu geverifieerde lokale Windows-installatie.
+
 ## Doel
 
 Piano Transcriber is een webapp voor korte solo-piano-opnames: upload, validatie, playback, automatische transcriptie, pianorol en falling-keys-weergave.
@@ -35,9 +92,10 @@ Controleer het actuele `HEAD` alleen wanneer dit voor de taak nodig is.
 * OpenClaw hostcontrol ondersteunt inspect, exec, logs, update, restart en rollback.
 * **Correction API**: immutable `corrected-r<N>.json`/`corrected-r<N>.mid` artifacts worden volledig geschreven en gecontroleerd vóór publicatie via één metadata-`save_job`; failure-injectiontests en 100 backendtests + 20 correction-tests groen.
 
-## Huidige live status
+## Historische containerstatus — 2026-06-14
 
-De live API draait met echte Basic Pitch-inferentie, persistente artifactdownloads en **correction API**.
+De toenmalige container-API draaide met echte Basic Pitch-inferentie,
+persistente artifactdownloads en **correction API**.
 
 Bewezen op 2026-06-14:
 
@@ -56,7 +114,7 @@ Bewezen op 2026-06-14:
 
 De dependencycontext vereist nog steeds dat `backend/.deps` via `site.addsitedir(...)` wordt geladen, zodat de setuptools `distutils`-shim actief wordt.
 
-## Huidig doel
+## Historisch containerdoel
 
 Echte Basic Pitch-inferentie en persistent artifact export zijn live geactiveerd en gevalideerd in de bestaande Piano Transcriber-container.
 
@@ -84,8 +142,8 @@ Actieve live configuratie:
 * Verwijder geen hostcontrol-rollbacksnapshot.
 * Wijzig tijdens Piano Transcriber-werk niet de OpenClaw-gatewaycontainer.
 * Herhaal het modelselectieonderzoek niet.
-* Basic Pitch blijft de gekozen prototype-engine.
-* Kong/Qiu/ByteDance blijft fallback.
+* De historische Basic Pitch-enginekeuze is vervangen door ByteDance primary.
+* Basic Pitch blijft een expliciete referentie; er is geen automatische fallback.
 * Borg bij toekomstige dependency-regeneratie expliciet `setuptools<81`, omdat Basic Pitch/resampy via `pkg_resources` loopt.
 * Geen professionele bladmuziek, handdetectie of correctie-editor in deze taak.
 * Multi-process en distributed-worker-garanties vallen nog buiten de huidige scope.

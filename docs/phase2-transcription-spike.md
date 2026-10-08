@@ -1,8 +1,12 @@
 # Phase 2 Transcription Spike
 
+> Historisch spikecontract. Sinds 2026-10-05 is ByteDance de primaire lokale engine op verzoek van de projecteigenaar. Zie `local-bytedance-verification.md` voor de daadwerkelijk geteste runtime/modelbron en pipeline. De eerdere Basic Pitch-default hieronder geldt niet meer.
+
 ## Samenvatting
 
-Aanbevolen engine: Basic Pitch.
+Historische spike-aanbeveling: Basic Pitch. De huidige stagedemo gebruikt
+ByteDance primary, menselijke correctie en de bekende offsetbeperking; zie
+`PROJECT_STATE.md` en de MAPS-rapporten. Dit document bewaart het oude onderzoek.
 
 Fallback: Kong/Qiu piano transcription (`piano-transcription-inference` / ByteDance piano transcription), alleen na aparte licentie- en resourcebevestiging.
 
