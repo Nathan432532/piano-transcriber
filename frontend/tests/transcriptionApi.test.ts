@@ -41,7 +41,7 @@ await test('client creates, fetches, cancels, and maps API errors', async () => 
   assertEqual(cancelled.state, 'cancelled');
   assertEqual(calls[0].input, 'http://api.test/api/transcriptions');
   assertEqual((calls[0].init?.headers as Record<string, string>)['Idempotency-Key'], 'idem-1');
-  assertEqual(JSON.parse(String(calls[0].init?.body)).engine, 'basic-pitch');
+  assertEqual(JSON.parse(String(calls[0].init?.body)).engine, 'bytedance');
   assertEqual(calls[2].init?.method, 'DELETE');
 
   await assertRejects(async () => client.get('missing'), (error) => {
@@ -50,6 +50,17 @@ await test('client creates, fetches, cancels, and maps API errors', async () => 
     assertEqual(apiError.code, 'JOB_NOT_FOUND');
     assertEqual(apiError.message, 'This transcription job no longer exists.');
   });
+});
+
+await test('client can explicitly select Basic Pitch as reference', async () => {
+  let requestEngine: string | undefined;
+  const fetchImpl = async (_input: RequestInfo | URL, init?: RequestInit) => {
+    requestEngine = JSON.parse(String(init?.body)).engine;
+    return jsonResponse(queuedJob, 202);
+  };
+  const client = createTranscriptionApiClient(fetchImpl, 'http://api.test', 'basic-pitch');
+  await client.create('upload-1', 'reference-key');
+  assertEqual(requestEngine, 'basic-pitch');
 });
 
 await test('create retry keeps the same request operation for temporary failures', async () => {

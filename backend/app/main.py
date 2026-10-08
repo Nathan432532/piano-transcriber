@@ -39,7 +39,7 @@ app.add_middleware(
 
 class TranscriptionCreateRequest(BaseModel):
     uploadId: str
-    engine: str = "basic-pitch"
+    engine: str = "bytedance"
     options: dict[str, Any] = Field(default_factory=dict)
 
 

@@ -132,11 +132,18 @@ class DemoTranscriptionAdapter:
         return build_demo_result(context.job, context.upload_path)
 
 
-def create_transcription_adapter() -> TranscriptionAdapter:
+def create_transcription_adapter(engine: str | None = None) -> TranscriptionAdapter:
     mode = config.TRANSCRIPTION_RUNNER_MODE
-    if mode == "demo":
+    if mode == "demo" and engine != "bytedance":
         return DemoTranscriptionAdapter()
-    if mode == "basic-pitch":
+    if mode not in {"demo", "basic-pitch", "bytedance"}:
+        raise TranscriptionAdapterLoadError("Unknown transcription runner mode")
+    selected = engine or mode
+    if selected == "bytedance":
+        from .bytedance_adapter import ByteDanceTranscriptionAdapter
+
+        return ByteDanceTranscriptionAdapter(config.BYTEDANCE_MODEL_PATH)
+    if selected == "basic-pitch":
         from .basic_pitch_adapter import BasicPitchTranscriptionAdapter
 
         return BasicPitchTranscriptionAdapter(config.BASIC_PITCH_MODEL_PATH)
@@ -382,7 +389,7 @@ def create_transcription_job(body: dict[str, Any], idempotency_key: str | None) 
     request_body = canonical_request_body(body)
     request_body["options"] = validate_options(request_body["options"])
 
-    if request_body["engine"] != "basic-pitch":
+    if request_body["engine"] not in {"basic-pitch", "bytedance"}:
         raise TranscriptionApiError("UNSUPPORTED_ENGINE")
 
     upload_path = find_upload_path(request_body["uploadId"])
@@ -980,7 +987,7 @@ def run_transcription_job(job_id: str, adapter: TranscriptionAdapter | None = No
             return cancelled
 
         try:
-            adapter = adapter or create_transcription_adapter()
+            adapter = adapter or create_transcription_adapter(job["engine"])
         except TranscriptionAdapterLoadError:
             return fail_transcription_job(job_id, "MODEL_LOAD_FAILED", percent=25, details={"engine": job["engine"]})
 

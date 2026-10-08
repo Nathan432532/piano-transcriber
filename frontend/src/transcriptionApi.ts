@@ -224,7 +224,7 @@ export function makeIdempotencyKey(): string {
   return `transcription-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-export function createTranscriptionApiClient(fetchImpl: FetchLike, apiBase: string) {
+export function createTranscriptionApiClient(fetchImpl: FetchLike, apiBase: string, engine = 'bytedance') {
   const apiUrl = (path: string) => (path.startsWith('http') ? path : `${apiBase}${path}`);
 
   const requestJson = async <T>(path: string, init?: RequestInit): Promise<T> => {
@@ -245,7 +245,7 @@ export function createTranscriptionApiClient(fetchImpl: FetchLike, apiBase: stri
         },
         body: JSON.stringify({
           uploadId,
-          engine: 'basic-pitch',
+          engine,
           options: { minPitch: 21, maxPitch: 108 },
         }),
         signal,

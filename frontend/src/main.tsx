@@ -69,7 +69,7 @@ type EditorMode = 'view' | 'edit';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
 const SPEEDS = [0.5, 0.75, 1] as const;
-const transcriptionApi = createTranscriptionApiClient(fetch, API_BASE);
+const transcriptionApi = createTranscriptionApiClient(fetch, API_BASE, import.meta.env.VITE_TRANSCRIPTION_ENGINE || 'bytedance');
 
 function apiUrl(path: string): string {
   if (path.startsWith('http')) {
